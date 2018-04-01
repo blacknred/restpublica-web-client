@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import CircularProgress from 'material-ui/CircularProgress';
 
-import { getUserData, createSubscription, removeSubscription } from '../api'
+import { getUserProfile, createUserSubscription, removeUserSubscription } from '../api'
 import { setUserStats } from '../actions'
 import AuthorContent from '../components/AuthorContent';
 import AuthorTabs from '../components/AuthorTabs'

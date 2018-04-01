@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 
-import { getTrendingUsersNoPosts, createSubscription, removeSubscription } from '../api'
+import { getTrendingProfiles, createUserSubscription, removeUserSubscription } from '../api'
 import { createFlashMessage } from '../actions'
 import AuthorsPreviewList from '../components/AuthorsPreviewList';
 

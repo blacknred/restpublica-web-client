@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 
-import { getDashboardPosts, getTrendingPosts, getSearchPosts,getUserPosts } from '../api'
+import { getDashboardPosts, getTrendingPosts, getSearchedPosts, getProfilePosts } from '../api'
 import PostList from '../components/PostList'
 
 class Posts extends Component {

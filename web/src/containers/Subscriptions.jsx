@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 
-import { getUserId, getSubscriptions, createSubscription, removeSubscription } from '../api'
+import { getUserSubscriptions, createUserSubscription, removeUserSubscription } from '../api'
 import { createFlashMessage, increaseUserStats, decreaseUserStats } from '../actions'
 import SubscriptionList from '../components/SubscriptionList'
 

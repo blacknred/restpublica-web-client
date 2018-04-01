@@ -6,6 +6,7 @@ WORKDIR /usr/src/app
 
 # add `/usr/src/app/node_modules/.bin` to $PATH
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
+ENV API_HOST=http://localhost:3003
 
 # install and cache app dependencies
 ADD package.json /usr/src/app/package.json

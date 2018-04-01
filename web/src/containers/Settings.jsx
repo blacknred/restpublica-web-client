@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import { Switch, Route } from 'react-router-dom'
 
-import { getProfileData, userUpdate, avatarUpdate } from '../api'
+import { getUserProfile, userUpdate } from '../api'
 import { updateUser, createFlashMessage } from '../actions'
 import SettingsProfile from '../components/SettingsProfile'
 import SettingsApp from '../components/SettingsApp'

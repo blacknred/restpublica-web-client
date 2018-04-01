@@ -1,4 +1,3 @@
-/*eslint-disable no-undef */
 import React from 'react';
 import PropTypes from 'prop-types'
 import { Switch, Route, Link } from 'react-router-dom';
@@ -16,10 +15,9 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'flex-start'
     },
-    containerForm: {
+    form: {
         marginTop: '6em',
-        padding: '1em 2.5em',
-        borderRadius: '1%',
+        padding: '2em 3em',
         backgroundColor: 'rgb(250, 250, 250)',
         display: 'flex',
         flexDirection: 'column',
@@ -32,9 +30,8 @@ const LandingBackground = ({ gifUrl, fields, errors, submitLogin,
     return (
         <div style={Object.assign({}, styles.container,
             { background: `url("${gifUrl}") no-repeat center / cover fixed` })} >
-            <div style={styles.containerForm} >
-
-                <h3>REST<small>publica</small></h3>
+            <div style={styles.form} >
+                <h2>Restpublica</h2>
                 <Switch>
                     <Route path='/login' render={() => (
                         <LoginForm
@@ -59,7 +56,6 @@ const LandingBackground = ({ gifUrl, fields, errors, submitLogin,
                     icon={<ActionExploreIcon />}
                 />
                 <br />
-
             </div>
         </div >
     )

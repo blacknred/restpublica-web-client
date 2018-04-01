@@ -4,7 +4,10 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 
-import { getTrendingUsers, getSearchedUsers, createSubscription, removeSubscription } from '../api'
+import {
+    getTrendingProfiles, getSearchedProfiles,
+    createUserSubscription, removeUserSubscription
+} from '../api'
 import { createFlashMessage } from '../actions'
 import AuthorsList from '../components/AuthorsList';
 
@@ -29,18 +32,18 @@ class Authors extends Component {
         const { mode, query } = this.props
         switch (mode) {
             case 'trending': _res = await getTrendingUsers({ page, filter: false })
-            break
+                break
             case 'search': _res = await getSearchedUsers({ query, page, filter: false })
-            break
-            default:;
+                break
+            default: ;
         }
         res = _res.data.data
         if (!res) {
             this.setState({ hasMore: false });
             return
         }
-         // if there are no requested authors at all view empty page 
-         if (parseInt(res.count, 10) === 0) {
+        // if there are no requested authors at all view empty page 
+        if (parseInt(res.count, 10) === 0) {
             this.setState({ empty: true, hasMore: false })
         }
         // enlarge authors arr if there are, block loading if there are not
