@@ -1,13 +1,16 @@
-/* eslint-disable no-undef */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 
-import { getDashboardPosts, getTrendingPosts, getSearchedPosts, getProfilePosts } from '../api'
+import {
+    getDashboardPosts, getTrendingPosts,
+    getSearchedPosts, getProfilePosts
+} from '../api'
+import { createFlashMessage } from '../actions'
 import PostList from '../components/PostList'
 
-class Posts extends Component {
+class Posts extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -18,40 +21,58 @@ class Posts extends Component {
     }
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
-        mode: PropTypes.oneOf(['dashboard', 'trending', 'search', 'u', 'me']),
+        mode: PropTypes.oneOf(['dashboard', 'trending', 'search', 'u']),
         username: PropTypes.string.isRequired,
         query: PropTypes.string
     }
     getPostsHandler = async (page) => {
-        let _res, res
-        const { mode, query, username } = this.props 
+        const { mode, query, username } = this.props
+        let res
         switch (mode) {
-            case 'dashboard': _res = await getDashboardPosts({ page, filter: false })
-            break
-            case 'trending': _res = await getTrendingPosts({ page, filter: false })
-            break
-            case 'search': _res = await getSearchPosts({ query, page, filter: false })
-            break
-            default: _res = await getUserPosts({ username, page, filter: false });
+            case 'dashboard': res = await getDashboardPosts(page)
+                break
+            case 'trending': res = await getTrendingPosts(page)
+                break
+            case 'search': res = await getSearchedPosts(query, page)
+                break
+            default:
+            // get userId
+            // res = await getProfilePosts(userId, page);
+            // communityPosts, tagPosts
         }
-        res = _res.data.data
-        if (!res) {
+        if (!res.status) {
             this.setState({ hasMore: false });
+            this.props.createMessage(res)
             return
         }
         // if there are no requested posts at all view empty page 
-        if (parseInt(res.count, 2) === 0) {
+        if (parseInt(res.data.count, 10) === 0) {
             this.setState({ empty: true, hasMore: false })
         }
         // enlarge posts arr if there are, block loading if there are not
-        if (res.posts.length > 0) {
-            this.setState({
-                posts: this.state.posts.concat(res.posts)
-            });
+        if (res.data.posts.length > 0) {
+            res.data.posts.forEach(post => {
+                post.isExpanded = false;
+                post.comments = []
+            })
+            this.setState({ posts: this.state.posts.concat(res.data.posts) });
         } else {
             this.setState({ hasMore: false });
         }
-        console.log(`Posts - page:${page}, count:${res.count}, length:${this.state.posts.length}`)
+        console.log(`page:${page}, count:${res.data.count}, length:${this.state.posts.length}`)
+    }
+    expandPostHandler = (id) => {
+        const posts = [...this.state.posts]
+        posts.forEach(post => {
+            if (post.id === id) post.isExpanded = !post.isExpanded
+        })
+        this.setState({ posts })
+    }
+    updatePostHandler = (e, child) => {
+        console.log(e, child)
+    }
+    deletePostHandler = (id) => {
+        console.log(id)
     }
     emptyMessage = () => {
         switch (this.props.mode) {
@@ -93,7 +114,8 @@ class Posts extends Component {
         }
     }
     componentDidMount() {
-        console.log(`${this.props.mode} posts are mounted`)
+        const { mode, username } = this.props
+        console.log(`[${mode}, ${username}] posts are mounted`)
     }
 
     render() {
@@ -101,18 +123,29 @@ class Posts extends Component {
             mode={this.props.mode}
             isFullAccess={this.props.mode === 'me' ? true : false}
             isAuthenticated={this.props.isAuthenticated}
+            isAutoGifs={this.props.isAutoGifs}
+            isFeedOneColumn={this.props.isFeedOneColumn}
             {...this.state}
             getPosts={this.getPostsHandler}
+            expandPost={this.expandPostHandler}
+            updatePost={this.updatePostHandler}
+            deletePost={this.deletePostHandler}
             emptyMessage={this.emptyMessage}
         />
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
-        isAuthenticated: state.authentication.isAuthenticated,
-        mode: ownProps.location.pathname.split('/')[1],
-        query: ownProps.match.params.query || '',
-        username: ownProps.match.params.name || state.authentication.user.name,
+    isAuthenticated: state.authentication.isAuthenticated,
+    mode: ownProps.location.pathname.split('/')[1] || 'dashboard',
+    query: ownProps.match.params.query || '',
+    username: ownProps.match.params.name || state.authentication.username,
+    isAutoGifs: state.uiSwitchers.isAutoGifs,
+    isFeedOneColumn: state.uiSwitchers.isFeedOneColumn
 })
 
-export default withRouter(connect(mapStateToProps)(Posts))
+const mapDispatchToProps = dispatch => ({
+    createMessage: (text) => dispatch(createFlashMessage(text))
+})
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Posts))

@@ -1,135 +1,220 @@
-/*eslint-disable no-undef */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import { Switch, Route } from 'react-router-dom'
 
-import { getUserProfile, userUpdate } from '../api'
-import { updateUser, createFlashMessage } from '../actions'
+import { getUserProfile, login, userUpdate } from '../api'
+import {
+    updateUser, createFlashMessage, toggleNightMode,
+    toggleNotify, toggleAutoGifs, toggleFeedOneColumn, logoutUser
+} from '../actions'
 import SettingsProfile from '../components/SettingsProfile'
 import SettingsApp from '../components/SettingsApp'
 
-class Settings extends Component {
+class Settings extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             profile: {
-                fields: {
+                values: {
                     username: '',
                     fullname: '',
                     description: '',
                     email: '',
-                    avatar: ''
+                    avatar: '',
+                    email_notify: true,
+                    feed_rand: 0,
+                    oldpassword: null,
+                    newpassword: null
                 },
                 errors: {
-                    username: '',
-                    fullname: '',
-                    description: '',
-                    email: ''
+                    username: null,
+                    fullname: null,
+                    description: null,
+                    email: null,
+                    oldpassword: null,
+                    newpassword: null
                 }
             }
         };
     }
     static propTypes = {
+        username: PropTypes.string.isRequired,
         update: PropTypes.func.isRequired,
         createMessage: PropTypes.func.isRequired
     }
     getProfile = async () => {
-        let _res, res
-        _res = await getProfileData()
-        res = _res.data.data
-        if (!res) return
+        const res = await getUserProfile()
+        if (!res.status) {
+            this.props.createMessage(res)
+            return
+        }
         this.setState({
             profile: {
                 ...this.state.profile,
-                fields: {
-                    username: res.username,
-                    fullname: res.fullname,
-                    description: res.description,
-                    email: res.email,
-                    avatar: `data:image/png;base64, ${res.avatar}`
+                values: {
+                    ...this.state.profile.values,
+                    ...res.data,
+                    //avatar: `data:image/png;base64, ${res.data.avatar}`
                 }
             }
         })
     }
-    inputProfileFieldChangeHandle = (event) => {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
-        this.setState({
-            profile: {
-                ...this.state.profile,
-                fields: {
-                    ...this.state.profile.fields,
-                    [name]: value
+    updateProfileValueHandler = async (option, value) => {
+        if (value === this.state.profile.values[option]) {
+            this.setState({
+                profile: {
+                    values: {
+                        ...this.state.profile.values
+                    },
+                    errors: {
+                        ...this.state.profile.errors,
+                        [option]: null
+                    }
                 }
-            }
-        })
-    }
-    inputProfileFileChangeHandle = (event) => {
-        const avatar = window.URL.createObjectURL(event.target.files[0])
-        this.setState({
-            profile: {
-                ...this.state.profile,
-                fields: {
-                    ...this.state.profile.fields,
-                    avatar
-                }
-            }
-        });
-    }
-    updateUserAvatarHandle = async (event) => {
-        event.preventDefault();
-        let _res, res, profilePic
-        profilePic = event.target.querySelector('#avatar').files[0];
-        if (!profilePic) return this.props.createMessage('Select an image at first')
-        const formData = new FormData();
-        formData.append('avatar', profilePic);
-        _res = await avatarUpdate(formData)
-        res = _res.data.data
-        this.setState({
-            profile: {
-                ...this.state.profile,
-                fields: {
-                    ...this.state.profile.fields,
-                    avatar: `data:image/png;base64, ${res}`
-                }
-            }
-        })
-        this.props.update({
-            username: this.state.profile.fields.username,
-            avatar: res
-        });
-    }
-    updateUserFieldsHandle = async (event) => {
-        event.preventDefault();
-        let _res, res, name
-        const profileData = {
-            'username': this.state.profile.fields.username,
-            'fullname': this.state.profile.fields.fullname,
-            'description': this.state.profile.fields.description,
-            'email': this.state.profile.fields.email
+            });
+            return;
+        }
+        const updatedData = {
+            option,
+            value
         };
-        _res = await userUpdate(profileData)
-        if (!_res) return
-        res = _res.data
-        res.status === 'Validation failed' ?
-            res.failures.forEach((failure) => {
-                name = failure.param
+        const res = await userUpdate(updatedData)
+        if (!res.status) {
+            this.props.createMessage(res)
+            return
+        } else if (res.status.toString().match(/(401|409|422)/)) {
+            if (!res.message.length) res.message = [res.message]
+            res.message.forEach((failure) => {
                 this.setState({
                     profile: {
-                        ...this.state.profile.fields,
+                        values: {
+                            ...this.state.profile.values
+                        },
                         errors: {
                             ...this.state.profile.errors,
-                            [name]: failure.msg
+                            [option]: failure.msg
                         }
                     }
-                })
-            }) :
-            this.props.update({
-                username: this.state.profile.fields.username,
-                avatar: this.state.profile.fields.avatar
+                });
             })
+        } else {
+            this.setState({
+                profile: {
+                    ...this.state.profile,
+                    values: {
+                        ...this.state.profile.values,
+                        ...res.data
+                    }
+                }
+            })
+            if (option.match(/^(username|feed_rand)$/)) {
+                this.props.update(res.data)
+            }
+            if (!option.match(/^(email_notify|feed_rand)$/)) {
+                const formatedOption = option[0].toUpperCase() + option.substr(1);
+                this.props.createMessage(formatedOption + ' is updated')
+            }
+        }
+    }
+    updateProfileAvatarHandler = async (event) => {
+        event.preventDefault();
+        let avatar = event.target.files[0];
+        if (!avatar) return
+        if (avatar.size > 2000000) {
+            this.props.createMessage('Maximum size is 2 mB')
+            return
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(avatar);
+        reader.onloadend = async () => {
+            avatar = reader.result.split(',')[1].trim();
+            const updatedData = {
+                option: 'avatar',
+                value: avatar
+            }
+            const res = await userUpdate(updatedData)
+            if (!res.status) {
+                this.props.createMessage(res)
+                return
+            }
+            this.setState({
+                profile: {
+                    ...this.state.profile,
+                    values: {
+                        ...this.state.profile.values,
+                        ...res.data
+                    }
+                }
+            })
+            this.props.update(res.data);
+            this.props.createMessage('Avatar is updated')
+        }
+    }
+    checkProfilePasswordHandler = async (event) => {
+        event.preventDefault();
+        const checkName = event.target.name
+        const checkValue = event.target.value
+        const checkData = {
+            'username': this.props.username,
+            'password': checkValue
+        };
+        const res = await login(checkData)
+        if (!res.status) {
+            this.props.createMessage(res)
+            return
+        } else if (res.status.toString().match(/(401|409|422)/)) {
+            if (!res.message.length) res.message = [res.message]
+            res.message.forEach((failure) => {
+                this.setState({
+                    profile: {
+                        ...this.state.profile,
+                        errors: {
+                            ...this.state.profile.errors,
+                            [checkName]: failure.msg
+                        }
+                    }
+                });
+            })
+        } else {
+            this.setState({
+                profile: {
+                    ...this.state.profile,
+                    values: {
+                        ...this.state.profile.values,
+                        [checkName]: checkValue
+                    },
+                    errors: {
+                        ...this.state.profile.errors,
+                        [checkName]: null
+                    }
+                }
+            })
+        }
+    }
+    checkProfileNewPasswordHandler = async (event) => {
+        event.preventDefault();
+        const checkName = event.target.name
+        const checkValue = event.target.value
+        let failure = null;
+        if (!checkValue.match(/^.*(?=.{5,})(?=.*\d)(?=.*[a-zA-Z]).*$/)) {
+            failure = 'Password must has at least 5 chars and one number'
+        } else if (checkValue === this.state.profile.values.oldpassword) {
+            failure = 'New password must differ previous'
+        }
+        this.setState({
+            profile: {
+                ...this.state.profile,
+                values: {
+                    ...this.state.profile.values,
+                    [checkName]: checkValue
+                },
+                errors: {
+                    ...this.state.profile.errors,
+                    [checkName]: failure
+                }
+            }
+        });
     }
     componentDidMount() {
         console.log('profile is mounted')
@@ -137,36 +222,29 @@ class Settings extends Component {
     }
 
     render() {
+        const settingsProfile =
+            <SettingsProfile
+                {...this.state.profile}
+                updateValue={this.updateProfileValueHandler}
+                updateAvatar={this.updateProfileAvatarHandler}
+                checkPassword={this.checkProfilePasswordHandler}
+                checkNewPassword={this.checkProfileNewPasswordHandler}
+                logoutUser={this.props.logoutUser}
+            />
+        const settingsApp =
+            <SettingsApp
+                {...this.props}
+                feed_rand={this.state.profile.values.feed_rand}
+                email_notify={this.state.profile.values.email_notify}
+                updateValue={this.updateProfileValueHandler}
+            />
         return (
             <Switch>
-                <Route path='/settings/profile' render={() => (
-                    <div>
-                        <SettingsProfile
-                            fields={this.state.profile.fields}
-                            errors={this.state.profile.errors}
-                            inputFieldChange={this.inputProfileFieldChangeHandle}
-                            inputFileChange={this.inputProfileFileChangeHandle}
-                            updateAvatar={this.updateUserAvatarHandle}
-                            updateFields={this.updateUserFieldsHandle}
-                        />
-                    </div>
-                )} />
-                <Route path='/settings/app' render={() => (
-                    <div>
-                        <SettingsApp />
-                    </div>
-                )} />
+                <Route path='/settings/profile' render={() => settingsProfile} />
                 <Route render={() => (
                     <div>
-                        <SettingsApp />
-                        <SettingsProfile
-                            fields={this.state.profile.fields}
-                            errors={this.state.profile.errors}
-                            inputFieldChange={this.inputProfileFieldChangeHandle}
-                            inputFileChange={this.inputProfileFileChangeHandle}
-                            updateAvatar={this.updateUserAvatarHandle}
-                            updateFields={this.updateUserFieldsHandle}
-                        />
+                        {settingsApp}
+                        {settingsProfile}
                     </div>
                 )} />
             </Switch>
@@ -174,8 +252,21 @@ class Settings extends Component {
     }
 }
 
+const mapStateToProps = (state) => ({
+    username: state.authentication.username,
+    isNightMode: state.uiSwitchers.isNightMode,
+    isNotify: state.notifications.isNotify,
+    isAutoGifs: state.uiSwitchers.isAutoGifs,
+    isFeedOneColumn: state.uiSwitchers.isFeedOneColumn
+})
+
 const mapDispatchToProps = dispatch => ({
     update: (profileData) => dispatch(updateUser(profileData)),
-    createMessage: (text) => dispatch(createFlashMessage(text))
+    createMessage: (text) => dispatch(createFlashMessage(text)),
+    toggleNightMode: (mode) => dispatch(toggleNightMode(mode)),
+    toggleNotify: (mode) => dispatch(toggleNotify(mode)),
+    toggleAutoGifs: (mode) => dispatch(toggleAutoGifs(mode)),
+    toggleFeedOneColumn: (mode) => dispatch(toggleFeedOneColumn(mode)),
+    logoutUser: () => dispatch(logoutUser())
 })
-export default connect(null, mapDispatchToProps)(Settings)
+export default connect(mapStateToProps, mapDispatchToProps)(Settings)

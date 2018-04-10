@@ -5,10 +5,15 @@ import IconButton from 'material-ui/IconButton';
 
 const styles = {
     optionsRightPanel: {
-        position: 'fixed', display: 'flex', flexDirection: 'column',
-        transition: 'right 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms'
+        position: 'fixed',
+        right: '5em',
+        display: 'flex',
+        flexDirection: 'column',
+        // transition: 'right 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms'
     },
-    backToTop: { position: 'static' }
+    backToTop: {
+        position: 'static'
+    }
 }
 
 const ListRightPanel = () => {

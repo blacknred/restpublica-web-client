@@ -44,7 +44,7 @@ class Author extends Component {
     getUserDataHandler = async () => {
         let _res, res
         const name = this.props.name
-        _res = await getUserData(name)
+        _res = await getUserProfile(name)
         res = _res.data.data
         if (!res) return
         const counts = {
@@ -67,7 +67,7 @@ class Author extends Component {
     }
     createSubscriptionHandler = async (id, name) => {
         let _res, res
-        _res = await createSubscription(id)
+        _res = await createUserSubscription(id)
         res = _res.data.data
         if (!res) return
         this.setState({
@@ -83,7 +83,7 @@ class Author extends Component {
     }
     removeSubscriptionHandler = async (id, name) => {
         let _res, res
-        _res = await removeSubscription(id)
+        _res = await removeUserSubscription(id)
         res = _res.data.data
         if (!res && parseInt(res, 10) !== this.state.my_subscription_id) return
         this.setState({

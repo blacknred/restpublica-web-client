@@ -19,15 +19,15 @@ class AuthorsPreview extends Component {
         isNightMode: PropTypes.bool.isRequired
     }
     getAuthorsDataHandler = async () => {
-        let _res, res
-        _res = await getTrendingUsersNoPosts()
-        res = _res.data.data.users
-        if (!res) return
-        this.setState({ authors: res })
+        // let _res, res
+        // _res = await getTrendingProfiles()
+        // res = _res.data.data.users
+        // if (!res) return
+        // this.setState({ authors: res })
     }
     createSubscriptionHandler = async (id, name) => {
         let _res, res, authors
-        _res = await createSubscription(id)
+        _res = await createUserSubscription(id)
         res = _res.data.data
         if (!res) return
         authors = this.state.authors
@@ -39,7 +39,7 @@ class AuthorsPreview extends Component {
     }
     removeSubscriptionHandler = async (id, name) => {
         let _res, res, authors
-        _res = await removeSubscription(id)
+        _res = await removeUserSubscription(id)
         res = _res.data.data
         if (!res) return
         authors = this.state.authors

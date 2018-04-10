@@ -15,6 +15,7 @@ const RegisterForm = ({ submitHandler, fields, errors, inputChange }) => {
                 hintText="Username Field"
                 onChange={inputChange}
                 errorText={errors.username}
+                fullWidth={true}
             /><br />
             <TextField
                 id='fullname'
@@ -24,6 +25,7 @@ const RegisterForm = ({ submitHandler, fields, errors, inputChange }) => {
                 hintText="Fullname Field"
                 onChange={inputChange}
                 errorText={errors.fullname}
+                fullWidth={true}
             /><br />
             <TextField
                 id='email'
@@ -34,6 +36,7 @@ const RegisterForm = ({ submitHandler, fields, errors, inputChange }) => {
                 hintText="Email Field"
                 onChange={inputChange}
                 errorText={errors.email}
+                fullWidth={true}
             /><br />
             <TextField
                 id='password'
@@ -44,6 +47,7 @@ const RegisterForm = ({ submitHandler, fields, errors, inputChange }) => {
                 floatingLabelText="Password"
                 onChange={inputChange}
                 errorText={errors.password}
+                fullWidth={true}
             /><br /><br />
             <FlatButton
                 type='submit'

@@ -1,10 +1,10 @@
 import constants from '../constants/index.js'
 
 const initialState = () => {
-    if (window.localStorage.getItem('authToken')) {
-        const { userNotify } = window.localStorage;
+    if (window.localStorage.getItem('token')) {
+        const { isnotify } = window.localStorage;
         return {
-            isNotify: userNotify === 'true',
+            isNotify: isnotify === 'true',
             notificationsList: [
                 {
                    date: Date.now(),

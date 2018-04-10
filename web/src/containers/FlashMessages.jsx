@@ -7,15 +7,13 @@ import FlashMessage from '../components/FlashMessage'
 
 const FlashMessages = ({ messages, deleteMessage }) => {
     return (
-        <div>
-            {
-                messages.map((message, index) => <FlashMessage
-                    key={index}
-                    message={message}
-                    closeHandler={() => deleteMessage(index)}
-                />)
-            }
-        </div>
+        messages.map((message, index) =>
+            <FlashMessage
+                key={index}
+                message={message}
+                closeHandler={() => deleteMessage(index)}
+            />
+        )
     )
 }
 FlashMessages.propTypes = {
@@ -25,7 +23,8 @@ FlashMessages.propTypes = {
     deleteMessage: PropTypes.func.isRequired
 }
 const mapStateToProps = state => ({
-    messages: state.flashMessages.messages
+    messages: state.flashMessages.messages,
+    isNightMode: state.uiSwitchers.isNightMode
 })
 const mapDispatchToProps = dispatch => ({
     deleteMessage: (index) => dispatch(deleteFlashMessage(index))

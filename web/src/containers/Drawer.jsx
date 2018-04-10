@@ -29,8 +29,9 @@ Drawer.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
     isDrawer: state.uiSwitchers.isDrawer,
     isNotFound: state.uiSwitchers.isNotFound,
-    pathname: ownProps.location.url,
-    username: state.authentication.user.name
+    isNightMode: state.uiSwitchers.isNightMode,
+    pathname: ownProps.location.pathname,
+    username: state.authentication.username
 })
 const mapDispatchToProps = dispatch => ({
     toggleNotFound: (mode) => dispatch(toggleNotFound(mode))

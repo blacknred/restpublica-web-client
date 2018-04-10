@@ -1,26 +1,23 @@
 import constants from '../constants/index.js'
 
 const initialState = () => {
-    if (window.localStorage.getItem('authToken')) {
-        const { userId, userName, userAvatar } = window.localStorage;
+    if (window.localStorage.getItem('token')) {
+        const { id, username, avatar, feedrand } = window.localStorage;
         return {
             isAuthenticated: true,
-            user: {
-                id: userId,
-                name: userName,
-                avatar: userAvatar
-            },
+            feedRand: feedrand,
+            id,
+            username,
+            avatar,
             stats: {
-                posts: 0,
-                followers: 0,
-                followin: 0
+                postsCnt: 0,
+                followersCnt: 0,
+                followinCnt: 0
             }
         }
     }
     return {
-        isAuthenticated: false,
-        user: {},
-        stats: {}
+        isAuthenticated: false
     }
 }
 
@@ -28,28 +25,18 @@ const authentication = (state = initialState(), action) => {
     switch (action.type) {
         case constants.AUTH_USER:
             return {
-                ...state,
+                ...action.userData,
                 isAuthenticated: true,
-                user: {
-                    id: action.id,
-                    name: action.username,
-                    avatar: action.avatar
-                }
+                
             }
         case constants.UPDATE_USER:
             return {
                 ...state,
-                user: {
-                    ...state.user,
-                    name: action.username,
-                    avatar: action.avatar
-                }
+                ...action.userData
             }
         case constants.LOGOUT_USER:
             return {
-                ...state,
-                isAuthenticated: false,
-                user: {}
+                isAuthenticated: false
             }
         case constants.SET_USER_STATS:
             return {

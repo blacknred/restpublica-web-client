@@ -34,12 +34,9 @@ Header.propTypes = {
             text: PropTypes.string.isRequired
         })
     ).isRequired,
-    user: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        avatar: PropTypes.string.isRequired
-    }).isRequired,
-    query: PropTypes.any.isRequired,
-    toggleFound: PropTypes.func.isRequired,
+    avatar: PropTypes.string.isRequired,
+    query: PropTypes.any,
+    toggleNotFound: PropTypes.func.isRequired,
     toggleNotify: PropTypes.func.isRequired,
     createFlashMessage: PropTypes.func.isRequired
 }
@@ -50,7 +47,7 @@ const mapStateToProps = (state, ownProps) => ({
     isNightMode: state.uiSwitchers.isNightMode,
     isNotFound: state.uiSwitchers.isNotFound,
     notifications: state.notifications.notificationsList,
-    user: state.authentication.user,
+    avatar: state.authentication.avatar,
     query: ownProps.match.params.query || null
 })
 const mapDispatchToProps = dispatch => {
@@ -62,7 +59,7 @@ const mapDispatchToProps = dispatch => {
         createFlashMessage: (text) => dispatch(createFlashMessage(text)),
         logoutUser: () => {
             dispatch(logoutUser())
-            this.props.history.push('/')
+            // this.props.history.push('/')
         }
     }
 }

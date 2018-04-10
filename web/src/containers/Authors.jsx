@@ -31,9 +31,9 @@ class Authors extends Component {
         let _res, res
         const { mode, query } = this.props
         switch (mode) {
-            case 'trending': _res = await getTrendingUsers({ page, filter: false })
+            case 'trending': _res = await getTrendingProfiles({ page, filter: false })
                 break
-            case 'search': _res = await getSearchedUsers({ query, page, filter: false })
+            case 'search': _res = await getSearchedProfiles({ query, page, filter: false })
                 break
             default: ;
         }
@@ -58,7 +58,7 @@ class Authors extends Component {
     }
     createSubscriptionHandler = async (id, name) => {
         let _res, res, authors
-        _res = await createSubscription(id)
+        _res = await createUserSubscription(id)
         res = _res.data.data
         if (!res) return
         authors = this.state.authors
@@ -70,7 +70,7 @@ class Authors extends Component {
     }
     removeSubscriptionHandler = async (id, name) => {
         let _res, res, authors
-        _res = await removeSubscription(id)
+        _res = await removeUserSubscription(id)
         res = _res.data.data
         if (!res) return
         authors = this.state.authors

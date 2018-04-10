@@ -33,7 +33,7 @@ class Subscriptions extends Component {
             }
             this.setState({ userId: res })
         }
-        _res = await getSubscriptions({ mode: this.props.mode, id: this.state.userId, page })
+        _res = await getUserSubscriptions({ mode: this.props.mode, id: this.state.userId, page })
         res = _res.data.data
         if (!res) {
             this.setState({ hasMore: false });
@@ -55,7 +55,7 @@ class Subscriptions extends Component {
     }
     createSubscriptionHandler = async (id, name) => {
         let _res, res, subscriptions
-        _res = await createSubscription(id, name)
+        _res = await createUserSubscription(id, name)
         res = _res.data.data
         if (!res) return
         subscriptions = this.state.subscriptions
@@ -68,7 +68,7 @@ class Subscriptions extends Component {
     }
     removeSubscriptionHandler = async (id, name) => {
         let _res, res, subscriptions
-        _res = await removeSubscription(id, name)
+        _res = await removeUserSubscription(id, name)
         res = _res.data.data
         if (!res) return
         subscriptions = this.state.subscriptions

@@ -15,6 +15,7 @@ const LoginForm = ({ submitHandler, fields, errors, inputChange }) => {
                 hintText="Username Field"
                 onChange={inputChange}
                 errorText={errors.username}
+                fullWidth={true}
             /><br />
             <TextField
                 id='password'
@@ -25,6 +26,7 @@ const LoginForm = ({ submitHandler, fields, errors, inputChange }) => {
                 floatingLabelText="Password"
                 onChange={inputChange}
                 errorText={errors.password}
+                fullWidth={true}
             /><br /><br />
             <FlatButton
                 type='submit'

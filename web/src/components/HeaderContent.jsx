@@ -7,12 +7,12 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
-import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
+import AppBar from 'material-ui/AppBar';
 import Badge from 'material-ui/Badge';
 import Toggle from 'material-ui/Toggle';
-import { grey200, grey300, grey600, grey900, black } from 'material-ui/styles/colors';
+import muiThemeable from 'material-ui/styles/muiThemeable';
 import NavigationMenuIcon from 'material-ui/svg-icons/navigation/menu';
-import ContentAddIcon from 'material-ui/svg-icons/content/add';
+import ContentAddIcon from 'material-ui/svg-icons/content/add-circle';
 import SocialNotificationsIcon from 'material-ui/svg-icons/social/notifications';
 import SocialNotificationsOffIcon from 'material-ui/svg-icons/social/notifications-off';
 import ActionSettingsIcon from 'material-ui/svg-icons/action/settings';
@@ -20,73 +20,69 @@ import ActionExitToAppIcon from 'material-ui/svg-icons/action/exit-to-app';
 
 const styles = {
     appbar: {
-        position: 'fixed',
-        top: '0',
-        width: '100%',
         zIndex: '1400',
+        position: 'fixed',
         boxShadow: '0 1px 8px rgba(0,0,0,.3)'
     },
-    drawerButton: {
-        marginLeft: '-10px'
+    title: {
+        fontSize: '1.3em',
+        fontWeight: '700',
+        margin: '0 1.5em 0 0.7em',
+        flex: null
     },
-    drawerButtonIcon: {
-        color: grey600
+    rightBlock: {
+        flex: 1,
+        marginRight: '0.3em'
     },
-    toolbarTitle: {
-        fontSize: '1.2em',
-        marginLeft: '1em',
-        fontWeight: '700'
+    rightBlockContainer: {
+        display: 'flex'
+    },
+    searchBlock: {
+        flex: 1
     },
     searchField: {
-        width: '450px',
-        height: '42px',
-        lineHeight: '42px',
-        padding: '0 1em',
-        marginLeft: '35px',
-        borderRadius: '3px'
+        maxWidth: '600px',
+        width: '90%',
+        height: '48px',
+        lineHeight: '48px',
+        paddingLeft: '1em',
+        borderRadius: '3px',
+        backgroundColor: 'rgba(158, 158, 158, 0.2)'
     },
-    badge: {
-        top: '15px',
-        right: '10px'
+    hintStyle: {
+        paddingLeft: '1em'
     },
-    userButton: {
-        margin: '0px',
+    badgeStyle: {
+        top: '12px',
+        right: '8px'
+    },
+    userButtonIcon: {
         padding: '0px'
     },
-    iconButton: {
-        color: grey600
+    userButtonAnchorOrigin: {
+        horizontal: 'right',
+        vertical: 'bottom'
     },
-    userMenu: {
-        cursor: 'pointer'
+    userButtonTargetOrigin: {
+        horizontal: 'right',
+        vertical: 'top'
     },
-    newPost: {
-        minWidth: '48px'
+    userButtonToggle: {
+        paddingTop: 14
     }
+
 }
 
-const HeaderContent = ({ redirect, user, query, isDrawer, isNightMode, isNotFound,
+const HeaderContent = ({ redirect, avatar, query, isDrawer, isNightMode, isNotFound,
     isAuthenticated, isNotify, notifications, toggleNightMode, createFlashMessage,
-    toggleNotFound, toggleDrawer, toggleNotify, logoutUser }) => {
+    toggleNotFound, toggleDrawer, toggleNotify, logoutUser, muiTheme }) => {
 
     const searchSubmit = (event) => {
         event.preventDefault();
-        const query = event.target.querySelector('#searchField').value
+        const query = event.target.value
         if (isNotFound) toggleNotFound();
         if (query) redirect(`/search/${query}/posts`);
     }
-    const searchBlock = (
-        <form onSubmit={searchSubmit}>
-            <TextField
-                hintText={query || "Search"}
-                id='searchField'
-                style={Object.assign({}, styles.searchField,
-                    { backgroundColor: isNightMode ? grey900 : grey300, })}
-                inputStyle={{ color: isNightMode ? grey200 : grey900 }}
-                underlineShow={false}
-                hintStyle={{ bottom: '0' }}
-            />
-        </form>
-    );
     const notifyButton = (
         <Link to='/me/activity'>
             {
@@ -94,15 +90,15 @@ const HeaderContent = ({ redirect, user, query, isDrawer, isNightMode, isNotFoun
                     notifications.length ?
                         <Badge
                             badgeContent={notifications.length}
-                            secondary={true}
-                            badgeStyle={styles.badge} >
-                            <SocialNotificationsIcon style={styles.iconButton} />
-                        </Badge>
-                        : <IconButton iconStyle={styles.iconButton}>
-                            <SocialNotificationsIcon />
+                            primary={true}
+                            badgeStyle={styles.badgeStyle} />
+                        : <IconButton>
+                            <SocialNotificationsIcon
+                                color={muiTheme.palette.secondaryTextColor} />
                         </IconButton>
-                    : <IconButton iconStyle={styles.iconButton}>
-                        <SocialNotificationsOffIcon />
+                    : <IconButton>
+                        <SocialNotificationsOffIcon
+                            color={muiTheme.palette.secondaryTextColor} />
                     </IconButton>
             }
         </Link>
@@ -110,13 +106,16 @@ const HeaderContent = ({ redirect, user, query, isDrawer, isNightMode, isNotFoun
     const userButton = (
         <IconMenu
             iconButtonElement={
-                <IconButton style={styles.userButton}>
-                    <Avatar src={`data:image/png;base64, ${user.avatar}`} size={35} />
+                <IconButton style={styles.userButtonIcon}>
+                    <Avatar
+                        src={`data:image/png;base64, ${avatar}`}
+                        size={35}
+                    />
                 </IconButton>
             }
-            anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-            targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-            style={styles.userMenu} >
+            anchorOrigin={styles.userButtonAnchorOrigin}
+            targetOrigin={styles.userButtonTargetOrigin}
+        >
             <MenuItem leftIcon={<ActionSettingsIcon />} >
                 <Link to='/settings/profile'>Edit profile</Link>
             </MenuItem>
@@ -131,7 +130,7 @@ const HeaderContent = ({ redirect, user, query, isDrawer, isNightMode, isNotFoun
             </MenuItem>
             <MenuItem>
                 <Toggle
-                    style={{ paddingTop: 14 }}
+                    style={styles.userButtonToggle}
                     label="Notifications"
                     defaultToggled={isNotify}
                     toggled={isNotify}
@@ -144,7 +143,7 @@ const HeaderContent = ({ redirect, user, query, isDrawer, isNightMode, isNotFoun
             </MenuItem>
             <MenuItem>
                 <Toggle
-                    style={{ paddingTop: 14 }}
+                    style={styles.userButtonToggle}
                     label="Night mode"
                     defaultToggled={isNightMode}
                     toggled={isNightMode}
@@ -157,54 +156,59 @@ const HeaderContent = ({ redirect, user, query, isDrawer, isNightMode, isNotFoun
             </MenuItem>
         </IconMenu>
     );
-    const toobarLeftGroup = (
-        <ToolbarGroup>
-            {
-                isAuthenticated ?
-                    <IconButton
-                        style={styles.drawerButton}
-                        iconStyle={styles.drawerButtonIcon}
-                        onClick={() => toggleDrawer(!isDrawer)} >
-                        <NavigationMenuIcon />
-                    </IconButton>
-                    : null
-            }
-            <ToolbarTitle
-                text={<span>REST<small>publica</small></span>}
-                style={Object.assign({}, styles.toolbarTitle,
-                    { color: isNightMode ? grey200 : grey600 })} />
-            {searchBlock}
-        </ToolbarGroup>
-    );
-    const toobarRightGroup = (
-        isAuthenticated ?
-            <ToolbarGroup>
-                <Link to={{ pathname: '/newpost', state: { modal: true } }}>
-                    <FlatButton
-                        //label='create'
-                        //secondary={true}
-                        style={styles.newPost}
-                        icon={<ContentAddIcon />}
-                    />
-                </Link>
-                {notifyButton}
-                {userButton}
-            </ToolbarGroup> :
-            <ToolbarGroup>
-                <Link to='/login'>
-                    <FlatButton label='Login' />
-                </Link>
-                <Link to='/register'>
-                    <FlatButton label='Register' />
-                </Link>
-            </ToolbarGroup>
-    );
     return (
-        <Toolbar style={Object.assign({}, styles.appbar,
-            { backgroundColor: isNightMode ? black : 'white' })}>
-            {toobarLeftGroup}
-            {toobarRightGroup}
-        </Toolbar>
+        <AppBar
+            style={Object.assign(styles.appbar, { backgroundColor: muiTheme.palette.canvasColor })}
+            title='Restpublica'
+            titleStyle={Object.assign(styles.title, { color: muiTheme.palette.secondaryTextColor })}
+            iconElementLeft={
+                <IconButton>
+                    <NavigationMenuIcon color={muiTheme.palette.secondaryTextColor} />
+                </IconButton>
+            }
+            onLeftIconButtonClick={() => toggleDrawer(!isDrawer)}
+            iconStyleRight={styles.rightBlock}
+            iconElementRight={
+                <div style={styles.rightBlockContainer}>
+                    <TextField
+                        hintText={query || "Search"}
+                        style={styles.searchBlock}
+                        inputStyle={styles.searchField}
+                        underlineShow={false}
+                        hintStyle={styles.hintStyle}
+                        onKeyPress={(ev) => {
+                            if (ev.key === 'Enter') {
+                                searchSubmit(ev)
+                                ev.preventDefault();
+                            }
+                        }}
+                    />
+                    {/* {
+                        isAuthenticated &&
+                        <Link to={{ pathname: '/newpost', state: { modal: true } }}>
+                            <IconButton>
+                                <ContentAddIcon
+                                    color={muiTheme.palette.secondaryTextColor} />
+                            </IconButton>
+                        </Link>
+                    } */}
+                    {isAuthenticated && notifyButton}
+                    {isAuthenticated && userButton}
+                    {
+                        !isAuthenticated &&
+                        <span>
+                            <Link to='/login'>
+                                <FlatButton label='Login' />
+                            </Link>
+                            <Link to='/register'>
+                                <FlatButton label='Register' />
+                            </Link>
+                        </span>
+                    }
+                </div>
+            }
+        />
+
     )
 }
 
@@ -220,15 +224,13 @@ HeaderContent.propTypes = {
             text: PropTypes.string.isRequired
         })
     ).isRequired,
-    user: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        avatar: PropTypes.string.isRequired
-    }).isRequired,
-    query: PropTypes.any.isRequired,
+    avatar: PropTypes.string.isRequired,
+    query: PropTypes.any,
     toggleNotFound: PropTypes.func.isRequired,
     toggleNotify: PropTypes.func.isRequired,
     createFlashMessage: PropTypes.func.isRequired,
-    redirect: PropTypes.func.isRequired
+    redirect: PropTypes.func.isRequired,
+    logoutUser: PropTypes.func.isRequired
 }
 
-export default HeaderContent
+export default muiThemeable()(HeaderContent);

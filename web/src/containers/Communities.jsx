@@ -1,14 +1,16 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 const styles = {
     container: {
-        display: 'flex', minHeight: '10vh',
-        alignItems: 'center', justifyContent: 'center'
+        display: 'flex',
+        minHeight: '10vh',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 }
 
 
-class Communities extends Component {
+class Communities extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {}

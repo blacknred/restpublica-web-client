@@ -1,168 +1,172 @@
 import axios from 'axios';
-import asyncMiddleware from './asyncMiddleware'
+import asyncMddlwr from './asyncMiddleware'
 
-const GIPHY_URL =
-    encodeURI(`https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=space&rating=pg-13`);
-const API_HOST = 'http://localhost:3003' || process.env.API_HOST;
-const authToken = window.localStorage.authToken
-const HEADERS = { headers: { Authorization: `Bearer ${authToken}` } }
-
+axios.defaults.baseURL = 'http://localhost:3003' || process.env.API_HOST;
+axios.defaults.validateStatus = status => status >= 200 && status < 429;
+const GIPHY_URL = encodeURI('https://api.giphy.com/v1/gifs/random' +
+    '?api_key=dc6zaTOxFJmzC&tag=space&rating=pg-13');
+const FEED_RAND = window.localStorage.feedrand || 1;
+const instance = axios.create({
+    headers: { 'Authorization': `Bearer ${window.localStorage.token}` }
+});
+// axios.interceptors.request.use(req => console.log(req))
+// instance.interceptors.response.use(res => console.log(res))
 
 /* LANDING */
 
-export const getBackgroundPic = asyncMiddleware(() =>
+export const getBackgroundPic = asyncMddlwr(() =>
     axios.get(GIPHY_URL, {})
 )
 
 /* PROFILES */
 
-export const register = asyncMiddleware(data =>
-    axios.post(`${API_HOST}/users`, data)
+export const register = asyncMddlwr(data =>
+    axios.post(`/users`, data)
 )
-export const login = asyncMiddleware(data =>
-    axios.post(`${API_HOST}/users/login`, data)
+export const login = asyncMddlwr(data =>
+    axios.post(`/users/login`, data)
 )
-export const userUpdate = asyncMiddleware(data =>
-    axios.put(`${API_HOST}/users`, data, HEADERS)
+export const userUpdate = asyncMddlwr(data =>
+    instance.put(`/users`, data)
 )
-export const getUserProfile = asyncMiddleware(() =>
-    axios.get(`${API_HOST}/users/profile`, HEADERS)
+export const getUserProfile = asyncMddlwr(() =>
+    instance.get(`/users/profile`)
 )
-export const getProfile = asyncMiddleware(name =>
-    axios.get(`${API_HOST}users/${name}`, HEADERS)
+export const getProfile = asyncMddlwr(name =>
+    instance.get(`/users/${name}`)
 )
-export const getTrendingProfiles = asyncMiddleware(page =>
-    axios.get(`${API_HOST}/users?offset=${page}`, HEADERS)
+export const getTrendingProfiles = asyncMddlwr(page =>
+    instance.get(`/users?offset=${page}`)
 )
-export const getSearchedProfiles = asyncMiddleware((query, page) => {
-    axios.get(`${API_HOST}/users?q=${query}?offset=${page}`, HEADERS)
+export const getSearchedProfiles = asyncMddlwr((query, page) => {
+    instance.get(`/users?q=${query}?offset=${page}`)
 })
-export const createUserSubscription = asyncMiddleware((userId, data) => {
-    axios.post(`${API_HOST}/users/${userId}/follow`, { data }, HEADERS)
+export const createUserSubscription = asyncMddlwr((userId, data) => {
+    instance.post(`/users/${userId}/follow`, { data })
 })
-export const removeUserSubscription = asyncMiddleware((userId, subscriptionId) => {
-    axios.delete(`${API_HOST}/users/${userId}/follow/${subscriptionId}`, HEADERS)
+export const removeUserSubscription = asyncMddlwr((userId, subscriptionId) => {
+    instance.delete(`/users/${userId}/follow/${subscriptionId}`)
 })
-export const getUserSubscriptions = asyncMiddleware((userId, mode, page) => {
-    axios.get(`${API_HOST}/users/${userId}/${mode}?offset=${page}`, HEADERS)
+export const getUserSubscriptions = asyncMddlwr((userId, mode, page) => {
+    instance.get(`/users/${userId}/${mode}?offset=${page}`)
 })
 
 /* COMMUNITIES */
 
-export const createCommunity = asyncMiddleware(data =>
-    axios.post(`${API_HOST}/communities`, { data }, HEADERS)
+export const createCommunity = asyncMddlwr(data =>
+    instance.post(`/communities`, { data })
 )
-export const updateCommunity = asyncMiddleware((communityId, data) => {
-    axios.put(`${API_HOST}/communities/${communityId}`, { data }, HEADERS)
+export const updateCommunity = asyncMddlwr((communityId, data) => {
+    instance.put(`/communities/${communityId}`, { data })
 })
-export const getCommunity = asyncMiddleware(name =>
-    axios.get(`${API_HOST}/community/${name}`, HEADERS)
+export const getCommunity = asyncMddlwr(name =>
+    instance.get(`/community/${name}`)
 )
-export const getTrendingCommunities = asyncMiddleware(page =>
-    axios.get(`${API_HOST}/communities?offset=${page}`, HEADERS)
+export const getTrendingCommunities = asyncMddlwr(page =>
+    instance.get(`/communities?offset=${page}`)
 )
-export const getSearchedCommunities = asyncMiddleware((query, page) => {
-    axios.get(`${API_HOST}/communities?q=${query}?offset=${page}`, HEADERS)
+export const getSearchedCommunities = asyncMddlwr((query, page) => {
+    instance.get(`/communities?q=${query}?offset=${page}`)
 })
-export const getAdminCommunities = asyncMiddleware((adminId, page) => {
-    axios.get(`${API_HOST}/communities?admin=${adminId}?offset=${page}`, HEADERS)
+export const getAdminCommunities = asyncMddlwr((adminId, page) => {
+    instance.get(`/communities?admin=${adminId}?offset=${page}`)
 })
-export const getProfileCommunities = asyncMiddleware((userId, page) => {
-    axios.get(`${API_HOST}/communities?profile=${userId}?offset=${page}`, HEADERS)
+export const getProfileCommunities = asyncMddlwr((userId, page) => {
+    instance.get(`/communities?profile=${userId}?offset=${page}`)
 })
-export const createCommunitySubscription = asyncMiddleware((communityId, data) => {
-    axios.post(`${API_HOST}/communities/${communityId}/follow`, { data }, HEADERS)
+export const createCommunitySubscription = asyncMddlwr((communityId, data) => {
+    instance.post(`/communities/${communityId}/follow`, { data })
 })
-export const deleteCommunitySubscription = asyncMiddleware((communityId, subscriptionId) => {
-    axios.delete(`${API_HOST}/communities/${communityId}/follow/${subscriptionId}`, HEADERS)
+export const deleteCommunitySubscription = asyncMddlwr((communityId, subscriptionId) => {
+    instance.delete(`/communities/${communityId}/follow/${subscriptionId}`)
 })
-export const getCommunitySubscriptions = asyncMiddleware((communityId, page) => {
-    axios.get(`${API_HOST}/communities/${communityId}/followers?offset=${page}`, HEADERS)
+export const getCommunitySubscriptions = asyncMddlwr((communityId, page) => {
+    instance.get(`/communities/${communityId}/followers?offset=${page}`)
 })
-export const createCommunityBan = asyncMiddleware((communityId, data) => {
-    axios.post(`${API_HOST}/communities/${communityId}/ban`, { data }, HEADERS)
+export const createCommunityBan = asyncMddlwr((communityId, data) => {
+    instance.post(`/communities/${communityId}/ban`, { data })
 })
-export const getCommunityBans = asyncMiddleware((communityId, page) => {
-    axios.get(`${API_HOST}/communities/${communityId}/bans?offset=${page}`, HEADERS)
+export const getCommunityBans = asyncMddlwr((communityId, page) => {
+    instance.get(`/communities/${communityId}/bans?offset=${page}`)
 })
 
 /* POSTS */
 
-export const createPost = asyncMiddleware(data =>
-    axios.post(`${API_HOST}/posts`, { data }, HEADERS)
+export const createPost = asyncMddlwr(data =>
+    instance.post(`/posts`, { data })
 )
-export const updatePost = asyncMiddleware((postId, data) => {
-    axios.put(`${API_HOST}/posts/${postId}`, { data }, HEADERS)
+export const updatePost = asyncMddlwr((postId, data) => {
+    instance.put(`/posts/${postId}`, { data })
 })
-export const deletePost = asyncMiddleware(postId =>
-    axios.delete(`${API_HOST}/posts/${postId}`, HEADERS)
+export const deletePost = asyncMddlwr(postId =>
+    instance.delete(`/posts/${postId}`)
 )
-export const getPost = asyncMiddleware(slug =>
-    axios.get(`${API_HOST}/posts/${slug}`, HEADERS)
+export const getPost = asyncMddlwr(slug =>
+    instance.get(`/posts/${slug}`)
 )
-export const getDashboardPosts = asyncMiddleware(page =>
-    axios.get(`${API_HOST}/posts?dashboard=true&offset=${page}`, HEADERS)
+export const getDashboardPosts = asyncMddlwr(page =>
+    instance.get(`/posts?dashboard=true&offset=${page}&feed_rand=${FEED_RAND}`)
 )
-export const getTrendingPosts = asyncMiddleware(page =>
-    axios.get(`${API_HOST}/posts?offset=${page}`, HEADERS)
+export const getTrendingPosts = asyncMddlwr(page =>
+    instance.get(`/posts?offset=${page}`)
 )
-export const getSearchedPosts = asyncMiddleware((query, page) => {
-    axios.get(`${API_HOST}/posts?q=${query}?offset=${page}`, HEADERS)
+export const getSearchedPosts = asyncMddlwr((query, page) => {
+    instance.get(`/posts?q=${query}?offset=${page}`)
 })
-export const getTagPosts = asyncMiddleware((tag, page) => {
-    axios.get(`${API_HOST}/posts?tag=${tag}?offset=${page}`, HEADERS)
+export const getTagPosts = asyncMddlwr((tag, page) => {
+    instance.get(`/posts?tag=${tag}?offset=${page}`)
 })
-export const getProfilePosts = asyncMiddleware((userId, page) => {
-    axios.get(`${API_HOST}/posts?profile=${userId}?offset=${page}`, HEADERS)
+export const getProfilePosts = asyncMddlwr((userId, page) => {
+    instance.get(`/posts?profile=${userId}?offset=${page}`)
 })
-export const getCommunityPosts = asyncMiddleware((communityId, page) => {
-    axios.get(`${API_HOST}/posts?community=${communityId}?offset=${page}`, HEADERS)
+export const getCommunityPosts = asyncMddlwr((communityId, page) => {
+    instance.get(`/posts?community=${communityId}?offset=${page}`)
 })
-export const createPostComment = asyncMiddleware((postId, data) => {
-    axios.post(`${API_HOST}/posts/${postId}/comments`, { data }, HEADERS)
+export const createPostComment = asyncMddlwr((postId, data) => {
+    instance.post(`/posts/${postId}/comments`, { data })
 })
-export const updatePostComment = asyncMiddleware((postId, commentId, data) => {
-    axios.put(`${API_HOST}/posts/${postId}/comments/${commentId}`, { data }, HEADERS)
+export const updatePostComment = asyncMddlwr((postId, commentId, data) => {
+    instance.put(`/posts/${postId}/comments/${commentId}`, { data })
 })
-export const deletePostComment = asyncMiddleware((postId, commentId) => {
-    axios.delete(`${API_HOST}/posts/${postId}/comments/${commentId}`, HEADERS)
+export const deletePostComment = asyncMddlwr((postId, commentId) => {
+    instance.delete(`/posts/${postId}/comments/${commentId}`)
 })
-export const getPostComments = asyncMiddleware((postId, page) => {
-    axios.get(`${API_HOST}/posts/${postId}/comments?offset=${page}`, HEADERS)
+export const getPostComments = asyncMddlwr((postId, page) => {
+    instance.get(`/posts/${postId}/comments?offset=${page}`)
 })
-export const createPostLike = asyncMiddleware((postId, data) => {
-    axios.post(`${API_HOST}/posts/${postId}/likes`, { data }, HEADERS)
+export const createPostLike = asyncMddlwr((postId, data) => {
+    instance.post(`/posts/${postId}/likes`, { data })
 })
-export const deletePostLike = asyncMiddleware((postId) => {
-    axios.delete(`${API_HOST}/posts/${postId}/likes`, HEADERS)
+export const deletePostLike = asyncMddlwr((postId) => {
+    instance.delete(`/posts/${postId}/likes`)
 })
-export const getPostLikes = asyncMiddleware((postId, page) => {
-    axios.get(`${API_HOST}/posts/${postId}/likes?offset=${page}`, HEADERS)
+export const getPostLikes = asyncMddlwr((postId, page) => {
+    instance.get(`/posts/${postId}/likes?offset=${page}`)
 })
-export const getTrendingTags = asyncMiddleware(page =>
-    axios.get(`${API_HOST}/tags?offset=${page}`, HEADERS)
+export const getTrendingTags = asyncMddlwr(page =>
+    instance.get(`/tags?offset=${page}`)
 )
-export const getSearchedTags = asyncMiddleware((query, page) => {
-    axios.get(`${API_HOST}/tags?offset=${page}`, HEADERS)
+export const getSearchedTags = asyncMddlwr((query, page) => {
+    instance.get(`/tags?offset=${page}`)
 })
 
 /* PARTNERS API */
 
-export const getApiPlans = asyncMiddleware(() =>
-    axios.get(`${API_HOST}/plans`)
+export const getApiPlans = asyncMddlwr(() =>
+    instance.get(`/plans`)
 )
-export const getApiPlan = asyncMiddleware(planId =>
-    axios.get(`${API_HOST}/plans/${planId}`)
+export const getApiPlan = asyncMddlwr(planId =>
+    instance.get(`/plans/${planId}`)
 )
-export const createPartnerApp = asyncMiddleware(data =>
-    axios.post(`${API_HOST}/apps`, { data })
+export const createPartnerApp = asyncMddlwr(data =>
+    instance.post(`/apps`, { data })
 )
-export const updatePartnerApp = asyncMiddleware((appId, data) => {
-    axios.put(`${API_HOST}/apps/${appId}`, { data })
+export const updatePartnerApp = asyncMddlwr((appId, data) => {
+    instance.put(`/apps/${appId}`, { data })
 })
-export const deletePartnerApp = asyncMiddleware(postId =>
-    axios.delete(`${API_HOST}/apps/${postId}`)
+export const deletePartnerApp = asyncMddlwr(postId =>
+    instance.delete(`/apps/${postId}`)
 )
-export const getPartnerApp = asyncMiddleware(appId =>
-    axios.get(`${API_HOST}/apps/${appId}`)
+export const getPartnerApp = asyncMddlwr(appId =>
+    instance.get(`/apps/${appId}`)
 )

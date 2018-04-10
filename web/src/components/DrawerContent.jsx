@@ -4,6 +4,7 @@ import Drawer from 'material-ui/Drawer';
 import { List, ListItem } from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
+import muiThemeable from 'material-ui/styles/muiThemeable';
 import ActionDashboardIcon from 'material-ui/svg-icons/action/dashboard';
 import ActionExploreIcon from 'material-ui/svg-icons/action/explore';
 import SocialPersonIcon from 'material-ui/svg-icons/social/person';
@@ -12,39 +13,41 @@ import ActionHelpIcon from 'material-ui/svg-icons/action/help';
 import ActionFeedbackIcon from 'material-ui/svg-icons/action/feedback';
 import ActionViewColumnIcon from 'material-ui/svg-icons/action/view-column';
 import SocialNotificationsIcon from 'material-ui/svg-icons/social/notifications';
-import { red400 } from 'material-ui/styles/colors';
+import { cyan500 } from 'material-ui/styles/colors';
 
 const styles = {
     drawer: {
         boxShadow: 'none',
         backgroundColor: 'transparent',
-        padding: '4em 0 1em 0',
+        padding: '5em 0 1em 0',
         justifyContent: 'space-between',
-        width: '240px',
+        width: '220px',
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100%'
+        minHeight: '100%',
+        fontWeight: 'bold'
     },
     listItem: {
-        marginLeft: '10px',
-        fontSize: '16px',
-        //color: red400
+        marginLeft: '5px',
+        fontSize: '15px',
     },
     listItemSecondary: {
-        marginLeft: '10px',
-        fontSize: '15px',
-        opacity: '0.7'
+        marginLeft: '5px',
+        fontSize: '14px',
+        opacity: '0.4'
     },
     footer: {
         flex: 1,
         display: 'flex',
-        alignItems: 'flex-end',
-        padding: '3em 2em 0 2em',
-        fontSize: '14px'
+        flexDirection: 'column-reverse',
+        padding: '1em 2em',
+        fontSize: '13px',
+        lineHeight: '18px',
+        opacity: '0.6'
     }
 }
 
-const DrawerContent = ({ pathname, navigate, isDrawer, username }) => {
+const DrawerContent = ({ pathname, navigate, isDrawer, username, muiTheme }) => {
     return (
         <Drawer
             open={isDrawer}
@@ -52,76 +55,130 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username }) => {
             <List>
                 <ListItem
                     key={1}
-                    innerDivStyle={styles.listItem}
-                    primaryText="Dashboard"
-                    leftIcon={<ActionDashboardIcon
-                        color={pathname === '/' ? red400 : null} />}
+                    primaryText='Dashboard'
                     onClick={() => navigate('/')}
+                    innerDivStyle={{
+                        ...styles.listItem,
+                        color: pathname === '/' ? cyan500
+                            : muiTheme.palette.secondaryTextColor
+                    }}
+                    leftIcon={
+                        <ActionDashboardIcon
+                            color={pathname === '/' ? cyan500
+                                : muiTheme.palette.secondaryTextColor}
+                        />
+                    }
                 />
                 <ListItem
                     key={2}
-                    innerDivStyle={styles.listItem}
                     primaryText="Trending"
-                    leftIcon={<ActionExploreIcon
-                        color={pathname === '/trending' ? red400 : null} />}
                     onClick={() => navigate('/trending')}
+                    innerDivStyle={{
+                        ...styles.listItem,
+                        color: pathname === '/trending' ? cyan500
+                            : muiTheme.palette.secondaryTextColor
+                    }}
+                    leftIcon={
+                        <ActionExploreIcon
+                            color={pathname === '/trending' ? cyan500 :
+                                muiTheme.palette.secondaryTextColor}
+                        />
+                    }
                 />
                 <ListItem
                     key={3}
-                    innerDivStyle={styles.listItem}
                     primaryText="Communities"
-                    leftIcon={<ActionViewColumnIcon
-                        color={pathname.match(/^\/communities\/(.)+/) ? red400 : null} />}
                     onClick={() => navigate('/communities')}
+                    innerDivStyle={{
+                        ...styles.listItem,
+                        color: pathname.match(/^\/communities/) ? cyan500 :
+                            muiTheme.palette.secondaryTextColor
+                    }}
+                    leftIcon={
+                        <ActionViewColumnIcon
+                            color={pathname.match(/^\/communities/) ? cyan500 :
+                                muiTheme.palette.secondaryTextColor}
+                        />
+                    }
                 />
                 <ListItem
                     key={4}
-                    innerDivStyle={styles.listItem}
                     primaryText="Profile"
-                    leftIcon={<SocialPersonIcon
-                        color={pathname.includes(username) ? red400 : null} />}
                     onClick={() => navigate('/profile')}
+                    innerDivStyle={{
+                        ...styles.listItem,
+                        color: pathname.includes(username) ? cyan500 :
+                            muiTheme.palette.secondaryTextColor
+                    }}
+                    leftIcon={
+                        <SocialPersonIcon
+                            color={pathname.includes(username) ? cyan500 :
+                                muiTheme.palette.secondaryTextColor}
+                        />
+                    }
                 />
                 <ListItem
                     key={5}
-                    innerDivStyle={styles.listItem}
                     primaryText="Activity"
-                    leftIcon={<SocialNotificationsIcon
-                        color={pathname.match(/^\/activity\/(.)+/) ? red400 : null} />}
                     onClick={() => navigate('/activity')}
+                    innerDivStyle={{
+                        ...styles.listItem,
+                        color: pathname.match(/^\/activity/) ? cyan500 :
+                            muiTheme.palette.secondaryTextColor
+                    }}
+                    leftIcon={
+                        <SocialNotificationsIcon
+                            color={pathname.match(/^\/activity/) ? cyan500 :
+                                muiTheme.palette.secondaryTextColor}
+                        />
+                    }
+                />
+                <ListItem
+                    key={6}
+                    primaryText="Settings"
+                    onClick={() => navigate('/settings')}
+                    innerDivStyle={{
+                        ...styles.listItem,
+                        color: pathname.match(/^\/settings/) ? cyan500 :
+                            muiTheme.palette.secondaryTextColor
+                    }}
+                    leftIcon={
+                        <ActionSettingsIcon
+                            color={pathname.match(/^\/settings/) ? cyan500 :
+                                muiTheme.palette.secondaryTextColor}
+                        />
+                    }
                 />
             </List>
             <Divider />
             <List>
                 <ListItem
-                    key={5}
+                    key={8}
                     innerDivStyle={styles.listItemSecondary}
-                    primaryText="Settings"
-                    leftIcon={<ActionSettingsIcon
-                        color={pathname.match(/^\/settings/) ? red400 : null} />}
-                    onClick={() => navigate('/settings')}
+                    leftIcon={<ActionHelpIcon color={muiTheme.palette.secondaryTextColor} />}
+                    primaryText={
+                        <a href="https://github.com/blacknred/restpublica"
+                            target="_blank" rel="noopener noreferrer">Help</a>
+                    }
                 />
                 <ListItem
-                    key={6}
+                    key={9}
                     innerDivStyle={styles.listItemSecondary}
-                    primaryText={<a 
-                        href="https://github.com/blacknred/restpublica"
-                        target="_blank"
-                        rel="noopener noreferrer">Help</a>}
-                    leftIcon={<ActionHelpIcon />}
-                />
-                <ListItem
-                    key={7}
-                    innerDivStyle={styles.listItemSecondary}
-                    primaryText={<a 
+                    leftIcon={<ActionFeedbackIcon color={muiTheme.palette.secondaryTextColor} />}
+                    primaryText={<a
                         href="https://github.com/blacknred/restpublica/issues/new"
                         target="_blank"
                         rel="noopener noreferrer">Send feedback</a>}
-                    leftIcon={<ActionFeedbackIcon />}
+                    
                 />
             </List>
-            <Subheader style={styles.footer}>
-                © {(new Date()).getFullYear()} Restpublica, LLC
+            <Subheader style={styles.footer }>
+                <a href="https://github.com/blacknred/restpublica"
+                    target="_blank" rel="noopener noreferrer">Conditions of use</a>
+                <a href="/api" target="_blank" rel="noopener noreferrer">API Developers</a>
+                <a href="https://github.com/blacknred/restpublica/issues/new"
+                    target="_blank" rel="noopener noreferrer">Send feedback</a>
+                <span> © {(new Date()).getFullYear()} Restpublica, LLC </span>
             </Subheader>
         </Drawer>
     )
@@ -134,4 +191,4 @@ DrawerContent.propTypes = {
     username: PropTypes.string.isRequired,
 }
 
-export default DrawerContent
+export default muiThemeable()(DrawerContent);

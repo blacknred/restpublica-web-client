@@ -13,5 +13,7 @@ export default keyMirror({
     TOGGLE_NIGHT_MODE: null,
     TOGGLE_NOT_FOUND: null,
     TOGGLE_NOTIFY: null,
+    TOGGLE_AUTO_GIFS: null,
+    TOGGLE_FEED_ONE_COLUMN: null,
     CREATE_NOTIFICATION: null
 })

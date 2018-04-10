@@ -3,25 +3,22 @@ import PropTypes from 'prop-types'
 import Snackbar from 'material-ui/Snackbar';
 
 const styles = {
-    error: { background: 'red' },
-    notice: { background: 'black' },
-    success: { background: 'green' },
     snackbar: { 
-        left: '11%',
-        bottom: '2%'
+        left: '2%',
+        bottom: '2%',
+        transform: null
     }
 };
 
 const FlashMessage = ({ message, closeHandler }) => {
     return (
         <Snackbar
-            bodyStyle={styles[message.status]}
             style={styles.snackbar}
             open={true}
             message={message.text}
-            autoHideDuration={3000}
+            autoHideDuration={6000}
             action="Close"
-            // onActionClick={() => closeHandler(index)}
+            onActionClick={closeHandler}
             onRequestClose={closeHandler}
         />
     )

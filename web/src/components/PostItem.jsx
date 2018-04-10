@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
@@ -43,12 +42,11 @@ const styles = {
     }
 }
 
-const PostItem = ({ post, index, isFullAccess, isAuthenticated}) => {
+const PostItem = ({ post, index, isFullAccess, isAuthenticated }) => {
     const iconButtonElement = (
         <IconButton
             touch={true}
-            style={styles.postIconButton}
-        >
+            style={styles.postIconButton} >
             <MoreVertIcon color={grey600} />
         </IconButton>
     );
@@ -70,10 +68,10 @@ const PostItem = ({ post, index, isFullAccess, isAuthenticated}) => {
             //className='element'
             cols={index !== 0 && index % 6 === 0 ? 2 : 1}
             rows={1} >
-            <Link to={{ pathname: `/p/${post.post_id}`, state: { modal: true } }}>
+            <Link to={{ pathname: `/p/${post.slug}`, state: { modal: true } }}>
                 {
-                    post.thumbs.map((thumb, i) => {
-                        return <img src={thumb.url} key={i} alt="" width='100%' height='160' style={{ opacity: '0.8' }} />
+                    post.content.map((content, i) => {
+                        return <img src={content.thumb} key={i} alt="" width='100%' height='160' style={{ opacity: '0.8' }} />
                     })
                 }
             </Link>
@@ -85,14 +83,14 @@ const PostItem = ({ post, index, isFullAccess, isAuthenticated}) => {
                 secondaryText={
                     <p style={styles.postSecondary}>
                         {
-                            !post.author ? null :
+                            post.author &&
                                 <Link to={`/u/${post.author.username}/posts`}>
                                     <b>{post.author.username}</b><br />
                                 </Link>
                         }
                         <span>
-                            <span>{post.views} views &#8226; </span>
-                            <span>{post.likes_count} likes &#8226; </span>
+                            <span>{post.views_cnt} views &#8226; </span>
+                            <span>{post.likes_cnt} likes &#8226; </span>
                             <span>{countDate(post.created_at)}</span>
                         </span>
                     </p>
@@ -105,19 +103,41 @@ const PostItem = ({ post, index, isFullAccess, isAuthenticated}) => {
 
 PostItem.propTypes = {
     post: PropTypes.shape({
-        user_id: PropTypes.number.isRequired,
-        thumbs: PropTypes.arrayOf(
+        archived: PropTypes.bool.isRequired,
+        author: PropTypes.shape({
+            username: PropTypes.string.isRequired,
+            avatar: PropTypes.string.isRequired
+        }),
+        author_id: PropTypes.number.isRequired,
+        commentable: PropTypes.bool.isRequired,
+        community_id: PropTypes.number,
+        views_cnt: PropTypes.number.isRequired,
+        comments_cnt: PropTypes.string.isRequired,
+        likes_cnt: PropTypes.string.isRequired,
+        my_like_id: PropTypes.number,
+        type: PropTypes.string.isRequired,
+        content: PropTypes.arrayOf(
             PropTypes.shape({
-                url: PropTypes.string.isRequired
+                id: PropTypes.number.isRequired,
+                post_id: PropTypes.number.isRequired,
+                file: PropTypes.string,
+                thumb: PropTypes.string,
+                mime: PropTypes.string,
+                type: PropTypes.string,
+                link: PropTypes.string,
+                title: PropTypes.string,
+                subject: PropTypes.string,
+                ends_at: PropTypes.string,
+                votes_cnt: PropTypes.string,
+                options: PropTypes.arrayOf(PropTypes.string),
+                myVotedOptionId: PropTypes.number
             })
         ),
-        author: PropTypes.shape({
-            username: PropTypes.string.isRequired
-        }),
+        slug: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired,
-        views: PropTypes.number.isRequired,
         created_at: PropTypes.any.isRequired,
-        likes_count: PropTypes.any.isRequired
+        tags: PropTypes.arrayOf(PropTypes.string),
+
     }).isRequired,
     index: PropTypes.number.isRequired,
     isFullAccess: PropTypes.bool.isRequired,

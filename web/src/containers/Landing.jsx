@@ -1,6 +1,4 @@
-/* eslint-disable no-undef */
-
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
@@ -9,7 +7,7 @@ import { getBackgroundPic, login, register } from '../api'
 import { authUser, createFlashMessage } from '../actions'
 import LandingBackground from '../components/LandingBackground';
 
-class Landing extends Component {
+class Landing extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -30,16 +28,14 @@ class Landing extends Component {
     }
     static propTypes = {
         auth: PropTypes.func.isRequired,
-        createFlashMessage: PropTypes.func.isRequired,
+        createMessage: PropTypes.func.isRequired,
         history: PropTypes.object.isRequired
     }
 
     getBackground = async () => {
-        let _res, res
-        _res = await getBackgroundPic()
-        if (!_res) return
-        res = _res.data.image_original_url;
-        if (res) this.setState({ gifUrl: res })
+        const res = await getBackgroundPic()
+        if (!res.status) return
+        this.setState({ gifUrl: res.data.image_original_url })
     }
     inputChangeHandler = (event) => {
         const target = event.target;
@@ -67,21 +63,22 @@ class Landing extends Component {
             'password': this.state.fields.password
         };
         const res = await login(userData)
-        if (!res) return
-        if (res.status === 401 || res.status === 409 || res.status === 422) {
-            if (!res.data.message.length) res.data.message = [res.data.message]
-            res.data.message.forEach((failure) => {
-                const name = failure.param
+        if (!res.status) {
+            this.props.createMessage(res)
+            return
+        } else if (res.status.toString().match(/(401|409|422)/)) {
+            if (!res.message.length) res.message = [res.message]
+            res.message.forEach((failure) => {
                 this.setState({
                     errors: {
                         ...this.state.errors,
-                        [name]: failure.msg
+                        [failure.param]: failure.msg
                     }
                 });
             })
         } else {
             this.props.auth(res.data)
-            this.props.createFlashMessage(`You successfully logged in! Welcome!`)
+            this.props.createMessage(`You successfully logged in!`)
         }
     }
     submitRegisterHandler = async (event) => {
@@ -101,21 +98,22 @@ class Landing extends Component {
             'password': this.state.fields.password
         };
         const res = await register(userData)
-        if (!res) return
-        if (res.status === 401 || res.status === 409 || res.status === 422) {
-            if (!res.data.message.length) res.data.message = [res.data.message]
-            res.data.message.forEach((failure) => {
-                const name = failure.param
+        if (!res.status) {
+            this.props.createMessage(res)
+            return
+        } else if (res.status.toString().match(/(401|409|422)/)) {
+            if (!res.message.length) res.message = [res.message]
+            res.message.forEach((failure) => {
                 this.setState({
                     errors: {
                         ...this.state.errors,
-                        [name]: failure.msg
+                        [failure.param]: failure.msg
                     }
                 });
             })
         } else {
             this.props.auth(res.data)
-            this.props.createFlashMessage(`You successfully registered! Welcome!`)
+            this.props.createMessage(`You successfully registered!`)
             this.props.history.push('/')
         }
     }
@@ -137,6 +135,6 @@ class Landing extends Component {
 
 const mapDispatchToProps = dispatch => ({
     auth: (mode, userData) => dispatch(authUser(mode, userData)),
-    createFlashMessage: (text) => dispatch(createFlashMessage(text)),
+    createMessage: (text) => dispatch(createFlashMessage(text)),
 })
 export default withRouter(connect(null, mapDispatchToProps)(Landing))

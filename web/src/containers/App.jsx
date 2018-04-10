@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { withRouter, Route, Redirect, Switch } from 'react-router-dom'
+import { Link, withRouter, Route, Redirect, Switch } from 'react-router-dom'
 import { CSSTransitionGroup } from 'react-transition-group'
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -12,6 +12,8 @@ import Dialog from 'material-ui/Dialog';
 import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
 import NavigationCloseIcon from 'material-ui/svg-icons/navigation/close';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 import { grey100 } from 'material-ui/styles/colors';
 
 import NotFound from '../components/NotFound';
@@ -40,7 +42,7 @@ class App extends Component {
         isAuthenticated: PropTypes.bool.isRequired,
         isNightMode: PropTypes.bool.isRequired,
         isDrawer: PropTypes.bool.isRequired,
-        isNotFound: PropTypes.bool.isNotFound
+        isNotFound: PropTypes.bool.isRequired
     }
     componentWillUpdate(nextProps) {
         const { location } = this.props
@@ -68,7 +70,7 @@ class App extends Component {
         // }
     }
     render() {
-        const { location, isAuthenticated, isNotFound, isNightMode, isDrawer} = this.props
+        const { location, isAuthenticated, isNotFound, isNightMode, isDrawer } = this.props
         const isModal = !!(
             /* 
                 - modals engine -
@@ -87,12 +89,26 @@ class App extends Component {
                 state: { from: location.pathname }
             }} />
         )
+        const newPost = (
+            <Link to={{
+                pathname: '/newpost',
+                state: { modal: true }
+            }}>
+                <FloatingActionButton style={{ position: 'fixed', bottom: '3em', right: '3em'}}>
+                    <ContentAdd />
+                </FloatingActionButton>
+            </Link>
+        )
         return (
             <MuiThemeProvider muiTheme={getMuiTheme(isNightMode ? darkBaseTheme : lightBaseTheme)}>
-                <Paper style={{ minHeight: '100vh', backgroundColor: isNightMode ? null : grey100 }} >
+                <Paper style={{
+                    minHeight: '100vh',
+                    backgroundColor: isNightMode ? darkBaseTheme.palette.canvasColor : grey100
+                }} >
+                    {newPost}
                     <FlashMessages />
-                    {isAuthenticated && !isNotFound ? <Header /> : null}
-                    {isAuthenticated && !isNotFound ? <AppDrawer /> : null}
+                    {isAuthenticated && !isNotFound && <Header />}
+                    {isAuthenticated && !isNotFound && <AppDrawer />}
                     {
                         isNotFound ? <NotFound /> :
                             <Switch>
@@ -175,9 +191,9 @@ class App extends Component {
                                                         <Switch location={location} key={location.key}>
                                                             <Route path='/:username/posts' component={Posts} />
                                                             {
-                                                                !isAuthenticated ? null :
-                                                                    <Route path='/:username/:mode(followers|followin)'
-                                                                        component={Subscriptions} />
+                                                                isAuthenticated &&
+                                                                <Route path='/:username/:mode(followers|followin)'
+                                                                    component={Subscriptions} />
                                                             }
                                                             <Route render={() => (<Redirect to={`${match.url}/posts`} />)} />
                                                         </Switch>
@@ -185,24 +201,24 @@ class App extends Component {
                                                 )} />
                                             </Switch>
                                             {
-                                                !isModal ? null :
-                                                    <Route render={({ history }) => (
-                                                        <Dialog
-                                                            actions={
-                                                                <IconButton onClick={() => history.goBack()} >
-                                                                    <NavigationCloseIcon />
-                                                                </IconButton>
-                                                            }
-                                                            modal={true}
-                                                            contentStyle={{ width: 'auto', maxWidth: 'none' }}
-                                                            open={true} >
-                                                            <Switch>
-                                                                <Route path="/newpost" component={PostEditor} />
-                                                                <Route path="/p/:id/:mode(delete)" component={PostEditor} />
-                                                                <Route path="/p/:id/:mode(edit)" component={PostEditor} />
-                                                            </Switch>
-                                                        </Dialog>
-                                                    )} />
+                                                isModal &&
+                                                <Route render={({ history }) => (
+                                                    <Dialog
+                                                        actions={
+                                                            <IconButton onClick={() => history.goBack()} >
+                                                                <NavigationCloseIcon />
+                                                            </IconButton>
+                                                        }
+                                                        modal={true}
+                                                        contentStyle={{ width: 'auto', maxWidth: 'none' }}
+                                                        open={true} >
+                                                        <Switch>
+                                                            <Route path="/newpost" component={PostEditor} />
+                                                            <Route path="/p/:id/:mode(delete)" component={PostEditor} />
+                                                            <Route path="/p/:id/:mode(edit)" component={PostEditor} />
+                                                        </Switch>
+                                                    </Dialog>
+                                                )} />
                                             }
                                         </CSSTransitionGroup>
                                     </div>

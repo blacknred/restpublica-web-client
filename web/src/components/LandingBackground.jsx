@@ -16,8 +16,9 @@ const styles = {
         alignItems: 'flex-start'
     },
     form: {
+        width: '17em',
         marginTop: '6em',
-        padding: '2em 3em',
+        padding: '2em 2.5em',
         backgroundColor: 'rgb(250, 250, 250)',
         display: 'flex',
         flexDirection: 'column',
@@ -28,8 +29,10 @@ const styles = {
 const LandingBackground = ({ gifUrl, fields, errors, submitLogin,
     submitRegister, inputChange }) => {
     return (
-        <div style={Object.assign({}, styles.container,
-            { background: `url("${gifUrl}") no-repeat center / cover fixed` })} >
+        <div style={{
+            ...styles.container,
+            background: `url("${gifUrl}") no-repeat center / cover fixed`
+        }} >
             <div style={styles.form} >
                 <h2>Restpublica</h2>
                 <Switch>

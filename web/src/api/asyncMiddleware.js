@@ -1,12 +1,13 @@
 const asyncMiddleware = fn => async (next) => {
-    try { 
+    try {
         const res = await fn(next);
-        console.log({ ...res.data, ...res.status });
-        return { ...res.data, ...res.status };
+        console.log({ ...res.data, status: res.status });
+        return { ...res.data, status: res.status };
     }
-    catch (error) {
-        console.log(error.message);
-        return error.response || null;
+    catch (e) {
+        return e.response && e.response.status !== 500 ?
+            e.response.data.message :
+            'Server error. Try later.'
     }
 }
 

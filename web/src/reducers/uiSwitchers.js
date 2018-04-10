@@ -1,18 +1,22 @@
 import constants from '../constants/index.js'
 
 const initialState = () => {
-    if (window.localStorage.getItem('authToken')) {
-        const { userNightMode } = window.localStorage;
+    const { token, isnightmode, isautogifs, isfeedonecolumn } = window.localStorage;
+    if (token) {
         return {
             isDrawer: true,
-            isNightMode: userNightMode === 'true',
-            isNotFound: false
+            isNotFound: false,
+            isNightMode: isnightmode === 'true',
+            isAutoGifs: isautogifs === 'true',
+            isFeedOneColumn: isfeedonecolumn === 'true'
         }
     }
     return {
         isDrawer: false,
+        isNotFound: false,
         isNightMode: false,
-        isNotFound: false
+        isAutoGifs: true,
+        isFeedOneColumn: true
     }
 }
 
@@ -23,6 +27,10 @@ const uiSwitchers = (state = initialState(), action) => {
             return { ...state, isDrawer: action.mode }
         case constants.TOGGLE_NIGHT_MODE:
             return { ...state, isNightMode: action.mode }
+        case constants.TOGGLE_AUTO_GIFS:
+            return { ...state, isAutoGifs: action.mode }
+        case constants.TOGGLE_FEED_ONE_COLUMN:
+            return { ...state, isFeedOneColumn: action.mode }
         case constants.TOGGLE_NOT_FOUND:
             return { ...state, isNotFound: action.mode }
         default:
