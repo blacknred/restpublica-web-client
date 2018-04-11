@@ -11,7 +11,8 @@ import Paper from 'material-ui/Paper';
 
 const styles = {
     list: {
-        width: '550px'
+        width: '550px',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
     avatarForm: {
         display: 'flex',

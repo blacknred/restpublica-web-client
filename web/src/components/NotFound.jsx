@@ -6,11 +6,14 @@ const styles = {
     container: {
         color: '#747474',
         display: 'flex',
-        paddingTop: '10%',
         alignItems: 'center',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        position: 'fixed',
+        left: 0,
+        top: '30%',
+        right: 0
     },
-    icon: { 
+    icon: {
         width: '7em',
         height: '7em',
         color: 'rgb(228, 228, 228)'
@@ -28,7 +31,7 @@ const NotFound = () => (
         </p>
         <FlatButton
             secondary={true}
-            label={<a href='/dashboard'>Return Home</a>}
+            label={<a href='/'>Return Home</a>}
         />
     </div>
 )

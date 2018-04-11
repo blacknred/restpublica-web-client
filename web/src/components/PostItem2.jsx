@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 
-import IconButton from 'material-ui/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+// import IconButton from 'material-ui/IconButton';
+// import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 
@@ -19,11 +19,13 @@ import FlatButton from 'material-ui/FlatButton';
 
 const styles = {
     post: {
-        maxWidth: '510px',
-        margin: '0.5em',
+        maxWidth: '530px',
+        width: '530px',
+        margin: '0.8em',
         flex: '1 0 auto',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         fontSize: '14px',
+        animation: 'fadeIn 1s'
     },
     postHeader: {
         display: 'flex',
@@ -36,6 +38,7 @@ const styles = {
         flex: 1,
         display: 'flex',
         flexDirection: 'row-reverse',
+        fontSize: '13px',
     },
     postActions: {
         display: 'flex',
@@ -73,8 +76,7 @@ const styles = {
 
 }
 
-const PostItem = ({ post, index, isFullAccess, isAuthenticated,
-    expandPost, updatePost, deletePost, muiTheme }) => {
+const PostItem = ({ post, isFullAccess, expandPost, updatePost, deletePost, muiTheme }) => {
     const countDate = (dateObj => {
         let date = moment.parseZone(dateObj)
         let now = moment().parseZone()
@@ -179,7 +181,7 @@ const PostItem = ({ post, index, isFullAccess, isAuthenticated,
                 </FloatingActionButton>
                 <small>{post.views_cnt}</small>
                 {
-                    isAuthenticated && isFullAccess &&
+                    isFullAccess &&
                     <IconMenu
                         iconButtonElement={
                             <FloatingActionButton
@@ -276,9 +278,7 @@ PostItem.propTypes = {
             })
         )
     }).isRequired,
-    index: PropTypes.number.isRequired,
     isFullAccess: PropTypes.bool.isRequired,
-    isAuthenticated: PropTypes.bool.isRequired,
     expandPost: PropTypes.func.isRequired,
     deletePost: PropTypes.func.isRequired,
     updatePost: PropTypes.func.isRequired,

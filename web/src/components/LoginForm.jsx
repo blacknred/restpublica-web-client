@@ -16,7 +16,7 @@ const LoginForm = ({ submitHandler, fields, errors, inputChange }) => {
                 onChange={inputChange}
                 errorText={errors.username}
                 fullWidth={true}
-            /><br />
+            />
             <TextField
                 id='password'
                 name='password'

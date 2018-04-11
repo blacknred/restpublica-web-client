@@ -12,7 +12,6 @@ import Badge from 'material-ui/Badge';
 import Toggle from 'material-ui/Toggle';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 import NavigationMenuIcon from 'material-ui/svg-icons/navigation/menu';
-import ContentAddIcon from 'material-ui/svg-icons/content/add-circle';
 import SocialNotificationsIcon from 'material-ui/svg-icons/social/notifications';
 import SocialNotificationsOffIcon from 'material-ui/svg-icons/social/notifications-off';
 import ActionSettingsIcon from 'material-ui/svg-icons/action/settings';
@@ -22,7 +21,9 @@ const styles = {
     appbar: {
         zIndex: '1400',
         position: 'fixed',
-        boxShadow: '0 1px 8px rgba(0,0,0,.3)'
+        boxShadow: '0 1px 8px rgba(0,0,0,.3)',
+        top: 0,
+        left: 0
     },
     title: {
         fontSize: '1.3em',
@@ -32,7 +33,7 @@ const styles = {
     },
     rightBlock: {
         flex: 1,
-        marginRight: '0.3em'
+        marginRight: '0'
     },
     rightBlockContainer: {
         display: 'flex'
@@ -47,7 +48,7 @@ const styles = {
         lineHeight: '48px',
         paddingLeft: '1em',
         borderRadius: '3px',
-        backgroundColor: 'rgba(158, 158, 158, 0.2)'
+        backgroundColor: 'rgba(134, 134, 134, 0.2)'
     },
     hintStyle: {
         paddingLeft: '1em'
@@ -73,8 +74,8 @@ const styles = {
 
 }
 
-const HeaderContent = ({ redirect, avatar, query, isDrawer, isNightMode, isNotFound,
-    isAuthenticated, isNotify, notifications, toggleNightMode, createFlashMessage,
+const HeaderContent = ({ redirect, avatar, mode, query, isDrawer, isNightMode, isNotFound,
+    isAuthenticated, isNotify, notifications, toggleNightMode, createFlashMessage, history,
     toggleNotFound, toggleDrawer, toggleNotify, logoutUser, muiTheme }) => {
 
     const searchSubmit = (event) => {
@@ -109,7 +110,7 @@ const HeaderContent = ({ redirect, avatar, query, isDrawer, isNightMode, isNotFo
                 <IconButton style={styles.userButtonIcon}>
                     <Avatar
                         src={`data:image/png;base64, ${avatar}`}
-                        size={35}
+                        size={38}
                     />
                 </IconButton>
             }
@@ -123,7 +124,8 @@ const HeaderContent = ({ redirect, avatar, query, isDrawer, isNightMode, isNotFo
                 leftIcon={<ActionExitToAppIcon />}
                 onClick={() => {
                     createFlashMessage('You are now logged out.')
-                    logoutUser();
+                    toggleNightMode(false)
+                    logoutUser()
                 }}
             >
                 Sign out
@@ -158,8 +160,15 @@ const HeaderContent = ({ redirect, avatar, query, isDrawer, isNightMode, isNotFo
     );
     return (
         <AppBar
-            style={Object.assign(styles.appbar, { backgroundColor: muiTheme.palette.canvasColor })}
-            title='Restpublica'
+            style={Object.assign(styles.appbar, {
+                backgroundColor: muiTheme.palette.alternateTextColor
+            })}
+            title={
+                <span>
+                    Restpublica&nbsp;&nbsp;|&nbsp;&nbsp;
+                    {mode && mode[0].toUpperCase() + mode.substr(1)}
+                </span>
+            }
             titleStyle={Object.assign(styles.title, { color: muiTheme.palette.secondaryTextColor })}
             iconElementLeft={
                 <IconButton>
@@ -183,15 +192,6 @@ const HeaderContent = ({ redirect, avatar, query, isDrawer, isNightMode, isNotFo
                             }
                         }}
                     />
-                    {/* {
-                        isAuthenticated &&
-                        <Link to={{ pathname: '/newpost', state: { modal: true } }}>
-                            <IconButton>
-                                <ContentAddIcon
-                                    color={muiTheme.palette.secondaryTextColor} />
-                            </IconButton>
-                        </Link>
-                    } */}
                     {isAuthenticated && notifyButton}
                     {isAuthenticated && userButton}
                     {
@@ -225,7 +225,9 @@ HeaderContent.propTypes = {
         })
     ).isRequired,
     avatar: PropTypes.string.isRequired,
+    mode: PropTypes.string.isRequired,
     query: PropTypes.any,
+    history: PropTypes.any,
     toggleNotFound: PropTypes.func.isRequired,
     toggleNotify: PropTypes.func.isRequired,
     createFlashMessage: PropTypes.func.isRequired,

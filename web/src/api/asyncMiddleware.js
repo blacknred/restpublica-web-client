@@ -1,6 +1,7 @@
 const asyncMiddleware = fn => async (next) => {
     try {
         const res = await fn(next);
+        console.log(window.localStorage.token)
         console.log({ ...res.data, status: res.status });
         return { ...res.data, status: res.status };
     }

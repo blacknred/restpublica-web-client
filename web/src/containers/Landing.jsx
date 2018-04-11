@@ -27,6 +27,7 @@ class Landing extends PureComponent {
         }
     }
     static propTypes = {
+        from: PropTypes.string.isRequired,
         auth: PropTypes.func.isRequired,
         createMessage: PropTypes.func.isRequired,
         history: PropTypes.object.isRequired
@@ -78,6 +79,7 @@ class Landing extends PureComponent {
             })
         } else {
             this.props.auth(res.data)
+            this.props.history.push(this.props.from)
             this.props.createMessage(`You successfully logged in!`)
         }
     }
@@ -113,8 +115,8 @@ class Landing extends PureComponent {
             })
         } else {
             this.props.auth(res.data)
-            this.props.createMessage(`You successfully registered!`)
             this.props.history.push('/')
+            this.props.createMessage(`You successfully registered!`)            
         }
     }
     componentWillMount() {
@@ -132,9 +134,12 @@ class Landing extends PureComponent {
     }
 
 }
+const mapStateToProps = (state, ownProps) => ({
+    from: ownProps.location.state ? ownProps.location.state.from : '/'
+})
 
 const mapDispatchToProps = dispatch => ({
     auth: (mode, userData) => dispatch(authUser(mode, userData)),
     createMessage: (text) => dispatch(createFlashMessage(text)),
 })
-export default withRouter(connect(null, mapDispatchToProps)(Landing))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Landing))

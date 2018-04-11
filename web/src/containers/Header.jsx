@@ -10,7 +10,6 @@ import HeaderContent from '../components/HeaderContent'
 import { withRouter } from 'react-router-dom';
 
 
-
 const Header = (props) => {
     const redirect = (path) => props.history.push(path)
     return (
@@ -35,7 +34,8 @@ Header.propTypes = {
         })
     ).isRequired,
     avatar: PropTypes.string.isRequired,
-    query: PropTypes.any,
+    history: PropTypes.any,
+    mode: PropTypes.string.isRequired,
     toggleNotFound: PropTypes.func.isRequired,
     toggleNotify: PropTypes.func.isRequired,
     createFlashMessage: PropTypes.func.isRequired
@@ -48,7 +48,9 @@ const mapStateToProps = (state, ownProps) => ({
     isNotFound: state.uiSwitchers.isNotFound,
     notifications: state.notifications.notificationsList,
     avatar: state.authentication.avatar,
-    query: ownProps.match.params.query || null
+    mode: ownProps.location.pathname.split('/')[1] || 'feed',
+    query: ownProps.match.params.query || null,
+    history: ownProps.history
 })
 const mapDispatchToProps = dispatch => {
     return {
@@ -57,10 +59,7 @@ const mapDispatchToProps = dispatch => {
         toggleDrawer: (mode) => dispatch(toggleDrawer(mode)),
         toggleNotify: (mode) => dispatch(toggleNotify(mode)),
         createFlashMessage: (text) => dispatch(createFlashMessage(text)),
-        logoutUser: () => {
-            dispatch(logoutUser())
-            // this.props.history.push('/')
-        }
+        logoutUser: () => dispatch(logoutUser())
     }
 }
 

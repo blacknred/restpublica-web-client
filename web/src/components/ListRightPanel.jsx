@@ -6,10 +6,9 @@ import IconButton from 'material-ui/IconButton';
 const styles = {
     optionsRightPanel: {
         position: 'fixed',
-        right: '5em',
+        marginLeft: '3em',
         display: 'flex',
         flexDirection: 'column',
-        // transition: 'right 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms'
     },
     backToTop: {
         position: 'static'
@@ -18,7 +17,7 @@ const styles = {
 
 const ListRightPanel = () => {
     return (
-        <div style={styles.optionsRightPanel} >
+        <span style={styles.optionsRightPanel} >
             <ScrollToTop
                 showUnder={460}
                 style={styles.backToTop}>
@@ -26,7 +25,7 @@ const ListRightPanel = () => {
                     <NavidationArrowUpwardIcon />
                 </IconButton>
             </ScrollToTop>
-        </div>
+        </span>
     )
 }
 

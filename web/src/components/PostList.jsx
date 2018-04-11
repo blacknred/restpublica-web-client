@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroller'
 import CircularProgress from 'material-ui/CircularProgress';
+import NewPostButton from '../components/NewPostButton'
 
-import { GridList } from 'material-ui/GridList';
-import PostItem from './PostItem'
+// import { GridList } from 'material-ui/GridList';
+// import PostItem from './PostItem'
 import PostItem2 from './PostItem2'
 import ListRightPanel from './ListRightPanel'
 
@@ -13,6 +14,10 @@ const styles = {
         textAlign: 'center',
         display: 'block',
         width: '100%'
+    },
+    postsContainer: {
+        display: 'flex',
+        flexDirection: 'row-reverse'
     },
     postsGrid: {
         display: 'flex',
@@ -23,47 +28,44 @@ const styles = {
     }
 }
 
-const PostList = ({ mode, isFullAccess, isAuthenticated, empty, hasMore, deletePost,
+const PostList = ({ mode, postable, isFullAccess, empty, hasMore, deletePost,
     expandPost, updatePost, posts, getPosts, emptyMessage, isAutoGifs,
     isFeedOneColumn }) => {
     return (
         <div className='container'>
+        { postable && <NewPostButton/> }
             {
-                empty ? emptyMessage() :
-                    <div>
-                        {
-                            posts.length < 30 ? null : <ListRightPanel />
-                        }
-                        <InfiniteScroll
-                            // key={reload}
-                            // ref={(scroll) => { this.scroll = scroll; }}
-                            pageStart={0}
-                            initialLoad={true}
-                            loadMore={getPosts}
-                            hasMore={hasMore}
-                            loader={<CircularProgress key={798798} style={styles.loader} />}
-                            threshold={400} >
-
-                            <div style={{
-                                ...styles.postsGrid,
-                                flexDirection: isFeedOneColumn ? 'row' : 'column'
-                            }}>
+                empty ?
+                    emptyMessage() :
+                    <InfiniteScroll
+                        // key={reload}
+                        // ref={(scroll) => { this.scroll = scroll; }}
+                        pageStart={0}
+                        initialLoad={true}
+                        loadMore={getPosts}
+                        hasMore={hasMore}
+                        loader={<CircularProgress key={798798} style={styles.loader} />}
+                        threshold={400} >
+                        <div style={styles.postsContainer}>
+                            <div style={{ ...styles.postsGrid, flexDirection: isFeedOneColumn ? 'row' : 'column' }}>
                                 {
                                     posts.map((post, index) =>
-                                        <PostItem2
-                                            key={index}
-                                            post={post}
-                                            index={index}
-                                            isFullAccess={isFullAccess}
-                                            isAuthenticated={isAuthenticated}
-                                            expandPost={expandPost}
-                                            updatePost={updatePost}
-                                            deletePost={deletePost}
-                                            isAutoGifs={isAutoGifs}
-                                        />)
+                                    <PostItem2
+                                        key={index}
+                                        post={post}
+                                        isFullAccess={isFullAccess}
+                                        expandPost={expandPost}
+                                        updatePost={updatePost}
+                                        deletePost={deletePost}
+                                        isAutoGifs={isAutoGifs}
+                                    />)
                                 }
                             </div>
-                            {/* <GridList
+                            {posts.length > 20 && <ListRightPanel />}
+                        </div>
+
+
+                        {/* <GridList
                                         cellHeight={'auto'}
                                         cols={1}
                                         padding={12}>
@@ -78,8 +80,7 @@ const PostList = ({ mode, isFullAccess, isAuthenticated, empty, hasMore, deleteP
                                                 />)
                                         }
                                     </GridList> */}
-                        </InfiniteScroll>
-                    </div>
+                    </InfiniteScroll>
             }
         </div>
     )
@@ -87,7 +88,6 @@ const PostList = ({ mode, isFullAccess, isAuthenticated, empty, hasMore, deleteP
 
 PostList.propTypes = {
     isFullAccess: PropTypes.bool.isRequired,
-    isAuthenticated: PropTypes.bool.isRequired,
     isAutoGifs: PropTypes.bool.isRequired,
     isFeedOneColumn: PropTypes.bool.isRequired,
     empty: PropTypes.bool.isRequired,

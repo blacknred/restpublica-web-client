@@ -16,7 +16,7 @@ const RegisterForm = ({ submitHandler, fields, errors, inputChange }) => {
                 onChange={inputChange}
                 errorText={errors.username}
                 fullWidth={true}
-            /><br />
+            />
             <TextField
                 id='fullname'
                 name='fullname'
@@ -26,7 +26,7 @@ const RegisterForm = ({ submitHandler, fields, errors, inputChange }) => {
                 onChange={inputChange}
                 errorText={errors.fullname}
                 fullWidth={true}
-            /><br />
+            />
             <TextField
                 id='email'
                 name='email'
@@ -37,7 +37,7 @@ const RegisterForm = ({ submitHandler, fields, errors, inputChange }) => {
                 onChange={inputChange}
                 errorText={errors.email}
                 fullWidth={true}
-            /><br />
+            />
             <TextField
                 id='password'
                 name='password'

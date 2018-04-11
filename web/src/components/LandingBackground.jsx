@@ -18,7 +18,7 @@ const styles = {
     form: {
         width: '17em',
         marginTop: '6em',
-        padding: '2em 2.5em',
+        padding: '1.5em 2.5em',
         backgroundColor: 'rgb(250, 250, 250)',
         display: 'flex',
         flexDirection: 'column',
@@ -53,7 +53,7 @@ const LandingBackground = ({ gifUrl, fields, errors, submitLogin,
                         />
                     )} />
                 </Switch>
-                <br /><br />
+                <br />
                 <FlatButton
                     label={<Link to='/trending'>Explore</Link>}
                     icon={<ActionExploreIcon />}

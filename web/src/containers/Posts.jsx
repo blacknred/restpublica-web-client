@@ -21,7 +21,7 @@ class Posts extends PureComponent {
     }
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
-        mode: PropTypes.oneOf(['dashboard', 'trending', 'search', 'u']),
+        mode: PropTypes.oneOf(['feed', 'trending', 'search', 'u']),
         username: PropTypes.string.isRequired,
         query: PropTypes.string
     }
@@ -29,7 +29,7 @@ class Posts extends PureComponent {
         const { mode, query, username } = this.props
         let res
         switch (mode) {
-            case 'dashboard': res = await getDashboardPosts(page)
+            case 'feed': res = await getDashboardPosts(page)
                 break
             case 'trending': res = await getTrendingPosts(page)
                 break
@@ -76,7 +76,7 @@ class Posts extends PureComponent {
     }
     emptyMessage = () => {
         switch (this.props.mode) {
-            case 'dashboard':
+            case 'feed':
                 return (
                     <p>
                         Seems like you have not any subscription yet.<br /><br />
@@ -119,12 +119,13 @@ class Posts extends PureComponent {
     }
 
     render() {
+        const { postable, isAuthenticated, mode, isAutoGifs, isFeedOneColumn } = this.props;
         return <PostList
-            mode={this.props.mode}
-            isFullAccess={this.props.mode === 'me' ? true : false}
-            isAuthenticated={this.props.isAuthenticated}
-            isAutoGifs={this.props.isAutoGifs}
-            isFeedOneColumn={this.props.isFeedOneColumn}
+        postable={postable}
+            mode={mode}
+            isFullAccess={isAuthenticated && mode === 'me'}
+            isAutoGifs={isAutoGifs}
+            isFeedOneColumn={isFeedOneColumn}
             {...this.state}
             getPosts={this.getPostsHandler}
             expandPost={this.expandPostHandler}
@@ -137,11 +138,12 @@ class Posts extends PureComponent {
 
 const mapStateToProps = (state, ownProps) => ({
     isAuthenticated: state.authentication.isAuthenticated,
-    mode: ownProps.location.pathname.split('/')[1] || 'dashboard',
+    mode: ownProps.location.pathname.split('/')[1] || 'feed',
     query: ownProps.match.params.query || '',
     username: ownProps.match.params.name || state.authentication.username,
     isAutoGifs: state.uiSwitchers.isAutoGifs,
-    isFeedOneColumn: state.uiSwitchers.isFeedOneColumn
+    isFeedOneColumn: state.uiSwitchers.isFeedOneColumn,
+    postable: ownProps.postable || null
 })
 
 const mapDispatchToProps = dispatch => ({

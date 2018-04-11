@@ -18,14 +18,14 @@ import { cyan500 } from 'material-ui/styles/colors';
 const styles = {
     drawer: {
         boxShadow: 'none',
-        backgroundColor: 'transparent',
         padding: '5em 0 1em 0',
         justifyContent: 'space-between',
         width: '220px',
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100%',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        transition: 'all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms'
     },
     listItem: {
         marginLeft: '5px',
@@ -55,7 +55,7 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, muiTheme }) => 
             <List>
                 <ListItem
                     key={1}
-                    primaryText='Dashboard'
+                    primaryText='Feed'
                     onClick={() => navigate('/')}
                     innerDivStyle={{
                         ...styles.listItem,

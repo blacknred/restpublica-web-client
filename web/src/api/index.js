@@ -6,8 +6,10 @@ axios.defaults.validateStatus = status => status >= 200 && status < 429;
 const GIPHY_URL = encodeURI('https://api.giphy.com/v1/gifs/random' +
     '?api_key=dc6zaTOxFJmzC&tag=space&rating=pg-13');
 const FEED_RAND = window.localStorage.feedrand || 1;
+const y = window.localStorage.token
 const instance = axios.create({
-    headers: { 'Authorization': `Bearer ${window.localStorage.token}` }
+    timeout: 5000,
+    headers: { 'Authorization': `Bearer ${y}` }
 });
 // axios.interceptors.request.use(req => console.log(req))
 // instance.interceptors.response.use(res => console.log(res))
@@ -105,7 +107,7 @@ export const getPost = asyncMddlwr(slug =>
     instance.get(`/posts/${slug}`)
 )
 export const getDashboardPosts = asyncMddlwr(page =>
-    instance.get(`/posts?dashboard=true&offset=${page}&feed_rand=${FEED_RAND}`)
+    instance.get(`/posts?feed=true&offset=${page}&feed_rand=${FEED_RAND}`)
 )
 export const getTrendingPosts = asyncMddlwr(page =>
     instance.get(`/posts?offset=${page}`)
