@@ -10,20 +10,21 @@ import IconButton from 'material-ui/IconButton';
 import AppBar from 'material-ui/AppBar';
 import Badge from 'material-ui/Badge';
 import Toggle from 'material-ui/Toggle';
-import muiThemeable from 'material-ui/styles/muiThemeable';
 import NavigationMenuIcon from 'material-ui/svg-icons/navigation/menu';
 import SocialNotificationsIcon from 'material-ui/svg-icons/social/notifications';
 import SocialNotificationsOffIcon from 'material-ui/svg-icons/social/notifications-off';
 import ActionSettingsIcon from 'material-ui/svg-icons/action/settings';
 import ActionExitToAppIcon from 'material-ui/svg-icons/action/exit-to-app';
+import LinearProgress from 'material-ui/LinearProgress';
 
 const styles = {
     appbar: {
-        zIndex: '1400',
+        zIndex: '1301',
         position: 'fixed',
         boxShadow: '0 1px 8px rgba(0,0,0,.3)',
+        left: 0,
         top: 0,
-        left: 0
+        animation: 'topOff 0.5s',
     },
     title: {
         fontSize: '1.3em',
@@ -70,13 +71,21 @@ const styles = {
     },
     userButtonToggle: {
         paddingTop: 14
-    }
+    },
+    loader: { 
+        zIndex: '1302', 
+        position: 'absolute', 
+        top: 0, 
+        left: 0, 
+        right: 0,
+        backgroundColor: 'transparent'
+     }
 
 }
 
 const HeaderContent = ({ redirect, avatar, mode, query, isDrawer, isNightMode, isNotFound,
     isAuthenticated, isNotify, notifications, toggleNightMode, createFlashMessage, history,
-    toggleNotFound, toggleDrawer, toggleNotify, logoutUser, muiTheme }) => {
+    toggleNotFound, toggleDrawer, toggleNotify, logoutUser, isLoading, muiTheme }) => {
 
     const searchSubmit = (event) => {
         event.preventDefault();
@@ -94,12 +103,10 @@ const HeaderContent = ({ redirect, avatar, mode, query, isDrawer, isNightMode, i
                             primary={true}
                             badgeStyle={styles.badgeStyle} />
                         : <IconButton>
-                            <SocialNotificationsIcon
-                                color={muiTheme.palette.secondaryTextColor} />
+                            <SocialNotificationsIcon />
                         </IconButton>
                     : <IconButton>
-                        <SocialNotificationsOffIcon
-                            color={muiTheme.palette.secondaryTextColor} />
+                        <SocialNotificationsOffIcon />
                     </IconButton>
             }
         </Link>
@@ -158,57 +165,61 @@ const HeaderContent = ({ redirect, avatar, mode, query, isDrawer, isNightMode, i
             </MenuItem>
         </IconMenu>
     );
-    return (
-        <AppBar
-            style={Object.assign(styles.appbar, {
-                backgroundColor: muiTheme.palette.alternateTextColor
-            })}
-            title={
-                <span>
-                    Restpublica&nbsp;&nbsp;|&nbsp;&nbsp;
+    return (            
+            <AppBar
+                style={styles.appbar}
+                title={
+                    <span>
+                        Restpublica&nbsp;&nbsp;|&nbsp;&nbsp;
                     {mode && mode[0].toUpperCase() + mode.substr(1)}
-                </span>
-            }
-            titleStyle={Object.assign(styles.title, { color: muiTheme.palette.secondaryTextColor })}
-            iconElementLeft={
-                <IconButton>
-                    <NavigationMenuIcon color={muiTheme.palette.secondaryTextColor} />
-                </IconButton>
-            }
-            onLeftIconButtonClick={() => toggleDrawer(!isDrawer)}
-            iconStyleRight={styles.rightBlock}
-            iconElementRight={
-                <div style={styles.rightBlockContainer}>
-                    <TextField
-                        hintText={query || "Search"}
-                        style={styles.searchBlock}
-                        inputStyle={styles.searchField}
-                        underlineShow={false}
-                        hintStyle={styles.hintStyle}
-                        onKeyPress={(ev) => {
-                            if (ev.key === 'Enter') {
-                                searchSubmit(ev)
-                                ev.preventDefault();
-                            }
-                        }}
-                    />
-                    {isAuthenticated && notifyButton}
-                    {isAuthenticated && userButton}
-                    {
-                        !isAuthenticated &&
-                        <span>
-                            <Link to='/login'>
-                                <FlatButton label='Login' />
-                            </Link>
-                            <Link to='/register'>
-                                <FlatButton label='Register' />
-                            </Link>
-                        </span>
-                    }
-                </div>
-            }
-        />
-
+                    </span>
+                }
+                titleStyle={styles.title}
+                iconElementLeft={
+                    <IconButton>
+                        <NavigationMenuIcon />
+                    </IconButton>
+                }
+                onLeftIconButtonClick={() => toggleDrawer(!isDrawer)}
+                iconStyleRight={styles.rightBlock}
+                iconElementRight={
+                    <div style={styles.rightBlockContainer}>
+                        <TextField
+                            hintText={query || "Search"}
+                            style={styles.searchBlock}
+                            inputStyle={styles.searchField}
+                            underlineShow={false}
+                            hintStyle={styles.hintStyle}
+                            onKeyPress={(ev) => {
+                                if (ev.key === 'Enter') {
+                                    searchSubmit(ev)
+                                    ev.preventDefault();
+                                }
+                            }}
+                        />
+                        {isAuthenticated && notifyButton}
+                        {isAuthenticated && userButton}
+                        {
+                            !isAuthenticated &&
+                            <span>
+                                <Link to='/login'>
+                                    <FlatButton label='Login' />
+                                </Link>
+                                <Link to='/register'>
+                                    <FlatButton label='Register' />
+                                </Link>
+                            </span>
+                        }
+                    </div>
+                }
+                children={
+                   <LinearProgress
+                        mode="indeterminate"
+                        hidden={isLoading}
+                        style={{ ...styles.loader, display: isLoading ? 'block' : 'none' }}
+                    /> 
+                }
+            />
     )
 }
 
@@ -218,6 +229,7 @@ HeaderContent.propTypes = {
     isNotify: PropTypes.bool.isRequired,
     isNightMode: PropTypes.bool.isRequired,
     isNotFound: PropTypes.bool.isRequired,
+    isLoading: PropTypes.bool.isRequired,
     notifications: PropTypes.arrayOf(
         PropTypes.shape({
             date: PropTypes.number.isRequired,
@@ -235,4 +247,4 @@ HeaderContent.propTypes = {
     logoutUser: PropTypes.func.isRequired
 }
 
-export default muiThemeable()(HeaderContent);
+export default HeaderContent;

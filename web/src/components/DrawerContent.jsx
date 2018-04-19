@@ -13,7 +13,6 @@ import ActionHelpIcon from 'material-ui/svg-icons/action/help';
 import ActionFeedbackIcon from 'material-ui/svg-icons/action/feedback';
 import ActionViewColumnIcon from 'material-ui/svg-icons/action/view-column';
 import SocialNotificationsIcon from 'material-ui/svg-icons/social/notifications';
-import { cyan500 } from 'material-ui/styles/colors';
 
 const styles = {
     drawer: {
@@ -25,7 +24,8 @@ const styles = {
         flexDirection: 'column',
         minHeight: '100%',
         fontWeight: 'bold',
-        transition: 'all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms'
+        transition: 'all 400ms',
+        animation: 'leftOff 0.5s',
     },
     listItem: {
         marginLeft: '5px',
@@ -59,13 +59,15 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, muiTheme }) => 
                     onClick={() => navigate('/')}
                     innerDivStyle={{
                         ...styles.listItem,
-                        color: pathname === '/' ? cyan500
-                            : muiTheme.palette.secondaryTextColor
+                        color: pathname === '/' ?
+                            muiTheme.palette.primary1Color :
+                            muiTheme.palette.secondaryTextColor
                     }}
                     leftIcon={
                         <ActionDashboardIcon
-                            color={pathname === '/' ? cyan500
-                                : muiTheme.palette.secondaryTextColor}
+                            color={pathname === '/' ?
+                                muiTheme.palette.primary1Color :
+                                muiTheme.palette.secondaryTextColor}
                         />
                     }
                 />
@@ -75,12 +77,14 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, muiTheme }) => 
                     onClick={() => navigate('/trending')}
                     innerDivStyle={{
                         ...styles.listItem,
-                        color: pathname === '/trending' ? cyan500
-                            : muiTheme.palette.secondaryTextColor
+                        color: pathname === '/trending' ?
+                            muiTheme.palette.primary1Color :
+                            muiTheme.palette.secondaryTextColor
                     }}
                     leftIcon={
                         <ActionExploreIcon
-                            color={pathname === '/trending' ? cyan500 :
+                            color={pathname === '/trending' ?
+                                muiTheme.palette.primary1Color :
                                 muiTheme.palette.secondaryTextColor}
                         />
                     }
@@ -91,12 +95,14 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, muiTheme }) => 
                     onClick={() => navigate('/communities')}
                     innerDivStyle={{
                         ...styles.listItem,
-                        color: pathname.match(/^\/communities/) ? cyan500 :
+                        color: pathname.match(/^\/communities/) ?
+                            muiTheme.palette.primary1Color :
                             muiTheme.palette.secondaryTextColor
                     }}
                     leftIcon={
                         <ActionViewColumnIcon
-                            color={pathname.match(/^\/communities/) ? cyan500 :
+                            color={pathname.match(/^\/communities/) ?
+                                muiTheme.palette.primary1Color :
                                 muiTheme.palette.secondaryTextColor}
                         />
                     }
@@ -107,12 +113,14 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, muiTheme }) => 
                     onClick={() => navigate('/profile')}
                     innerDivStyle={{
                         ...styles.listItem,
-                        color: pathname.includes(username) ? cyan500 :
+                        color: pathname.includes(username) ?
+                            muiTheme.palette.primary1Color :
                             muiTheme.palette.secondaryTextColor
                     }}
                     leftIcon={
                         <SocialPersonIcon
-                            color={pathname.includes(username) ? cyan500 :
+                            color={pathname.includes(username) ?
+                                muiTheme.palette.primary1Color :
                                 muiTheme.palette.secondaryTextColor}
                         />
                     }
@@ -123,12 +131,14 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, muiTheme }) => 
                     onClick={() => navigate('/activity')}
                     innerDivStyle={{
                         ...styles.listItem,
-                        color: pathname.match(/^\/activity/) ? cyan500 :
+                        color: pathname.match(/^\/activity/) ?
+                            muiTheme.palette.primary1Color :
                             muiTheme.palette.secondaryTextColor
                     }}
                     leftIcon={
                         <SocialNotificationsIcon
-                            color={pathname.match(/^\/activity/) ? cyan500 :
+                            color={pathname.match(/^\/activity/) ?
+                                muiTheme.palette.primary1Color :
                                 muiTheme.palette.secondaryTextColor}
                         />
                     }
@@ -139,12 +149,14 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, muiTheme }) => 
                     onClick={() => navigate('/settings')}
                     innerDivStyle={{
                         ...styles.listItem,
-                        color: pathname.match(/^\/settings/) ? cyan500 :
+                        color: pathname.match(/^\/settings/) ?
+                            muiTheme.palette.primary1Color :
                             muiTheme.palette.secondaryTextColor
                     }}
                     leftIcon={
                         <ActionSettingsIcon
-                            color={pathname.match(/^\/settings/) ? cyan500 :
+                            color={pathname.match(/^\/settings/) ?
+                                muiTheme.palette.primary1Color :
                                 muiTheme.palette.secondaryTextColor}
                         />
                     }
@@ -169,10 +181,10 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, muiTheme }) => 
                         href="https://github.com/blacknred/restpublica/issues/new"
                         target="_blank"
                         rel="noopener noreferrer">Send feedback</a>}
-                    
+
                 />
             </List>
-            <Subheader style={styles.footer }>
+            <Subheader style={styles.footer}>
                 <a href="https://github.com/blacknred/restpublica"
                     target="_blank" rel="noopener noreferrer">Conditions of use</a>
                 <a href="/api" target="_blank" rel="noopener noreferrer">API Developers</a>

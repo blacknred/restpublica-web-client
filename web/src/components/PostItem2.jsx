@@ -25,7 +25,7 @@ const styles = {
         flex: '1 0 auto',
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
         fontSize: '14px',
-        animation: 'fadeIn 1s'
+        //animation: 'fadeIn 1s'
     },
     postHeader: {
         display: 'flex',
@@ -160,6 +160,7 @@ const PostItem = ({ post, isFullAccess, expandPost, updatePost, deletePost, muiT
                     {
                         post.commentable &&
                         <FlatButton
+                            primary={true}
                             label={
                                 `${post.isExpanded ? 'Hide' : 'Join'}
                         discussion ${post.comments_cnt}`

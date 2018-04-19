@@ -1,9 +1,12 @@
 /* eslint-disable no-undef */
 import React, { Component } from 'react';
 
+import Paper from 'material-ui/Paper';
+
 const styles = {
     postEditorContainer: {
-        background: '#eee', margin: '0 auto', width: '500px'
+        width: '530px',
+        height: '400px',
     }
 }
 
@@ -14,9 +17,9 @@ class PostEditor extends Component {
     }
     render() {
         return (
-            <div style={styles.postEditorContainer}>
+            <Paper style={styles.postEditorContainer}>
                 New Post
-            </div>
+            </Paper>
         )
     }
 

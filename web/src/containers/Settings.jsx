@@ -5,7 +5,7 @@ import { Switch, Route } from 'react-router-dom'
 
 import { getUserProfile, login, userUpdate } from '../api'
 import {
-    updateUser, createFlashMessage, toggleNightMode,
+    updateUser, createFlashMessage, toggleNightMode, toggleLoader,
     toggleNotify, toggleAutoGifs, toggleFeedOneColumn, logoutUser
 } from '../actions'
 import SettingsProfile from '../components/SettingsProfile'
@@ -25,7 +25,8 @@ class Settings extends PureComponent {
                     email_notify: true,
                     feed_rand: 0,
                     oldpassword: null,
-                    newpassword: null
+                    newpassword: null,
+                    emailConfirmationCode: null
                 },
                 errors: {
                     username: null,
@@ -33,40 +34,63 @@ class Settings extends PureComponent {
                     description: null,
                     email: null,
                     oldpassword: null,
-                    newpassword: null
-                }
+                    newpassword: null,
+                    emailConfirmationCode: null
+                },
+                isChangePasswordDialogOpen: false,
+                isDeleteProfileDialogOpen: false,
             }
         };
     }
     static propTypes = {
         username: PropTypes.string.isRequired,
+        isNightMode: PropTypes.bool.isRequired,
+        isNotify: PropTypes.bool.isRequired,
+        isAutoGifs: PropTypes.bool.isRequired,
+        isFeedOneColumn: PropTypes.bool.isRequired,
         update: PropTypes.func.isRequired,
-        createMessage: PropTypes.func.isRequired
+        createMessage: PropTypes.func.isRequired,
+        toggleNightMode: PropTypes.func.isRequired,
+        toggleNotify: PropTypes.func.isRequired,
+        toggleLoader: PropTypes.func.isRequired,
+        toggleAutoGifs: PropTypes.func.isRequired,
+        toggleFeedOneColumn: PropTypes.func.isRequired,
+        logoutUser: PropTypes.func.isRequired
     }
-    getProfile = async () => {
+    showDialogHandler = (target) => {
+        this.setState({
+            ...this.state,
+            profile: {
+                ...this.state.profile,
+                [target]: !this.state.profile[target]
+            }
+        })
+    }
+    getProfileHandler = async () => {
+        this.props.toggleLoader(true)
         const res = await getUserProfile()
         if (!res.status) {
             this.props.createMessage(res)
             return
         }
         this.setState({
+            ...this.state,
             profile: {
                 ...this.state.profile,
                 values: {
                     ...this.state.profile.values,
-                    ...res.data,
-                    //avatar: `data:image/png;base64, ${res.data.avatar}`
+                    ...res.data
                 }
             }
         })
+        this.props.toggleLoader(false)
     }
     updateProfileValueHandler = async (option, value) => {
         if (value === this.state.profile.values[option]) {
             this.setState({
+                ...this.state,
                 profile: {
-                    values: {
-                        ...this.state.profile.values
-                    },
+                    ...this.state.profile,
                     errors: {
                         ...this.state.profile.errors,
                         [option]: null
@@ -111,7 +135,7 @@ class Settings extends PureComponent {
             if (option.match(/^(username|feed_rand)$/)) {
                 this.props.update(res.data)
             }
-            if (!option.match(/^(email_notify|feed_rand)$/)) {
+            if (!option.match(/^(email_notify|feed_rand|active)$/)) {
                 const formatedOption = option[0].toUpperCase() + option.substr(1);
                 this.props.createMessage(formatedOption + ' is updated')
             }
@@ -139,6 +163,7 @@ class Settings extends PureComponent {
                 return
             }
             this.setState({
+                ...this.state,
                 profile: {
                     ...this.state.profile,
                     values: {
@@ -167,6 +192,7 @@ class Settings extends PureComponent {
             if (!res.message.length) res.message = [res.message]
             res.message.forEach((failure) => {
                 this.setState({
+                    ...this.state,
                     profile: {
                         ...this.state.profile,
                         errors: {
@@ -178,6 +204,7 @@ class Settings extends PureComponent {
             })
         } else {
             this.setState({
+                ...this.state,
                 profile: {
                     ...this.state.profile,
                     values: {
@@ -203,6 +230,7 @@ class Settings extends PureComponent {
             failure = 'New password must differ previous'
         }
         this.setState({
+            ...this.state,
             profile: {
                 ...this.state.profile,
                 values: {
@@ -216,9 +244,79 @@ class Settings extends PureComponent {
             }
         });
     }
+    sendProfileNewPasswordEmailConfirmationHandler = async () => {
+        const confirmationCode = Math.floor(100000 + Math.random() * 900000)
+        this.setState({
+            ...this.state,
+            profile: {
+                ...this.state.profile,
+                values: {
+                    ...this.state.profile.values,
+                    emailConfirmationCode: null
+                },
+                errors: {
+                    ...this.state.profile.errors,
+                    emailConfirmationCode: null
+                }
+            }
+        })
+        window.sessionStorage.setItem('newPasswordEmailConfirmationCode', confirmationCode)
+        // send mail with code on this.state.profile.fields.email
+    }
+    updateEmailConfirmationCodeHandler = (event) => {
+        const value = event.target.value
+        this.setState({
+            ...this.state,
+            profile: {
+                ...this.state.profile,
+                values: {
+                    ...this.state.profile.values,
+                    emailConfirmationCode: value
+                }
+            }
+        })
+    }
+    updateProfilePasswordHandler = async (event) => {
+        const confirmationCode = window.sessionStorage.getItem('newPasswordEmailConfirmationCode')
+        if (confirmationCode !== this.state.profile.values.emailConfirmationCode) {
+            this.setState({
+                ...this.state,
+                profile: {
+                    ...this.state.profile,
+                    errors: {
+                        ...this.state.profile.errors,
+                        emailConfirmationCode: 'Not match'
+                    }
+                }
+            })
+            return
+        }
+        window.sessionStorage.removeItem('newPasswordEmailConfirmationCode')
+        this.updateProfileValueHandler('password', this.state.profile.values.newpassword)
+        this.setState({
+            ...this.state,
+            profile: {
+                ...this.state.profile,
+                values: {
+                    ...this.state.profile.values,
+                    oldpassword: null,
+                    newpassword: null,
+                    emailConfirmationCode: null
+                },
+                errors: {
+                    ...this.state.profile.errors,
+                    oldpassword: null,
+                    newpassword: null,
+                    emailConfirmationCode: null
+                }
+            }
+        })
+        this.showDialogHandler('isChangePasswordDialogOpen')
+    }
+    
     componentDidMount() {
-        console.log('profile is mounted')
-        this.getProfile();
+        console.log('settings is mounted')
+        this.getProfileHandler();
     }
 
     render() {
@@ -227,9 +325,13 @@ class Settings extends PureComponent {
                 {...this.state.profile}
                 updateValue={this.updateProfileValueHandler}
                 updateAvatar={this.updateProfileAvatarHandler}
+                updatePassword={this.updateProfilePasswordHandler}
                 checkPassword={this.checkProfilePasswordHandler}
                 checkNewPassword={this.checkProfileNewPasswordHandler}
                 logoutUser={this.props.logoutUser}
+                showDialog={this.showDialogHandler}
+                sendNewPasswordEmailConfirmation={this.sendProfileNewPasswordEmailConfirmationHandler}
+                updateEmailConfirmationCode={this.updateEmailConfirmationCodeHandler}
             />
         const settingsApp =
             <SettingsApp
@@ -265,6 +367,7 @@ const mapDispatchToProps = dispatch => ({
     createMessage: (text) => dispatch(createFlashMessage(text)),
     toggleNightMode: (mode) => dispatch(toggleNightMode(mode)),
     toggleNotify: (mode) => dispatch(toggleNotify(mode)),
+    toggleLoader: (mode) => dispatch(toggleLoader(mode)),
     toggleAutoGifs: (mode) => dispatch(toggleAutoGifs(mode)),
     toggleFeedOneColumn: (mode) => dispatch(toggleFeedOneColumn(mode)),
     logoutUser: () => dispatch(logoutUser())

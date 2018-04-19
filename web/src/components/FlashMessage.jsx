@@ -6,7 +6,7 @@ const styles = {
     snackbar: { 
         left: '2%',
         bottom: '2%',
-        transform: null
+        transform: null,
     }
 };
 

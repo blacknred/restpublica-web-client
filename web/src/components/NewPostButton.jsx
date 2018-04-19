@@ -16,7 +16,7 @@ const styles = {
 const NewPostButton = () => {
     return (
         <Link to={{
-            pathname: '/newpost',
+            pathname: '/post',
             state: { modal: true }
         }} >
             <FloatingActionButton style={styles.button}>

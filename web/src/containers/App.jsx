@@ -8,7 +8,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import Paper from 'material-ui/Paper';
-
+import './App.css';
 import NotFound from '../components/NotFound';
 import Landing from './Landing';
 import FlashMessages from './FlashMessages';
@@ -27,10 +27,21 @@ import Posts from './Posts';
 import Subscriptions from './Subscriptions'
 import Authors from './Authors'
 import AuthorsPreview from './AuthorsPreview'
-import './App.css';
 
-// console.log(lightBaseTheme.palette)
+import PostEditor from './PostEditor';
+
+//console.log(lightBaseTheme)
+lightBaseTheme.palette.primary1Color = '#03A9F4'
 lightBaseTheme.palette.canvasColor = '#fdfdfd'
+lightBaseTheme.appBar = {
+    color: lightBaseTheme.palette.canvasColor,
+    textColor: lightBaseTheme.palette.secondaryTextColor
+}
+darkBaseTheme.palette.primary1Color = '#03A9F4'
+darkBaseTheme.appBar = {
+    color: darkBaseTheme.palette.canvasColor,
+    textColor: darkBaseTheme.palette.secondaryTextColor
+}
 
 class App extends Component {
     previousLocation = this.props.location
@@ -48,6 +59,7 @@ class App extends Component {
         )
         if (willUpdate) this.previousLocation = this.props.location
     }
+
     render() {
         const { location, isAuthenticated, isNotFound, isNightMode, isDrawer } = this.props
         const isModal = !!(
@@ -68,14 +80,27 @@ class App extends Component {
                 state: { from: location.pathname }
             }} />
         )
+        const closeModalHandler = () => setTimeout(() => { this.props.history.goBack() }, 300);
+        const Modals = Modal(() => (
+            <Switch  >
+                <Route exact path="/post" component={PostEditor} />
+                <Route path="/community" component={() => (<h1>New community</h1>)} />
+                <Route path="/p/:id" component={() => (<h1>Post</h1>)} />
+            </Switch>
+        ))
         return (
-            <MuiThemeProvider muiTheme={getMuiTheme(isNightMode ? darkBaseTheme : lightBaseTheme)}>
+            <MuiThemeProvider
+                muiTheme={getMuiTheme(isNightMode ? darkBaseTheme : lightBaseTheme)}>
                 <Paper className={isDrawer && isAuthenticated ? 'frame left top' :
                     isAuthenticated ? 'frame top' : 'frame'} >
                     <FlashMessages />
                     {isAuthenticated && !isNotFound && <Header />}
                     {isAuthenticated && !isNotFound && <AppDrawer />}
                     {isNotFound && <NotFound />}
+                    {
+                        isModal &&
+                        <Modals close={closeModalHandler} />
+                    }
                     {!isNotFound &&
                         <Switch>
                             {/* ***** landing, auth ***** */}
@@ -88,16 +113,34 @@ class App extends Component {
                             {/* ***** app ***** */}
                             <Route render={() => (
                                 <CSSTransitionGroup
-                                    transitionName={{
-                                        enter: "animated",
-                                        enterActive: "fadeInUp",
-                                        leave: "animated",
-                                        leaveActive: "fadeOutUp",
-                                        // appear: 'animated',
-                                        // appearActive: 'fadeInUp'
-                                    }}
-                                    transitionEnterTimeout={1000}
-                                    transitionLeaveTimeout={1000} >
+                                    transitionName='fadeinup'
+                                    transitionEnterTimeout={500}
+                                    transitionLeaveTimeout={400}
+                                >
+                                    {/* {
+                                        isModal &&
+                                        <div
+                                            onClick={closeModalHandler}
+                                            style={{
+                                                position: 'fixed',
+                                                left: 0,
+                                                right: 0,
+                                                top: 0,
+                                                height: '100vh',
+                                                zIndex: '1302',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            }}
+                                        >
+                                            <Switch  >
+                                                <Route exact path="/post" component={PostEditor} />
+                                                <Route path="/community" component={() => (<h1>New community</h1>)} />
+                                                <Route path="/p/:id" component={() => (<h1>Post</h1>)} />
+                                            </Switch>
+                                        </div>
+
+                                    } */}
                                     <Switch
                                         key={isModal ? this.previousLocation.key : location.key}
                                         location={isModal ? this.previousLocation : location} >
@@ -116,6 +159,7 @@ class App extends Component {
                                             !isAuthenticated ? toLogin : <Communities />
                                         )} />
                                         <Route path='/post' render={() => <Redirect to='/' />} />
+                                        <Route path='/community' render={() => <Redirect to='/' />} />
 
                                         {/* ***** non auth paths ***** */}
                                         <Route path='/p/:id' component={Post} />
@@ -168,9 +212,10 @@ class App extends Component {
                                             </div>
                                         )} />
                                     </Switch>
-                                    {isModal && <Modal />}
+
                                 </CSSTransitionGroup>
                             )} />
+
                         </Switch>
                     }
                 </Paper>

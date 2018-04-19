@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroller'
 import CircularProgress from 'material-ui/CircularProgress';
 import NewPostButton from '../components/NewPostButton'
-
+import { CSSTransitionGroup } from 'react-transition-group'
 // import { GridList } from 'material-ui/GridList';
 // import PostItem from './PostItem'
 import PostItem2 from './PostItem2'
@@ -31,12 +31,24 @@ const styles = {
 const PostList = ({ mode, postable, isFullAccess, empty, hasMore, deletePost,
     expandPost, updatePost, posts, getPosts, emptyMessage, isAutoGifs,
     isFeedOneColumn }) => {
+    const items = posts.map((post, index) =>
+        <PostItem2
+            key={index}
+            post={post}
+            isFullAccess={isFullAccess}
+            expandPost={expandPost}
+            updatePost={updatePost}
+            deletePost={deletePost}
+            isAutoGifs={isAutoGifs}
+        />)
     return (
-        <div className='container'>
-        { postable && <NewPostButton/> }
-            {
-                empty ?
-                    emptyMessage() :
+        <span>
+            {postable && <NewPostButton />}
+            <div className='container'>
+
+                {empty && emptyMessage()}
+                {
+                    !empty &&
                     <InfiniteScroll
                         // key={reload}
                         // ref={(scroll) => { this.scroll = scroll; }}
@@ -44,26 +56,22 @@ const PostList = ({ mode, postable, isFullAccess, empty, hasMore, deletePost,
                         initialLoad={true}
                         loadMore={getPosts}
                         hasMore={hasMore}
-                        loader={<CircularProgress key={798798} style={styles.loader} />}
+                        loader={
+                            posts.length ?
+                            <CircularProgress key={798798} style={styles.loader} />
+                            : null
+                        }
                         threshold={400} >
                         <div style={styles.postsContainer}>
-                            <div style={{ ...styles.postsGrid, flexDirection: isFeedOneColumn ? 'row' : 'column' }}>
-                                {
-                                    posts.map((post, index) =>
-                                    <PostItem2
-                                        key={index}
-                                        post={post}
-                                        isFullAccess={isFullAccess}
-                                        expandPost={expandPost}
-                                        updatePost={updatePost}
-                                        deletePost={deletePost}
-                                        isAutoGifs={isAutoGifs}
-                                    />)
-                                }
-                            </div>
-                            {posts.length > 20 && <ListRightPanel />}
+                            <CSSTransitionGroup
+                                style={{ ...styles.postsGrid, flexDirection: isFeedOneColumn ? 'row' : 'column' }}
+                                transitionName='fadeinup'
+                                transitionEnterTimeout={500}
+                                transitionLeaveTimeout={400} >
+                                {items}
+                            </CSSTransitionGroup>
                         </div>
-
+                        {posts.length > 20 && <ListRightPanel />}
 
                         {/* <GridList
                                         cellHeight={'auto'}
@@ -81,8 +89,9 @@ const PostList = ({ mode, postable, isFullAccess, empty, hasMore, deletePost,
                                         }
                                     </GridList> */}
                     </InfiniteScroll>
-            }
-        </div>
+                }
+            </div>
+        </span>
     )
 }
 

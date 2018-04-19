@@ -27,6 +27,7 @@ Header.propTypes = {
     isNotify: PropTypes.bool.isRequired,
     isNightMode: PropTypes.bool.isRequired,
     isNotFound: PropTypes.bool.isRequired,
+    isLoading: PropTypes.bool.isRequired,
     notifications: PropTypes.arrayOf(
         PropTypes.shape({
             date: PropTypes.number.isRequired,
@@ -46,9 +47,10 @@ const mapStateToProps = (state, ownProps) => ({
     isNotify: state.notifications.isNotify,
     isNightMode: state.uiSwitchers.isNightMode,
     isNotFound: state.uiSwitchers.isNotFound,
+    isLoading: state.uiSwitchers.isLoading,
     notifications: state.notifications.notificationsList,
     avatar: state.authentication.avatar,
-    mode: ownProps.location.pathname.split('/')[1] || 'feed',
+    mode: ownProps.location.pathname.split('/')[1] || 'Feed',
     query: ownProps.match.params.query || null,
     history: ownProps.history
 })

@@ -71,6 +71,12 @@ export const toggleDrawer = (mode) => {
         mode
     }
 }
+export const toggleLoader = (mode) => {
+    return {
+        type: constants.TOGGLE_LOADER,
+        mode
+    }
+}
 export const toggleNightMode = (mode) => {
     window.localStorage.setItem('isnightmode', mode);
     return {

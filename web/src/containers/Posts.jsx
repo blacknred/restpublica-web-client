@@ -7,7 +7,7 @@ import {
     getDashboardPosts, getTrendingPosts,
     getSearchedPosts, getProfilePosts
 } from '../api'
-import { createFlashMessage } from '../actions'
+import { createFlashMessage, toggleLoader } from '../actions'
 import PostList from '../components/PostList'
 
 class Posts extends PureComponent {
@@ -23,11 +23,13 @@ class Posts extends PureComponent {
         isAuthenticated: PropTypes.bool.isRequired,
         mode: PropTypes.oneOf(['feed', 'trending', 'search', 'u']),
         username: PropTypes.string.isRequired,
-        query: PropTypes.string
+        query: PropTypes.string,
+        toggleLoader: PropTypes.func.isRequired
     }
     getPostsHandler = async (page) => {
         const { mode, query, username } = this.props
         let res
+        this.props.toggleLoader(true)
         switch (mode) {
             case 'feed': res = await getDashboardPosts(page)
                 break
@@ -43,11 +45,13 @@ class Posts extends PureComponent {
         if (!res.status) {
             this.setState({ hasMore: false });
             this.props.createMessage(res)
+            this.props.toggleLoader(false)
             return
         }
         // if there are no requested posts at all view empty page 
         if (parseInt(res.data.count, 10) === 0) {
             this.setState({ empty: true, hasMore: false })
+            this.props.toggleLoader(false)
         }
         // enlarge posts arr if there are, block loading if there are not
         if (res.data.posts.length > 0) {
@@ -59,6 +63,7 @@ class Posts extends PureComponent {
         } else {
             this.setState({ hasMore: false });
         }
+        this.props.toggleLoader(false)
         console.log(`page:${page}, count:${res.data.count}, length:${this.state.posts.length}`)
     }
     expandPostHandler = (id) => {
@@ -147,6 +152,7 @@ const mapStateToProps = (state, ownProps) => ({
 })
 
 const mapDispatchToProps = dispatch => ({
+    toggleLoader: (mode) => dispatch(toggleLoader(mode)),
     createMessage: (text) => dispatch(createFlashMessage(text))
 })
 

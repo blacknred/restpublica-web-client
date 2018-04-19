@@ -13,7 +13,7 @@ ADD package.json /usr/src/app/package.json
 RUN npm install
 # ADD package-lock.json /usr/src/package-lock.json
 # COPY . /usr/src/app
-RUN npm install react-scripts@1.0.17 -g
+RUN npm install react-scripts@1.1.4 -g
 
 # start app
 CMD ["npm", "start"]

@@ -8,7 +8,7 @@ const GIPHY_URL = encodeURI('https://api.giphy.com/v1/gifs/random' +
 const FEED_RAND = window.localStorage.feedrand || 1;
 const y = window.localStorage.token
 const instance = axios.create({
-    timeout: 5000,
+    timeout: 10000,
     headers: { 'Authorization': `Bearer ${y}` }
 });
 // axios.interceptors.request.use(req => console.log(req))

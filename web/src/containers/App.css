@@ -1,8 +1,8 @@
 body{
     font-family: sans-serif;
     margin: 0;
-    overflow-y: scroll!important;
-    overflow-x: hidden!important;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 a{
     text-decoration: none;
@@ -12,11 +12,11 @@ form input[type=file]{
     display: none;
 }
 .frame{
-    transition: padding 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+    transition: padding 450ms;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
     height: 100%;
     min-height: 100vh;
     padding-left: 0
@@ -49,83 +49,92 @@ form input[type=file]{
 
 
 /* ANIMATIONS */
-@keyframes fadeIn {
+.fadeinup-enter {
+    opacity: 0.01;
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+}
+
+.fadeinup-enter.fadeinup-enter-active {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+    transition: all 500ms
+}
+
+.fadeinup-leave {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+}
+
+.fadeinup-leave.fadeinup-leave-active {
+    opacity: 0.01;
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+    transition: all 400ms
+}
+
+@keyframes leftOff {
     from {
-        opacity: 0;
+        left: -220px
     }
     to {
-        opacity: 1;
+        left: 0
     }
 }
-@-webkit-keyframes fadeInUp {
+@keyframes topOff {
     from {
-        opacity: 0;
-        -webkit-transform: translate3d(0, 40%, 0);
-        transform: translate3d(0, 40%, 0);
+        margin-top: -70px;
     }
-    40% {
-        opacity: 0.1;
-        -webkit-transform: translate3d(0, 40%, 0);
-        transform: translate3d(0, 40%, 0);
-    }
-    100% {
-        opacity: 1;
-        -webkit-transform: none;
-        transform: none;
+    to {
+        margin-top: 0
     }
 }
+@keyframes fadeIn {
+    from {
+        opacity: 0.01;
+    }
+    to {
+        opacity: 0.5;
+    }
+}
+@keyframes fadeOut {
+    from {
+        opacity: 5;
+    }
+    to {
+        opacity: 0.01;
+    }
+}
+
 @keyframes fadeInUp {
     from {
-        opacity: 0;
-        -webkit-transform: translate3d(0, 40%, 0);
-        transform: translate3d(0, 40%, 0);
-    }
-    40% {
-        opacity: 0.1;
-        -webkit-transform: translate3d(0, 40%, 0);
-        transform: translate3d(0, 40%, 0);
+        opacity: 0.01;
+        -webkit-transform: translateY(100%);
+        transform: translateY(100%);
     }
     100% {
         opacity: 1;
-        -webkit-transform: none;
-        transform: none;
-    }
-}
-@-webkit-keyframes fadeOutUp {
-    from {
-        opacity: 0;
-        -webkit-transform: translate3d(0, 50%, 0);
-        transform: translate3d(0, 50%, 0);
-    }
-    40% {
-        opacity: 1;
-        -webkit-transform: translate3d(0, 50%, 0);
-        transform: translate3d(0, 50%, 0);
-    }
-    100% {
-        opacity: 1;
-        -webkit-transform: none;
-        transform: none;
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
     }
 }
 @keyframes fadeOutUp {
     from {
         opacity: 1;
-        -webkit-transform: none;
-        transform: none;
-    }
-    40% {
-        opacity: 1;
-        -webkit-transform: translate3d(0, 50%, 0);
-        transform: translate3d(0, 50%, 0);
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
     }
     100% {
-        opacity: 0;
-        -webkit-transform: translate3d(0, 50%, 0);
-        transform: translate3d(0, 50%, 0);
+        opacity: 0.01;
+        -webkit-transform: translateY(100%);
+        transform: translateY(100%);
     }
 }
-.fadeInUp {
+
+
+/* .fadeInUp {
     -webkit-animation-name: fadeInUp;
     animation-name: fadeInUp;
 }
@@ -134,21 +143,9 @@ form input[type=file]{
     animation-name: fadeOutUp;
 }
 .animated {
-    -webkit-animation-duration: 1s ;
-    animation-duration: 1s;
+    -webkit-animation-duration: 0.8s ;
+    animation-duration: 0.8s;
     -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
 }
-
-
-/* @media (max-width: 1400px){
-    .container{
-        max-width: 900px;
-        width: auto;
-    }
-}
-@media (max-width: 1200px){
-    .container{
-        max-width: 800px;
-    }
-} */
+ */
