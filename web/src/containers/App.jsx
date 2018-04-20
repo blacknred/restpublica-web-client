@@ -15,7 +15,9 @@ import FlashMessages from './FlashMessages';
 import Header from './Header';
 import AppDrawer from './Drawer';
 
-import Modal from './Modal'
+import ModalHoc from './Modal'
+import PostEditor from './PostEditor';
+
 import Settings from './Settings';
 import Post from './Post';
 import DiscoveryTabs from '../components/DiscoveryTabs'
@@ -28,7 +30,7 @@ import Subscriptions from './Subscriptions'
 import Authors from './Authors'
 import AuthorsPreview from './AuthorsPreview'
 
-import PostEditor from './PostEditor';
+import { toggleModal } from '../actions'
 
 //console.log(lightBaseTheme)
 lightBaseTheme.palette.primary1Color = '#03A9F4'
@@ -49,7 +51,9 @@ class App extends Component {
         isAuthenticated: PropTypes.bool.isRequired,
         isNightMode: PropTypes.bool.isRequired,
         isDrawer: PropTypes.bool.isRequired,
-        isNotFound: PropTypes.bool.isRequired
+        isNotFound: PropTypes.bool.isRequired,
+        isModalOpen: PropTypes.bool.isRequired,
+        toggleModalOpen: PropTypes.func.isRequired
     }
     componentWillUpdate(nextProps) {
         const { location } = this.props
@@ -61,7 +65,8 @@ class App extends Component {
     }
 
     render() {
-        const { location, isAuthenticated, isNotFound, isNightMode, isDrawer } = this.props
+        const { location, history, isAuthenticated, isNotFound, isNightMode,
+            isDrawer, isModalOpen, toggleModalOpen } = this.props
         const isModal = !!(
             /* 
                 - modals engine -
@@ -80,14 +85,14 @@ class App extends Component {
                 state: { from: location.pathname }
             }} />
         )
-        const closeModalHandler = () => setTimeout(() => { this.props.history.goBack() }, 300);
-        const Modals = Modal(() => (
-            <Switch  >
+        const closeModalHandler = () => setTimeout(() => { history.goBack() }, 300);
+        const Modal = ModalHoc(() =>
+            <Switch >
                 <Route exact path="/post" component={PostEditor} />
                 <Route path="/community" component={() => (<h1>New community</h1>)} />
                 <Route path="/p/:id" component={() => (<h1>Post</h1>)} />
             </Switch>
-        ))
+        )
         return (
             <MuiThemeProvider
                 muiTheme={getMuiTheme(isNightMode ? darkBaseTheme : lightBaseTheme)}>
@@ -97,10 +102,12 @@ class App extends Component {
                     {isAuthenticated && !isNotFound && <Header />}
                     {isAuthenticated && !isNotFound && <AppDrawer />}
                     {isNotFound && <NotFound />}
-                    {
-                        isModal &&
-                        <Modals close={closeModalHandler} />
-                    }
+                    {isModal &&
+                        <Modal
+                            close={closeModalHandler}
+                            isModalOpen={isModalOpen}
+                            toggleModalOpen={toggleModalOpen}
+                        />}
                     {!isNotFound &&
                         <Switch>
                             {/* ***** landing, auth ***** */}
@@ -115,32 +122,7 @@ class App extends Component {
                                 <CSSTransitionGroup
                                     transitionName='fadeinup'
                                     transitionEnterTimeout={500}
-                                    transitionLeaveTimeout={400}
-                                >
-                                    {/* {
-                                        isModal &&
-                                        <div
-                                            onClick={closeModalHandler}
-                                            style={{
-                                                position: 'fixed',
-                                                left: 0,
-                                                right: 0,
-                                                top: 0,
-                                                height: '100vh',
-                                                zIndex: '1302',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center'
-                                            }}
-                                        >
-                                            <Switch  >
-                                                <Route exact path="/post" component={PostEditor} />
-                                                <Route path="/community" component={() => (<h1>New community</h1>)} />
-                                                <Route path="/p/:id" component={() => (<h1>Post</h1>)} />
-                                            </Switch>
-                                        </div>
-
-                                    } */}
+                                    transitionLeaveTimeout={500} >
                                     <Switch
                                         key={isModal ? this.previousLocation.key : location.key}
                                         location={isModal ? this.previousLocation : location} >
@@ -212,10 +194,8 @@ class App extends Component {
                                             </div>
                                         )} />
                                     </Switch>
-
                                 </CSSTransitionGroup>
                             )} />
-
                         </Switch>
                     }
                 </Paper>
@@ -228,7 +208,12 @@ const mapStateToProps = (state) => ({
     isAuthenticated: state.authentication.isAuthenticated,
     isNightMode: state.uiSwitchers.isNightMode,
     isDrawer: state.uiSwitchers.isDrawer,
-    isNotFound: state.uiSwitchers.isNotFound
+    isNotFound: state.uiSwitchers.isNotFound,
+    isModalOpen: state.uiSwitchers.isModal
 })
 
-export default withRouter(connect(mapStateToProps)(App))
+const mapDispatchToProps = dispatch => ({
+    toggleModalOpen: (mode) => dispatch(toggleModal(mode))
+})
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App))

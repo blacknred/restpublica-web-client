@@ -7,7 +7,7 @@ import {
     getDashboardPosts, getTrendingPosts,
     getSearchedPosts, getProfilePosts
 } from '../api'
-import { createFlashMessage, toggleLoader } from '../actions'
+import { createFlashMessage, toggleLoader, toggleModal } from '../actions'
 import PostList from '../components/PostList'
 
 class Posts extends PureComponent {
@@ -24,7 +24,9 @@ class Posts extends PureComponent {
         mode: PropTypes.oneOf(['feed', 'trending', 'search', 'u']),
         username: PropTypes.string.isRequired,
         query: PropTypes.string,
-        toggleLoader: PropTypes.func.isRequired
+        toggleLoader: PropTypes.func.isRequired,
+        toggleModalOpen: PropTypes.func.isRequired,
+        createMessage: PropTypes.func.isRequired
     }
     getPostsHandler = async (page) => {
         const { mode, query, username } = this.props
@@ -124,9 +126,10 @@ class Posts extends PureComponent {
     }
 
     render() {
-        const { postable, isAuthenticated, mode, isAutoGifs, isFeedOneColumn } = this.props;
+        const { postable, isAuthenticated, mode, isAutoGifs, isFeedOneColumn,
+            toggleModalOpen } = this.props;
         return <PostList
-        postable={postable}
+            postable={postable}
             mode={mode}
             isFullAccess={isAuthenticated && mode === 'me'}
             isAutoGifs={isAutoGifs}
@@ -137,6 +140,7 @@ class Posts extends PureComponent {
             updatePost={this.updatePostHandler}
             deletePost={this.deletePostHandler}
             emptyMessage={this.emptyMessage}
+            toggleModalOpen={toggleModalOpen}
         />
     }
 }
@@ -153,7 +157,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({
     toggleLoader: (mode) => dispatch(toggleLoader(mode)),
-    createMessage: (text) => dispatch(createFlashMessage(text))
+    createMessage: (text) => dispatch(createFlashMessage(text)),
+    toggleModalOpen: (mode) => dispatch(toggleModal(mode))
 })
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Posts))

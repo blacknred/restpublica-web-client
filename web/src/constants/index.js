@@ -11,6 +11,7 @@ export default keyMirror({
     DECREASE_USER_STATS: null,
     TOGGLE_DRAWER: null,
     TOGGLE_LOADER: null,
+    TOGGLE_MODAL: null,
     TOGGLE_NIGHT_MODE: null,
     TOGGLE_NOT_FOUND: null,
     TOGGLE_NOTIFY: null,

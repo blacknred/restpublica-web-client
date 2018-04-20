@@ -9,7 +9,8 @@ const initialState = () => {
             isNightMode: isnightmode === 'true',
             isAutoGifs: isautogifs === 'true',
             isFeedOneColumn: isfeedonecolumn === 'true',
-            isLoading: true
+            isLoading: true,
+            isModal: false
         }
     }
     return {
@@ -18,7 +19,8 @@ const initialState = () => {
         isNightMode: false,
         isAutoGifs: true,
         isFeedOneColumn: true,
-        isLoading: true
+        isLoading: true,
+        isModal: false
     }
 }
 
@@ -29,6 +31,8 @@ const uiSwitchers = (state = initialState(), action) => {
             return { ...state, isDrawer: action.mode }
         case constants.TOGGLE_LOADER:
             return { ...state, isLoading: action.mode }
+        case constants.TOGGLE_MODAL:
+            return { ...state, isModal: action.mode }
         case constants.TOGGLE_NIGHT_MODE:
             return { ...state, isNightMode: action.mode }
         case constants.TOGGLE_AUTO_GIFS:

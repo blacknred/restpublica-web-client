@@ -51,8 +51,8 @@ form input[type=file]{
 /* ANIMATIONS */
 .fadeinup-enter {
     opacity: 0.01;
-    -webkit-transform: translateY(100%);
-    transform: translateY(100%);
+    -webkit-transform: translateY(200px);
+    transform: translateY(200px);
 }
 
 .fadeinup-enter.fadeinup-enter-active {
@@ -70,9 +70,9 @@ form input[type=file]{
 
 .fadeinup-leave.fadeinup-leave-active {
     opacity: 0.01;
-    -webkit-transform: translateY(100%);
-    transform: translateY(100%);
-    transition: all 400ms
+    -webkit-transform: translateY(200px);
+    transform: translateY(200px);
+    transition: all 500ms
 }
 
 @keyframes leftOff {
@@ -111,8 +111,8 @@ form input[type=file]{
 @keyframes fadeInUp {
     from {
         opacity: 0.01;
-        -webkit-transform: translateY(100%);
-        transform: translateY(100%);
+        -webkit-transform: translateY(200px);
+        transform: translateY(200px);
     }
     100% {
         opacity: 1;
@@ -128,24 +128,7 @@ form input[type=file]{
     }
     100% {
         opacity: 0.01;
-        -webkit-transform: translateY(100%);
-        transform: translateY(100%);
+        -webkit-transform: translateY(200px);
+        transform: translateY(200px);
     }
 }
-
-
-/* .fadeInUp {
-    -webkit-animation-name: fadeInUp;
-    animation-name: fadeInUp;
-}
-.fadeOutUp {
-    -webkit-animation-name: fadeOutUp;
-    animation-name: fadeOutUp;
-}
-.animated {
-    -webkit-animation-duration: 0.8s ;
-    animation-duration: 0.8s;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
-}
- */

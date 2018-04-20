@@ -30,9 +30,9 @@ const styles = {
 
 const PostList = ({ mode, postable, isFullAccess, empty, hasMore, deletePost,
     expandPost, updatePost, posts, getPosts, emptyMessage, isAutoGifs,
-    isFeedOneColumn }) => {
+    isFeedOneColumn, toggleModalOpen }) => {
     const items = posts.map((post, index) =>
-        <PostItem2
+        mode === 'feed' && <PostItem2
             key={index}
             post={post}
             isFullAccess={isFullAccess}
@@ -43,7 +43,7 @@ const PostList = ({ mode, postable, isFullAccess, empty, hasMore, deletePost,
         />)
     return (
         <span>
-            {postable && <NewPostButton />}
+            {postable && <NewPostButton toggleModalOpen={toggleModalOpen} />}
             <div className='container'>
 
                 {empty && emptyMessage()}
@@ -106,7 +106,8 @@ PostList.propTypes = {
     expandPost: PropTypes.func.isRequired,
     updatePost: PropTypes.func.isRequired,
     deletePost: PropTypes.func.isRequired,
-    emptyMessage: PropTypes.func.isRequired
+    emptyMessage: PropTypes.func.isRequired,
+    toggleModalOpen: PropTypes.func.isRequired,
 }
 
 export default PostList

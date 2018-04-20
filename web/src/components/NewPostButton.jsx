@@ -13,14 +13,14 @@ const styles = {
     }
 }
 
-const NewPostButton = () => {
+const NewPostButton = ({ toggleModalOpen }) => {
     return (
         <Link to={{
             pathname: '/post',
             state: { modal: true }
         }} >
             <FloatingActionButton style={styles.button}>
-                <ContentAdd />
+                <ContentAdd onClick={() => toggleModalOpen(true)}/>
             </FloatingActionButton>
         </Link>
     )
