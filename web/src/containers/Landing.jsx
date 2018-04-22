@@ -1,31 +1,34 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Switch, Route } from 'react-router-dom';
 
 import { getBackgroundPic, login, register } from '../api'
 import { authUser, createFlashMessage } from '../actions'
-import LandingBackground from '../components/LandingBackground';
+import LandingContent from '../components/LandingContent';
+import LoginForm from '../components/LoginForm';
+import RegisterForm from '../components/RegisterForm';
 
 class Landing extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
-            fields: {
+            values: {
                 username: '',
                 password: '',
                 fullname: '',
                 email: ''
             },
             errors: {
-                username: '',
-                password: '',
-                fullname: '',
-                email: ''
+                username: null,
+                password: null,
+                fullname: null,
+                email: null
             },
             gifUrl: ''
         }
     }
+
     static propTypes = {
         from: PropTypes.string.isRequired,
         auth: PropTypes.func.isRequired,
@@ -35,33 +38,34 @@ class Landing extends PureComponent {
 
     getBackground = async () => {
         const res = await getBackgroundPic()
-        if (!res.status) return
-        this.setState({ gifUrl: res.data.image_original_url })
+        if (res.status) this.setState({ gifUrl: res.data.image_original_url })
     }
+
     inputChangeHandler = (event) => {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
         this.setState({
-            fields: {
-                ...this.state.fields,
-                [name]: value
+            ...this.state,
+            values: {
+                ...this.state.values,
+                [target.name]: value
             }
         });
     }
+
     submitLoginHandler = async (event) => {
         event.preventDefault();
         this.setState({
             errors: {
-                username: '',
-                password: '',
-                fullname: '',
-                email: ''
+                username: null,
+                password: null,
+                fullname: null,
+                email: null
             }
         });
         const userData = {
-            'username': this.state.fields.username,
-            'password': this.state.fields.password
+            'username': this.state.values.username,
+            'password': this.state.values.password
         };
         const res = await login(userData)
         if (!res.status) {
@@ -83,21 +87,22 @@ class Landing extends PureComponent {
             this.props.createMessage(`You successfully logged in!`)
         }
     }
+
     submitRegisterHandler = async (event) => {
         event.preventDefault();
         this.setState({
             errors: {
-                username: '',
-                password: '',
-                fullname: '',
-                email: ''
+                username: null,
+                password: null,
+                fullname: null,
+                email: null
             }
         });
         const userData = {
-            'username': this.state.fields.username,
-            'fullname': this.state.fields.fullname,
-            'email': this.state.fields.email,
-            'password': this.state.fields.password
+            'username': this.state.values.username,
+            'fullname': this.state.values.fullname,
+            'email': this.state.values.email,
+            'password': this.state.values.password
         };
         const res = await register(userData)
         if (!res.status) {
@@ -116,24 +121,38 @@ class Landing extends PureComponent {
         } else {
             this.props.auth(res.data)
             this.props.history.push('/')
-            this.props.createMessage(`You successfully registered!`)            
+            this.props.createMessage(`You successfully registered!`)
         }
     }
+
     componentWillMount() {
         this.getBackground()
     }
+
     render() {
         return (
-            <LandingBackground
-                {...this.state}
-                submitLogin={this.submitLoginHandler}
-                submitRegister={this.submitRegisterHandler}
-                inputChange={this.inputChangeHandler}
-            />
+            <LandingContent gifUrl={this.state.gifUrl} >
+                <Switch>
+                    <Route path='/login' render={() => (
+                        <LoginForm
+                            {...this.state}
+                            inputChange={this.inputChangeHandler}
+                            submitHandler={this.submitLoginHandler}
+                        />
+                    )} />
+                    <Route path='/register' render={() => (
+                        <RegisterForm
+                            {...this.state}
+                            inputChange={this.inputChangeHandler}
+                            submitHandler={this.submitRegisterHandler}
+                        />
+                    )} />
+                </Switch>
+            </LandingContent>
         )
     }
-
 }
+
 const mapStateToProps = (state, ownProps) => ({
     from: ownProps.location.state ? ownProps.location.state.from : '/'
 })
@@ -142,4 +161,5 @@ const mapDispatchToProps = dispatch => ({
     auth: (mode, userData) => dispatch(authUser(mode, userData)),
     createMessage: (text) => dispatch(createFlashMessage(text)),
 })
+
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Landing))

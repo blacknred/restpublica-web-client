@@ -1,65 +1,79 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
 import {
-    toggleNotFound, toggleNightMode, toggleDrawer,
-    toggleNotify, logoutUser, createFlashMessage
+    switchNotFound, switchNightMode, switchDrawer,
+    switchNotify, logoutUser, createFlashMessage
 } from '../actions'
 import HeaderContent from '../components/HeaderContent'
 import { withRouter } from 'react-router-dom';
 
+class Header extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isUserMenuOpen: false
+        }
+    }
 
-const Header = (props) => {
-    const redirect = (path) => props.history.push(path)
-    return (
-        <HeaderContent
-            {...props}
-            redirect={redirect}
+    static propTypes = {
+        isDrawer: PropTypes.bool.isRequired,
+        isAuthenticated: PropTypes.bool.isRequired,
+        isNotify: PropTypes.bool.isRequired,
+        isNightMode: PropTypes.bool.isRequired,
+        isNotFound: PropTypes.bool.isRequired,
+        notifications: PropTypes.arrayOf(
+            PropTypes.shape({
+                date: PropTypes.number.isRequired,
+                text: PropTypes.string.isRequired
+            })
+        ).isRequired,
+        avatar: PropTypes.string.isRequired,
+        mode: PropTypes.string.isRequired,
+        query: PropTypes.string,
+        history: PropTypes.any,
+        switchNotFound: PropTypes.func.isRequired,
+        switchNightMode: PropTypes.func.isRequired,
+        switchDrawer: PropTypes.func.isRequired,
+        switchNotify: PropTypes.func.isRequired,
+        createFlashMessage: PropTypes.func.isRequired,
+        logoutUser: PropTypes.func.isRequired,
+    }
+
+    redirect = (path) => this.props.history.push(path)
+
+    userMenuOpenHandler = (val) => this.setState({ isUserMenuOpen: val })
+
+    render() {
+        return <HeaderContent
+            {...this.props}
+            {...this.state}
+            redirect={this.redirect}
+            userMenuOpen={this.userMenuOpenHandler}
         />
-    )
-
+    }
 }
 
-Header.propTypes = {
-    isDrawer: PropTypes.bool.isRequired,
-    isAuthenticated: PropTypes.bool.isRequired,
-    isNotify: PropTypes.bool.isRequired,
-    isNightMode: PropTypes.bool.isRequired,
-    isNotFound: PropTypes.bool.isRequired,
-    isLoading: PropTypes.bool.isRequired,
-    notifications: PropTypes.arrayOf(
-        PropTypes.shape({
-            date: PropTypes.number.isRequired,
-            text: PropTypes.string.isRequired
-        })
-    ).isRequired,
-    avatar: PropTypes.string.isRequired,
-    history: PropTypes.any,
-    mode: PropTypes.string.isRequired,
-    toggleNotFound: PropTypes.func.isRequired,
-    toggleNotify: PropTypes.func.isRequired,
-    createFlashMessage: PropTypes.func.isRequired
-}
 const mapStateToProps = (state, ownProps) => ({
     isDrawer: state.uiSwitchers.isDrawer,
     isAuthenticated: state.authentication.isAuthenticated,
     isNotify: state.notifications.isNotify,
     isNightMode: state.uiSwitchers.isNightMode,
     isNotFound: state.uiSwitchers.isNotFound,
-    isLoading: state.uiSwitchers.isLoading,
     notifications: state.notifications.notificationsList,
     avatar: state.authentication.avatar,
     mode: ownProps.location.pathname.split('/')[1] || 'Feed',
     query: ownProps.match.params.query || null,
-    history: ownProps.history
+    history: ownProps.history,
 })
+
 const mapDispatchToProps = dispatch => {
     return {
-        toggleNotFound: (mode) => dispatch(toggleNotFound(mode)),
-        toggleNightMode: (mode) => dispatch(toggleNightMode(mode)),
-        toggleDrawer: (mode) => dispatch(toggleDrawer(mode)),
-        toggleNotify: (mode) => dispatch(toggleNotify(mode)),
+        switchNotFound: (mode) => dispatch(switchNotFound(mode)),
+        switchNightMode: (mode) => dispatch(switchNightMode(mode)),
+        switchDrawer: (mode) => dispatch(switchDrawer(mode)),
+        switchNotify: (mode) => dispatch(switchNotify(mode)),
         createFlashMessage: (text) => dispatch(createFlashMessage(text)),
         logoutUser: () => dispatch(logoutUser())
     }

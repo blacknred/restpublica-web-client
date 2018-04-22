@@ -33,7 +33,7 @@ const notifications = (state = initialState(), action) => {
                     }
                 ]
             }
-        case constants.TOGGLE_NOTIFY:
+        case constants.SWITCH_NOTIFY:
             return {
                 ...state,
                 isNotify: action.mode,              

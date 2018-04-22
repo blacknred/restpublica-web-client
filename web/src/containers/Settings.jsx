@@ -5,11 +5,11 @@ import { Switch, Route } from 'react-router-dom'
 
 import { getUserProfile, login, userUpdate } from '../api'
 import {
-    updateUser, createFlashMessage, toggleNightMode, toggleLoader,
-    toggleNotify, toggleAutoGifs, toggleFeedOneColumn, logoutUser
+    updateUser, createFlashMessage, switchNightMode, switchLoader,
+    switchNotify, switchAutoGifs, switchFeedOneColumn, logoutUser
 } from '../actions'
-import SettingsProfile from '../components/SettingsProfile'
-import SettingsApp from '../components/SettingsApp'
+import ProfileSettings from '../components/SettingsProfile'
+import AppSettings from '../components/SettingsApp'
 
 class Settings extends PureComponent {
     constructor(props) {
@@ -50,11 +50,11 @@ class Settings extends PureComponent {
         isFeedOneColumn: PropTypes.bool.isRequired,
         update: PropTypes.func.isRequired,
         createMessage: PropTypes.func.isRequired,
-        toggleNightMode: PropTypes.func.isRequired,
-        toggleNotify: PropTypes.func.isRequired,
-        toggleLoader: PropTypes.func.isRequired,
-        toggleAutoGifs: PropTypes.func.isRequired,
-        toggleFeedOneColumn: PropTypes.func.isRequired,
+        switchNightMode: PropTypes.func.isRequired,
+        switchNotify: PropTypes.func.isRequired,
+        switchLoader: PropTypes.func.isRequired,
+        switchAutoGifs: PropTypes.func.isRequired,
+        switchFeedOneColumn: PropTypes.func.isRequired,
         logoutUser: PropTypes.func.isRequired
     }
     showDialogHandler = (target) => {
@@ -67,7 +67,7 @@ class Settings extends PureComponent {
         })
     }
     getProfileHandler = async () => {
-        this.props.toggleLoader(true)
+        this.props.switchLoader(true)
         const res = await getUserProfile()
         if (!res.status) {
             this.props.createMessage(res)
@@ -83,7 +83,7 @@ class Settings extends PureComponent {
                 }
             }
         })
-        this.props.toggleLoader(false)
+        this.props.switchLoader(false)
     }
     updateProfileValueHandler = async (option, value) => {
         if (value === this.state.profile.values[option]) {
@@ -261,7 +261,7 @@ class Settings extends PureComponent {
             }
         })
         window.sessionStorage.setItem('newPasswordEmailConfirmationCode', confirmationCode)
-        // send mail with code on this.state.profile.fields.email
+        //TODO: send mail with code on this.state.profile.fields.email
     }
     updateEmailConfirmationCodeHandler = (event) => {
         const value = event.target.value
@@ -314,14 +314,13 @@ class Settings extends PureComponent {
         this.showDialogHandler('isChangePasswordDialogOpen')
     }
     
-    componentDidMount() {
-        console.log('settings is mounted')
+    componentWillMount() {
         this.getProfileHandler();
     }
 
     render() {
-        const settingsProfile =
-            <SettingsProfile
+        const profileSettings =
+            <ProfileSettings
                 {...this.state.profile}
                 updateValue={this.updateProfileValueHandler}
                 updateAvatar={this.updateProfileAvatarHandler}
@@ -333,8 +332,8 @@ class Settings extends PureComponent {
                 sendNewPasswordEmailConfirmation={this.sendProfileNewPasswordEmailConfirmationHandler}
                 updateEmailConfirmationCode={this.updateEmailConfirmationCodeHandler}
             />
-        const settingsApp =
-            <SettingsApp
+        const appSettings =
+            <AppSettings
                 {...this.props}
                 feed_rand={this.state.profile.values.feed_rand}
                 email_notify={this.state.profile.values.email_notify}
@@ -342,12 +341,13 @@ class Settings extends PureComponent {
             />
         return (
             <Switch>
-                <Route path='/settings/profile' render={() => settingsProfile} />
+                <Route path='/settings/profile' render={() => profileSettings} />
+                <Route path='/settings/app' render={() => appSettings} />
                 <Route render={() => (
-                    <div>
-                        {settingsApp}
-                        {settingsProfile}
-                    </div>
+                    <span>
+                        {appSettings}
+                        {profileSettings}
+                    </span>
                 )} />
             </Switch>
         )
@@ -365,11 +365,11 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = dispatch => ({
     update: (profileData) => dispatch(updateUser(profileData)),
     createMessage: (text) => dispatch(createFlashMessage(text)),
-    toggleNightMode: (mode) => dispatch(toggleNightMode(mode)),
-    toggleNotify: (mode) => dispatch(toggleNotify(mode)),
-    toggleLoader: (mode) => dispatch(toggleLoader(mode)),
-    toggleAutoGifs: (mode) => dispatch(toggleAutoGifs(mode)),
-    toggleFeedOneColumn: (mode) => dispatch(toggleFeedOneColumn(mode)),
+    switchNightMode: (mode) => dispatch(switchNightMode(mode)),
+    switchNotify: (mode) => dispatch(switchNotify(mode)),
+    switchLoader: (mode) => dispatch(switchLoader(mode)),
+    switchAutoGifs: (mode) => dispatch(switchAutoGifs(mode)),
+    switchFeedOneColumn: (mode) => dispatch(switchFeedOneColumn(mode)),
     logoutUser: () => dispatch(logoutUser())
 })
 export default connect(mapStateToProps, mapDispatchToProps)(Settings)

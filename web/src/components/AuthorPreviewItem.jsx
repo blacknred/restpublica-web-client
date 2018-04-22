@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Avatar from 'material-ui/Avatar';
-import FlatButton from 'material-ui/FlatButton';
+import Button from 'material-ui/Button';
 import { GridTile } from 'material-ui/GridList';
 
 const styles = {
@@ -38,14 +38,14 @@ const AuthorPreviewItem = ({ author, isSubscriptionAllowed, removeSubscription, 
             {
                 !isSubscriptionAllowed ? null :
                     author.my_subscription_id !== null ?
-                        <FlatButton
+                        <Button
                             secondary={true}
                             label='Unfollow'
                             onClick={() => {
                                 removeSubscription(author.my_subscription_id, author.username)
                             }} />
                         :
-                        <FlatButton
+                        <Button
                             secondary={true}
                             label='Follow'
                             onClick={() => {

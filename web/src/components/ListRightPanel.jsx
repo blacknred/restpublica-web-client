@@ -1,32 +1,39 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import ScrollToTop from 'react-scroll-up';
-import NavidationArrowUpwardIcon from 'material-ui/svg-icons/navigation/arrow-upward';
+
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import IconButton from 'material-ui/IconButton';
+import { withStyles } from 'material-ui/styles';
 
 const styles = {
-    optionsRightPanel: {
+    panel: {
         position: 'fixed',
         marginLeft: '3em',
         display: 'flex',
         flexDirection: 'column',
     },
-    backToTop: {
+    top: {
         position: 'static'
     }
 }
 
-const ListRightPanel = () => {
+const ListRightPanel = ({ classes }) => {
     return (
-        <span style={styles.optionsRightPanel} >
+        <span className={classes.panel} >
             <ScrollToTop
                 showUnder={460}
-                style={styles.backToTop}>
+                className={classes.top}>
                 <IconButton>
-                    <NavidationArrowUpwardIcon />
+                    <ArrowUpwardIcon />
                 </IconButton>
             </ScrollToTop>
         </span>
     )
 }
 
-export default ListRightPanel
+ListRightPanel.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(ListRightPanel)

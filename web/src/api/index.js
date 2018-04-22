@@ -1,15 +1,16 @@
 import axios from 'axios';
 import asyncMddlwr from './asyncMiddleware'
 
-axios.defaults.baseURL = 'http://localhost:3003' || process.env.API_HOST;
-axios.defaults.validateStatus = status => status >= 200 && status < 429;
 const GIPHY_URL = encodeURI('https://api.giphy.com/v1/gifs/random' +
     '?api_key=dc6zaTOxFJmzC&tag=space&rating=pg-13');
 const FEED_RAND = window.localStorage.feedrand || 1;
-const y = window.localStorage.token
+const TOKEN = window.localStorage.token
+
+axios.defaults.baseURL = 'http://localhost:3003' || process.env.API_HOST;
+axios.defaults.validateStatus = status => status >= 200 && status < 429;
 const instance = axios.create({
-    timeout: 10000,
-    headers: { 'Authorization': `Bearer ${y}` }
+    timeout: 15000,
+    headers: { 'Authorization': `Bearer ${TOKEN || window.localStorage.token}` }
 });
 // axios.interceptors.request.use(req => console.log(req))
 // instance.interceptors.response.use(res => console.log(res))

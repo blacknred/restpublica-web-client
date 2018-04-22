@@ -1,39 +1,46 @@
 import React from 'react';
-import FlatButton from 'material-ui/FlatButton';
-import SocialSentimentDissatisfiedIcon from 'material-ui/svg-icons/social/sentiment-dissatisfied';
+import PropTypes from 'prop-types';
+
+import { withStyles } from 'material-ui/styles';
+import Button from 'material-ui/Button';
+import Typography from 'material-ui/Typography';
+import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
+import grey from 'material-ui/colors/grey';
 
 const styles = {
     container: {
-        color: '#747474',
+        color: grey[500],
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',
-        position: 'fixed',
-        left: 0,
-        top: '30%',
-        right: 0
+        justifyContent: 'center',
+        height: '100vh'
     },
     icon: {
-        width: '7em',
-        height: '7em',
-        color: 'rgb(228, 228, 228)'
+        width: '6em',
+        height: '6em',
+        color: grey[300]
     }
 }
 
-const NotFound = () => (
-    <div style={styles.container}>
-        <SocialSentimentDissatisfiedIcon style={styles.icon} />
-        <h1>
-            <span>404 Page Not Found</span>
-        </h1>
-        <p>
+const NotFound = ({ classes }) => (
+    <div className={classes.container}>
+        <SentimentDissatisfiedIcon className={classes.icon} />
+        <br /><br />
+        <Typography variant="display1">
+            404 Page Not Found
+        </Typography>
+        <br />
+        <Typography variant="subheading">
             There is something wrong with your url.
-        </p>
-        <FlatButton
-            secondary={true}
-            label={<a href='/'>Return Home</a>}
-        />
+        </Typography>
+        <br />
+        <Button color="inherit" href='/' >Return Home</Button>
     </div>
 )
 
-export default NotFound
+NotFound.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(NotFound)

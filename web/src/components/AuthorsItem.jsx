@@ -3,13 +3,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Avatar from 'material-ui/Avatar';
-import FlatButton from 'material-ui/FlatButton';
+import Button from 'material-ui/Button';
 import { GridList } from 'material-ui/GridList';
 import { ListItem } from 'material-ui/List';
-import { grey100 } from 'material-ui/styles/colors';
+import { grey100 } from 'material-ui/colors';
 
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import NavigationChevronRightIcon from 'material-ui/svg-icons/navigation/chevron-right';
+import NavigationChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import PostItem from './PostItem'
 
@@ -72,14 +71,14 @@ const AuthorsItem = ({ author, isNightMode, isAuthenticated, removeSubscription,
                 {
                     !isAuthenticated ? null :
                         author.my_subscription_id !== null ?
-                            <FlatButton
+                            <Button
                                 secondary={true}
                                 label='Unfollow'
                                 onClick={() => {
                                     removeSubscription(author.my_subscription_id, author.username)
                                 }} />
                             :
-                            <FlatButton
+                            <Button
                                 secondary={true}
                                 label='Follow'
                                 onClick={() => {
@@ -105,14 +104,14 @@ const AuthorsItem = ({ author, isNightMode, isAuthenticated, removeSubscription,
                 }
                 <div style={styles.showMore}>
                     <Link to={`/u/${author.username}/posts`}>
-                        <FloatingActionButton
+                        <Button
                             mini={true}
                             style={{ color: '#aaa' }}
                             backgroundColor={grey100}
                         //iconStyle={{color: 'red'}}
                         >
                             <NavigationChevronRightIcon />
-                        </FloatingActionButton>
+                        </Button>
                     </Link>
                 </div>
             </GridList>

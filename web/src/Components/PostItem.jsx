@@ -4,11 +4,11 @@ import moment from 'moment'
 
 import { GridList, GridTile } from 'material-ui/GridList';
 import { Card, CardMedia, CardTitle, CardText } from 'material-ui/Card';
-import { grey400, darkBlack, lightBlack } from 'material-ui/styles/colors';
+import { grey400, darkBlack, lightBlack } from 'material-ui/colors';
 import IconButton from 'material-ui/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/Menu/MenuItem';
 
 const styles = {
     card: {
@@ -53,8 +53,8 @@ const PostCard = ({ post, index, isFullAccess }) => {
         </IconButton>
     );
 
-    const rightIconMenu = (
-        <IconMenu iconButtonElement={iconButtonElement}>
+    const rightMenu = (
+        <Menu iconButtonElement={iconButtonElement}>
             {
                 !isFullAccess ?
                     <MenuItem>Repost</MenuItem>
@@ -64,7 +64,7 @@ const PostCard = ({ post, index, isFullAccess }) => {
                         <MenuItem>Delete</MenuItem>
                     </div>
             }
-        </IconMenu>
+        </Menu>
     );
 
     return (
@@ -100,7 +100,7 @@ const PostCard = ({ post, index, isFullAccess }) => {
             </Link>
             <CardText style={styles.cardText}>
                 <b>{post.description}</b>
-                {rightIconMenu}
+                {rightMenu}
             </CardText>
             <CardTitle
                 style={styles.cardTitle}

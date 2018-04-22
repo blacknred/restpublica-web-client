@@ -1,4 +1,9 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types';
+import { withRouter, Link } from 'react-router-dom';
+
+import NewCommunityButton from '../components/NewCommunityButton'
 
 const styles = {
     container: {
@@ -17,12 +22,23 @@ class Communities extends PureComponent {
     }
     render() {
         return (
-            <div style={styles.container}>
-                Communities
-            </div>
+            <span>
+                <NewCommunityButton />
+                <div className='container'>
+                    Communities
+                </div>
+            </span>
         )
     }
 
 }
 
-export default Communities;
+const mapStateToProps = (state, ownProps) => ({
+    postable: ownProps.postable || null
+})
+
+const mapDispatchToProps = dispatch => ({
+
+})
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Communities))

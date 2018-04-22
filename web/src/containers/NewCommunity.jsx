@@ -2,9 +2,9 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 
-import NewPostForm from '../components/NewPostForm'
+import NewCommunityForm from '../components/NewCommunityForm'
 
-class NewPost extends PureComponent {
+class NewCommunity extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -23,7 +23,7 @@ class NewPost extends PureComponent {
 
     render() {
         return (
-            <NewPostForm
+            <NewCommunityForm
                 {...this.state}
                 modalOpen={this.modalOpenHandler}
             />
@@ -38,4 +38,4 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = dispatch => ({
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewPost)
+export default connect(mapStateToProps, mapDispatchToProps)(NewCommunity)

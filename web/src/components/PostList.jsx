@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroller'
-import CircularProgress from 'material-ui/CircularProgress';
+
+import Slide from 'material-ui/transitions/Slide';
+import { CircularProgress } from 'material-ui/Progress';
 import NewPostButton from '../components/NewPostButton'
-import { CSSTransitionGroup } from 'react-transition-group'
-// import { GridList } from 'material-ui/GridList';
 // import PostItem from './PostItem'
-import PostItem2 from './PostItem2'
+import PostItem from './PostItem2'
 import ListRightPanel from './ListRightPanel'
 
 const styles = {
     loader: {
         textAlign: 'center',
         display: 'block',
-        width: '100%'
+        //width: '100%'
     },
     postsContainer: {
         display: 'flex',
@@ -30,65 +30,59 @@ const styles = {
 
 const PostList = ({ mode, postable, isFullAccess, empty, hasMore, deletePost,
     expandPost, updatePost, posts, getPosts, emptyMessage, isAutoGifs,
-    isFeedOneColumn, toggleModalOpen }) => {
+    isFeedOneColumn }) => {
     const items = posts.map((post, index) =>
-        mode === 'feed' && <PostItem2
-            key={index}
-            post={post}
-            isFullAccess={isFullAccess}
-            expandPost={expandPost}
-            updatePost={updatePost}
-            deletePost={deletePost}
-            isAutoGifs={isAutoGifs}
-        />)
+        mode === 'feed' ?
+            <PostItem
+                key={index}
+                post={post}
+                isFullAccess={isFullAccess}
+                expandPost={expandPost}
+                updatePost={updatePost}
+                deletePost={deletePost}
+                isAutoGifs={isAutoGifs}
+            /> :
+            // <PostItem
+            //     key={index}
+            //     post={post}
+            //     index={index}
+            //     isFullAccess={isFullAccess}
+            //     isAuthenticated={isAuthenticated}
+            // />)
+            < div > {index}</div>
+    )
     return (
         <span>
-            {postable && <NewPostButton toggleModalOpen={toggleModalOpen} />}
-            <div className='container'>
-
+            {postable && <NewPostButton />}
+            <div >
                 {empty && emptyMessage()}
                 {
                     !empty &&
-                    <InfiniteScroll
-                        // key={reload}
-                        // ref={(scroll) => { this.scroll = scroll; }}
-                        pageStart={0}
-                        initialLoad={true}
-                        loadMore={getPosts}
-                        hasMore={hasMore}
-                        loader={
-                            posts.length ?
-                            <CircularProgress key={798798} style={styles.loader} />
-                            : null
-                        }
-                        threshold={400} >
-                        <div style={styles.postsContainer}>
-                            <CSSTransitionGroup
-                                style={{ ...styles.postsGrid, flexDirection: isFeedOneColumn ? 'row' : 'column' }}
-                                transitionName='fadeinup'
-                                transitionEnterTimeout={500}
-                                transitionLeaveTimeout={400} >
-                                {items}
-                            </CSSTransitionGroup>
-                        </div>
-                        {posts.length > 20 && <ListRightPanel />}
-
-                        {/* <GridList
-                                        cellHeight={'auto'}
-                                        cols={1}
-                                        padding={12}>
-                                        {
-                                            posts.map((post, index) =>
-                                                <PostItem
-                                                    key={index}
-                                                    post={post}
-                                                    index={index}
-                                                    isFullAccess={isFullAccess}
-                                                    isAuthenticated={isAuthenticated}
-                                                />)
-                                        }
-                                    </GridList> */}
-                    </InfiniteScroll>
+                    <Slide direction="up" in={hasMore && !empty} mountOnEnter unmountOnExit>
+                        <InfiniteScroll
+                            // key={reload}
+                            // ref={(scroll) => { this.scroll = scroll; }}
+                            pageStart={0}
+                            initialLoad={true}
+                            loadMore={getPosts}
+                            hasMore={hasMore}
+                            loader={
+                                posts.length ?
+                                    <CircularProgress
+                                        key={'loader'}
+                                        style={styles.loader} />
+                                    : null
+                            }
+                            threshold={400}
+                        >
+                            <div style={styles.postsContainer}>
+                                <div style={{ ...styles.postsGrid, flexDirection: isFeedOneColumn ? 'row' : 'column' }} >
+                                    {items}
+                                </div>
+                                {posts.length > 20 && <ListRightPanel />}
+                            </div>
+                        </InfiniteScroll>
+                    </Slide>
                 }
             </div>
         </span>
@@ -107,7 +101,6 @@ PostList.propTypes = {
     updatePost: PropTypes.func.isRequired,
     deletePost: PropTypes.func.isRequired,
     emptyMessage: PropTypes.func.isRequired,
-    toggleModalOpen: PropTypes.func.isRequired,
 }
 
 export default PostList

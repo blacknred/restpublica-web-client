@@ -3,9 +3,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Avatar from 'material-ui/Avatar';
-import RaisedButton from 'material-ui/RaisedButton'
+import Button from 'material-ui/Button'
 import Chip from 'material-ui/Chip';
-import { grey300, grey400, grey600, grey900 } from 'material-ui/styles/colors';
+import { grey300, grey400, grey600, grey900 } from 'material-ui/colors';
 
 const styles = {
     userBlock: {
@@ -41,19 +41,19 @@ const AuthorContent = ({ author, counts, isAuthenticated, isMine,
     const userBlockButton = (
         !isAuthenticated ? null :
             isMine ?
-                <RaisedButton
+                <Button
                     primary={true}
                     style={styles.button}
                     label={<Link to='/settings/profile'>Edit profile</Link>} />
                 :
                 author.mySubscriptionId ?
-                    <RaisedButton
+                    <Button
                         secondary={true}
                         style={styles.button}
                         label='Unfollow'
                         onClick={() => removeSubscription(author.mySubscriptionId, author.username)} />
                     :
-                    <RaisedButton
+                    <Button
                         primary={true}
                         style={styles.button}
                         label='Follow'

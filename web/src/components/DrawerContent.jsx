@@ -1,40 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import Drawer from 'material-ui/Drawer';
-import { List, ListItem } from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
-import Divider from 'material-ui/Divider';
-import muiThemeable from 'material-ui/styles/muiThemeable';
-import ActionDashboardIcon from 'material-ui/svg-icons/action/dashboard';
-import ActionExploreIcon from 'material-ui/svg-icons/action/explore';
-import SocialPersonIcon from 'material-ui/svg-icons/social/person';
-import ActionSettingsIcon from 'material-ui/svg-icons/action/settings';
-import ActionHelpIcon from 'material-ui/svg-icons/action/help';
-import ActionFeedbackIcon from 'material-ui/svg-icons/action/feedback';
-import ActionViewColumnIcon from 'material-ui/svg-icons/action/view-column';
-import SocialNotificationsIcon from 'material-ui/svg-icons/social/notifications';
 
-const styles = {
+import { withStyles } from 'material-ui/styles';
+import Drawer from 'material-ui/Drawer';
+import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import Divider from 'material-ui/Divider';
+import Typography from 'material-ui/Typography';
+import ActionDashboardIcon from '@material-ui/icons/Home';
+import ActionExploreIcon from '@material-ui/icons/Explore';
+import SocialPersonIcon from '@material-ui/icons/Person';
+import ActionSettingsIcon from '@material-ui/icons/Settings';
+import ActionViewColumnIcon from '@material-ui/icons/ViewColumn';
+import SocialNotificationsIcon from '@material-ui/icons/Notifications';
+
+const styles = theme => ({
     drawer: {
-        boxShadow: 'none',
-        padding: '5em 0 1em 0',
-        justifyContent: 'space-between',
         width: '220px',
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100%',
-        fontWeight: 'bold',
-        transition: 'all 400ms',
         animation: 'leftOff 0.5s',
+        fontSize: '0.98em',
+        borderWidth: 0,
+        fontWeight: '700'
+    },
+    link: {
+        color: theme.palette.text.secondary
+    },
+    activeLink: {
+        color: theme.palette.primary.main,
     },
     listItem: {
-        marginLeft: '5px',
-        fontSize: '15px',
+        paddingLeft: '28px',
     },
-    listItemSecondary: {
-        marginLeft: '5px',
-        fontSize: '14px',
-        opacity: '0.4'
+    a: {
+        textDecoration: 'none',
+        fontWeight: '100',
+        color: 'inherit'
     },
     footer: {
         flex: 1,
@@ -42,157 +41,180 @@ const styles = {
         flexDirection: 'column-reverse',
         padding: '1em 2em',
         fontSize: '13px',
-        lineHeight: '18px',
-        opacity: '0.6'
+        opacity: '0.5',
+        fontWeight: '100',
+        lineHeight: '1.5em'
     }
-}
+})
 
-const DrawerContent = ({ pathname, navigate, isDrawer, username, muiTheme }) => {
+const DrawerContent = ({ pathname, navigate, isDrawer, username, classes }) => {
+
+    const primaryNavList = (
+        <List component="nav">
+            <ListItem
+                button
+                classes={{ root: classes.listItem }}
+                onClick={() => navigate('/')}>
+                <ListItemIcon
+                    className={pathname === '/' ? classes.activeLink : classes.link}>
+                    <ActionDashboardIcon />
+                </ListItemIcon>
+                <ListItemText
+                    primary='Feed'
+                    disableTypography={true}
+                    className={pathname === '/' ? classes.activeLink : classes.link}
+                />
+            </ListItem>
+            <ListItem
+                button
+                classes={{ root: classes.listItem }}
+                onClick={() => navigate('/trending')}>
+                <ListItemIcon
+                    className={pathname === '/trending' ? classes.activeLink : classes.link}>
+                    <ActionExploreIcon />
+                </ListItemIcon>
+                <ListItemText
+                    primary="Trending"
+                    disableTypography={true}
+                    className={pathname === '/trending' ? classes.activeLink : classes.link}
+                />
+            </ListItem>
+            <ListItem
+                button
+                classes={{ root: classes.listItem }}
+                onClick={() => navigate('/communities')}>
+                <ListItemIcon
+                    className={pathname.match(/^\/communities/) ? classes.activeLink : classes.link}>
+                    <ActionViewColumnIcon />
+                </ListItemIcon>
+                <ListItemText
+                    primary="Communities"
+                    disableTypography={true}
+                    className={pathname.match(/^\/communities/) ? classes.activeLink : classes.link}
+                />
+            </ListItem>
+            <ListItem
+                button
+                classes={{ root: classes.listItem }}
+                onClick={() => navigate('/profile')}>
+                <ListItemIcon
+                    className={pathname === '/profile' ? classes.activeLink : classes.link}>
+                    <SocialPersonIcon />
+                </ListItemIcon>
+                <ListItemText
+                    primary="Profile"
+                    disableTypography={true}
+                    className={pathname === '/profile' ? classes.activeLink : classes.link}
+                />
+            </ListItem>
+            <ListItem
+                button
+                classes={{ root: classes.listItem }}
+                onClick={() => navigate('/activity')}>
+                <ListItemIcon
+                    className={pathname.match(/^\/activity/) ? classes.activeLink : classes.link}>
+                    <SocialNotificationsIcon />
+                </ListItemIcon>
+                <ListItemText
+                    primary="Activity"
+                    disableTypography={true}
+                    className={pathname.match(/^\/activity/) ? classes.activeLink : classes.link}
+                />
+            </ListItem>
+            <ListItem
+                button
+                classes={{ root: classes.listItem }}
+                onClick={() => navigate('/settings')}>
+                <ListItemIcon
+                    className={pathname.match(/^\/settings/) ? classes.activeLink : classes.link}>
+                    <ActionSettingsIcon />
+                </ListItemIcon>
+                <ListItemText
+                    primary="Settings"
+                    disableTypography={true}
+                    className={pathname.match(/^\/settings/) ? classes.activeLink : classes.link}
+                />
+            </ListItem>
+        </List>
+    )
+
+    const secondaryNavList = (
+        <List component="nav">
+            <a
+                href="https://github.com/blacknred/restpublica"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.a}>
+                <ListItem
+                    button
+                    className={classes.listItem}>
+                    <ListItemText
+                        primary='Help'
+                        disableTypography={true}
+                        className={classes.link} />
+                </ListItem>
+            </a>
+            <a
+                href="https://github.com/blacknred/restpublica/issues/new"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.a}>
+                <ListItem
+                    button
+                    className={classes.listItem}>
+                    <ListItemText
+                        primary='Send feedback'
+                        disableTypography={true}
+                        className={classes.link} />
+                </ListItem>
+            </a>
+        </List>
+    )
+
+    const footerLinks = (
+        <span className={classes.footer}>
+            <a
+                href="https://github.com/blacknred/restpublica"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.a}>
+                Conditions of use
+            </a>
+            <a
+                href="/api"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.a}>
+                API Developers
+            </a>
+            <a
+                href="https://github.com/blacknred/restpublica/issues/new"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.a}>
+                Send feedback
+            </a>
+            <span> © {(new Date()).getFullYear()} Restpublica, LLC </span>
+        </span>
+    )
+    
     return (
         <Drawer
+            variant="persistent"
+            anchor={'left'}
             open={isDrawer}
-            containerStyle={styles.drawer}>
-            <List>
-                <ListItem
-                    key={1}
-                    primaryText='Feed'
-                    onClick={() => navigate('/')}
-                    innerDivStyle={{
-                        ...styles.listItem,
-                        color: pathname === '/' ?
-                            muiTheme.palette.primary1Color :
-                            muiTheme.palette.secondaryTextColor
-                    }}
-                    leftIcon={
-                        <ActionDashboardIcon
-                            color={pathname === '/' ?
-                                muiTheme.palette.primary1Color :
-                                muiTheme.palette.secondaryTextColor}
-                        />
-                    }
-                />
-                <ListItem
-                    key={2}
-                    primaryText="Trending"
-                    onClick={() => navigate('/trending')}
-                    innerDivStyle={{
-                        ...styles.listItem,
-                        color: pathname === '/trending' ?
-                            muiTheme.palette.primary1Color :
-                            muiTheme.palette.secondaryTextColor
-                    }}
-                    leftIcon={
-                        <ActionExploreIcon
-                            color={pathname === '/trending' ?
-                                muiTheme.palette.primary1Color :
-                                muiTheme.palette.secondaryTextColor}
-                        />
-                    }
-                />
-                <ListItem
-                    key={3}
-                    primaryText="Communities"
-                    onClick={() => navigate('/communities')}
-                    innerDivStyle={{
-                        ...styles.listItem,
-                        color: pathname.match(/^\/communities/) ?
-                            muiTheme.palette.primary1Color :
-                            muiTheme.palette.secondaryTextColor
-                    }}
-                    leftIcon={
-                        <ActionViewColumnIcon
-                            color={pathname.match(/^\/communities/) ?
-                                muiTheme.palette.primary1Color :
-                                muiTheme.palette.secondaryTextColor}
-                        />
-                    }
-                />
-                <ListItem
-                    key={4}
-                    primaryText="Profile"
-                    onClick={() => navigate('/profile')}
-                    innerDivStyle={{
-                        ...styles.listItem,
-                        color: pathname.includes(username) ?
-                            muiTheme.palette.primary1Color :
-                            muiTheme.palette.secondaryTextColor
-                    }}
-                    leftIcon={
-                        <SocialPersonIcon
-                            color={pathname.includes(username) ?
-                                muiTheme.palette.primary1Color :
-                                muiTheme.palette.secondaryTextColor}
-                        />
-                    }
-                />
-                <ListItem
-                    key={5}
-                    primaryText="Activity"
-                    onClick={() => navigate('/activity')}
-                    innerDivStyle={{
-                        ...styles.listItem,
-                        color: pathname.match(/^\/activity/) ?
-                            muiTheme.palette.primary1Color :
-                            muiTheme.palette.secondaryTextColor
-                    }}
-                    leftIcon={
-                        <SocialNotificationsIcon
-                            color={pathname.match(/^\/activity/) ?
-                                muiTheme.palette.primary1Color :
-                                muiTheme.palette.secondaryTextColor}
-                        />
-                    }
-                />
-                <ListItem
-                    key={6}
-                    primaryText="Settings"
-                    onClick={() => navigate('/settings')}
-                    innerDivStyle={{
-                        ...styles.listItem,
-                        color: pathname.match(/^\/settings/) ?
-                            muiTheme.palette.primary1Color :
-                            muiTheme.palette.secondaryTextColor
-                    }}
-                    leftIcon={
-                        <ActionSettingsIcon
-                            color={pathname.match(/^\/settings/) ?
-                                muiTheme.palette.primary1Color :
-                                muiTheme.palette.secondaryTextColor}
-                        />
-                    }
-                />
-            </List>
-            <Divider />
-            <List>
-                <ListItem
-                    key={8}
-                    innerDivStyle={styles.listItemSecondary}
-                    leftIcon={<ActionHelpIcon color={muiTheme.palette.secondaryTextColor} />}
-                    primaryText={
-                        <a href="https://github.com/blacknred/restpublica"
-                            target="_blank" rel="noopener noreferrer">Help</a>
-                    }
-                />
-                <ListItem
-                    key={9}
-                    innerDivStyle={styles.listItemSecondary}
-                    leftIcon={<ActionFeedbackIcon color={muiTheme.palette.secondaryTextColor} />}
-                    primaryText={<a
-                        href="https://github.com/blacknred/restpublica/issues/new"
-                        target="_blank"
-                        rel="noopener noreferrer">Send feedback</a>}
-
-                />
-            </List>
-            <Subheader style={styles.footer}>
-                <a href="https://github.com/blacknred/restpublica"
-                    target="_blank" rel="noopener noreferrer">Conditions of use</a>
-                <a href="/api" target="_blank" rel="noopener noreferrer">API Developers</a>
-                <a href="https://github.com/blacknred/restpublica/issues/new"
-                    target="_blank" rel="noopener noreferrer">Send feedback</a>
-                <span> © {(new Date()).getFullYear()} Restpublica, LLC </span>
-            </Subheader>
-        </Drawer>
+            classes={{ paper: classes.drawer }}
+        >
+            <br />
+            <br />
+            <br />
+            <br />
+            {primaryNavList}
+            <Divider light={true} />
+            {secondaryNavList}
+            {footerLinks}
+            <br />
+        </Drawer >
     )
 }
 
@@ -201,6 +223,7 @@ DrawerContent.propTypes = {
     navigate: PropTypes.func.isRequired,
     pathname: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
+    classes: PropTypes.object.isRequired,
 }
 
-export default muiThemeable()(DrawerContent);
+export default withStyles(styles)(DrawerContent);

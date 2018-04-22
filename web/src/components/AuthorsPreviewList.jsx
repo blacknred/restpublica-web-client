@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { GridList } from 'material-ui/GridList';
-import CircularProgress from 'material-ui/CircularProgress';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import NavigationChevronRightIcon from 'material-ui/svg-icons/navigation/chevron-right';
-import { grey100 } from 'material-ui/styles/colors';
+import { CircularProgress } from 'material-ui/Progress';
+import Button from 'material-ui/Button';
+import NavigationChevronRightIcon from '@material-ui/icons/ChevronRight';
+import { grey100 } from 'material-ui/colors';
 
 import AuthorPreviewItem from './AuthorPreviewItem';
 
@@ -63,11 +63,11 @@ const AuthorsPreviewList = ({ authors, isNightMode, isAuthenticated, createSubsc
                     </GridList>
             }
             <div style={styles.showMore}>
-                <FloatingActionButton
+                <Button
                     mini={true}
                     backgroundColor={grey100}>
                     <NavigationChevronRightIcon/>
-                </FloatingActionButton>
+                </Button>
             </div>
         </div>
     )

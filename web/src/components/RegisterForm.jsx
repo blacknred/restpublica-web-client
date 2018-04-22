@@ -1,66 +1,81 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom';
-import TextField from 'material-ui/TextField';
-import FlatButton from 'material-ui/FlatButton';
+import { Link } from 'react-router-dom'
 
-const RegisterForm = ({ submitHandler, fields, errors, inputChange }) => {
+import TextField from 'material-ui/TextField';
+import Button from 'material-ui/Button';
+import { ListItem } from 'material-ui/List';
+
+const styles = {
+    a: {
+        textDecoration: 'none',
+    },
+}
+
+const RegisterForm = ({ values, errors, inputChange, submitHandler }) => {
     return (
         <form onSubmit={submitHandler}>
-            <TextField
-                id='username'
-                name='username'
-                value={fields.username}
-                floatingLabelText="Username"
-                hintText="Username Field"
-                onChange={inputChange}
-                errorText={errors.username}
-                fullWidth={true}
-            />
-            <TextField
-                id='fullname'
-                name='fullname'
-                value={fields.fullname}
-                floatingLabelText="Fullname"
-                hintText="Fullname Field"
-                onChange={inputChange}
-                errorText={errors.fullname}
-                fullWidth={true}
-            />
-            <TextField
-                id='email'
-                name='email'
-                type='email'
-                value={fields.email}
-                floatingLabelText="Email"
-                hintText="Email Field"
-                onChange={inputChange}
-                errorText={errors.email}
-                fullWidth={true}
-            />
-            <TextField
-                id='password'
-                name='password'
-                type="password"
-                hintText="Password Field"
-                value={fields.password}
-                floatingLabelText="Password"
-                onChange={inputChange}
-                errorText={errors.password}
-                fullWidth={true}
-            /><br /><br />
-            <FlatButton
-                type='submit'
-                label='Sign up'
-                secondary={true} />
-            <FlatButton label={<Link to='/login'>Need to login?</Link>} />
-            <br /><br />
+            <ListItem>
+                <TextField
+                    label="Username"
+                    key='username'
+                    name='username'
+                    defaultValue={values.username}
+                    fullWidth={true}
+                    error={errors.username !== null}
+                    helperText={errors.username}
+                    onChange={inputChange}
+                />
+            </ListItem>
+            <ListItem>
+                <TextField
+                    label="Fullname"
+                    key='fullname'
+                    name='fullname'
+                    defaultValue={values.fullname}
+                    fullWidth={true}
+                    error={errors.fullname !== null}
+                    helperText={errors.fullname}
+                    onChange={inputChange}
+                />
+            </ListItem>
+            <ListItem>
+                <TextField
+                    label="Email"
+                    key='email'
+                    name='email'
+                    defaultValue={values.email}
+                    fullWidth={true}
+                    error={errors.email !== null}
+                    helperText={errors.email}
+                    onChange={inputChange}
+                />
+            </ListItem>
+            <ListItem>
+                <TextField
+                    label="Password"
+                    key='password'
+                    name='password'
+                    type='password'
+                    fullWidth={true}
+                    defaultValue={values.password}
+                    error={errors.password !== null}
+                    helperText={errors.password}
+                    onChange={inputChange}
+                />
+            </ListItem>
+            <ListItem>
+                <Button type='submit'>Sign up</Button>
+                <Link to='/login' style={styles.a}>
+                    <Button> Already have account?</Button>
+                </Link>
+            </ListItem>
         </form>
     )
 }
 
 RegisterForm.propTypes = {
-    fields: PropTypes.shape({
+    values: PropTypes.shape({
         username: PropTypes.string,
         fullname: PropTypes.string,
         password: PropTypes.string,

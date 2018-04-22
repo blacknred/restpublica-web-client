@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
-import EditIcon from '@material-ui/icons/Edit';
+import ContentAddIcon from '@material-ui/icons/Add';
 
 const styles = {
     button: {
@@ -14,26 +14,26 @@ const styles = {
     }
 }
 
-const NewPostButton = ({ classes }) => {
+const NewCommunityButton = ({ classes }) => {
     return (
         <Link to={{
-            pathname: '/post',
+            pathname: '/community',
             state: { modal: true }
         }} >
             <Button
                 className={classes.button}
                 variant="fab"
                 color="primary">
-                <EditIcon />
+                <ContentAddIcon />
             </Button>
         </Link>
     )
 }
 
-NewPostButton.propTypes = {
+NewCommunityButton.propTypes = {
     classes: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(NewPostButton);
+export default withStyles(styles)(NewCommunityButton);
 
 

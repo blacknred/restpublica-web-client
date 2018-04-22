@@ -7,7 +7,7 @@ import {
     getDashboardPosts, getTrendingPosts,
     getSearchedPosts, getProfilePosts
 } from '../api'
-import { createFlashMessage, toggleLoader, toggleModal } from '../actions'
+import { createFlashMessage, switchLoader } from '../actions'
 import PostList from '../components/PostList'
 
 class Posts extends PureComponent {
@@ -24,14 +24,13 @@ class Posts extends PureComponent {
         mode: PropTypes.oneOf(['feed', 'trending', 'search', 'u']),
         username: PropTypes.string.isRequired,
         query: PropTypes.string,
-        toggleLoader: PropTypes.func.isRequired,
-        toggleModalOpen: PropTypes.func.isRequired,
+        switchLoader: PropTypes.func.isRequired,
         createMessage: PropTypes.func.isRequired
     }
     getPostsHandler = async (page) => {
         const { mode, query, username } = this.props
         let res
-        this.props.toggleLoader(true)
+        this.props.switchLoader(true)
         switch (mode) {
             case 'feed': res = await getDashboardPosts(page)
                 break
@@ -47,13 +46,13 @@ class Posts extends PureComponent {
         if (!res.status) {
             this.setState({ hasMore: false });
             this.props.createMessage(res)
-            this.props.toggleLoader(false)
+            this.props.switchLoader(false)
             return
         }
         // if there are no requested posts at all view empty page 
         if (parseInt(res.data.count, 10) === 0) {
             this.setState({ empty: true, hasMore: false })
-            this.props.toggleLoader(false)
+            this.props.switchLoader(false)
         }
         // enlarge posts arr if there are, block loading if there are not
         if (res.data.posts.length > 0) {
@@ -65,7 +64,7 @@ class Posts extends PureComponent {
         } else {
             this.setState({ hasMore: false });
         }
-        this.props.toggleLoader(false)
+        this.props.switchLoader(false)
         console.log(`page:${page}, count:${res.data.count}, length:${this.state.posts.length}`)
     }
     expandPostHandler = (id) => {
@@ -126,8 +125,7 @@ class Posts extends PureComponent {
     }
 
     render() {
-        const { postable, isAuthenticated, mode, isAutoGifs, isFeedOneColumn,
-            toggleModalOpen } = this.props;
+        const { postable, isAuthenticated, mode, isAutoGifs, isFeedOneColumn } = this.props;
         return <PostList
             postable={postable}
             mode={mode}
@@ -140,7 +138,6 @@ class Posts extends PureComponent {
             updatePost={this.updatePostHandler}
             deletePost={this.deletePostHandler}
             emptyMessage={this.emptyMessage}
-            toggleModalOpen={toggleModalOpen}
         />
     }
 }
@@ -156,9 +153,8 @@ const mapStateToProps = (state, ownProps) => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    toggleLoader: (mode) => dispatch(toggleLoader(mode)),
-    createMessage: (text) => dispatch(createFlashMessage(text)),
-    toggleModalOpen: (mode) => dispatch(toggleModal(mode))
+    switchLoader: (mode) => dispatch(switchLoader(mode)),
+    createMessage: (text) => dispatch(createFlashMessage(text))
 })
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Posts))

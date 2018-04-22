@@ -1,115 +1,130 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Paper from 'material-ui/Paper';
-import { List, ListItem } from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
-import Divider from 'material-ui/Divider';
-import Toggle from 'material-ui/Toggle';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 
-const styles = {
+import Slide from 'material-ui/transitions/Slide';
+import { withStyles } from 'material-ui/styles';
+import ListSubheader from 'material-ui/List/ListSubheader';
+import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
+import { MenuItem } from 'material-ui/Menu';
+import Select from 'material-ui/Select';
+import Switch from 'material-ui/Switch';
+import Paper from 'material-ui/Paper';
+import Divider from 'material-ui/Divider';
+
+const styles = theme => ({
     list: {
         width: '550px',
+        margin: '1em 0',
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
-    selectField: { 
-        width: '10em' 
+    selectField: {
+        width: '6em',
+        marginRight: '1em'
     }
-}
-const SettingsApp = ({ isNightMode, isNotify, isAutoGifs, feed_rand, email_notify,
-    updateValue, isFeedOneColumn, toggleNotify, toggleNightMode, toggleAutoGifs,
-    toggleFeedOneColumn }) => {
+})
+
+const SettingsApp = ({
+    isNightMode, isNotify, isAutoGifs, isFeedOneColumn, classes, updateValue,
+    switchNotify, switchNightMode, switchAutoGifs, switchFeedOneColumn, ...props }) => {
+
+    const uiList = (
+        <List>
+            <ListSubheader>Ui</ListSubheader>
+            <ListItem>
+                <ListItemText
+                    primary="Night mode"
+                    secondary="Switch to dark theme"
+                />
+                <ListItemSecondaryAction>
+                    <Switch
+                        checked={isNightMode}
+                        onChange={() => switchNightMode(!isNightMode)}
+                    />
+                </ListItemSecondaryAction>
+            </ListItem>
+        </List>
+    )
+    const feedList = (
+        <List>
+            <ListSubheader>Feed</ListSubheader>
+            <ListItem>
+                <ListItemText
+                    primary="Optimize columns"
+                    secondary="Adjust the number of columns based on the width of the screen"
+                />
+                <ListItemSecondaryAction>
+                    <Switch
+                        checked={isFeedOneColumn}
+                        onChange={() => switchFeedOneColumn(!isFeedOneColumn)}
+                    />
+                </ListItemSecondaryAction>
+            </ListItem>
+            <ListItem>
+                <ListItemText primary="Autoload gifs" />
+                <ListItemSecondaryAction>
+                    <Switch
+                        checked={isAutoGifs}
+                        onChange={() => switchAutoGifs(!isAutoGifs)}
+                    />
+                </ListItemSecondaryAction>
+            </ListItem>
+            <ListItem>
+                <ListItemText
+                    primary="Randomize feed"
+                    secondary="Number of trending entries in feed"
+                />
+                <ListItemSecondaryAction>
+                    <Select
+                        disableUnderline={true}
+                        className={classes.selectField}
+                        value={parseInt(props.feed_rand, 10)}
+                        onChange={(event) => updateValue('feed_rand', event.target.value)} >
+                        <MenuItem value={0}>None</MenuItem>
+                        <MenuItem value={1}>Small</MenuItem>
+                        <MenuItem value={2}>Medium</MenuItem>
+                        <MenuItem value={3}>A lot</MenuItem>
+                    </Select>
+                </ListItemSecondaryAction>
+            </ListItem>
+        </List>
+    )
+    const notificationsList = (
+        <List>
+            <ListSubheader>Notifications</ListSubheader>
+            <ListItem>
+                <ListItemText primary="Allow push notifications" />
+                <ListItemSecondaryAction>
+                    <Switch
+                        checked={isNotify}
+                        onChange={() => switchNotify(!isNotify)}
+                    />
+                </ListItemSecondaryAction>
+            </ListItem>
+            <ListItem>
+                <ListItemText
+                    primary="Allow email notifications"
+                    secondary="Uses default registration email address"
+                />
+                <ListItemSecondaryAction>
+                    <Switch
+                        checked={props.email_notify}
+                        onChange={(event) =>
+                            updateValue('email_notify', !props.email_notify)}
+                    />
+                </ListItemSecondaryAction>
+            </ListItem>
+        </List>
+    )
     return (
-        <div className='container'>
-            <Paper style={styles.list}>
-                <List>
-                    <Subheader><b>App</b></Subheader>
-                    <ListItem
-                        disabled={true}
-                        primaryText="Night mode"
-                        secondaryText="Use dark theme"
-                        rightToggle={
-                            <Toggle
-                                defaultToggled={isNightMode}
-                                toggled={isNightMode}
-                                onToggle={() => toggleNightMode(!isNightMode)}
-                            />
-                        }
-                    />
-                </List>
+        <Slide direction="up" in={true} mountOnEnter unmountOnExit>
+            <Paper className={classes.list}>
+                {uiList}
                 <Divider />
-                <List>
-                    <Subheader><b>Feed</b></Subheader>
-                    <ListItem
-                        disabled={true}
-                        primaryText="Optimize columns"
-                        secondaryText="Adjust the number of columns based on the width of the screen"
-                        rightToggle={
-                            <Toggle
-                                defaultToggled={isFeedOneColumn}
-                                toggled={isFeedOneColumn}
-                                onToggle={() => toggleFeedOneColumn(!isFeedOneColumn)}
-                            />
-                        }
-                    />
-                    <ListItem
-                        disabled={true}
-                        primaryText="Autoload gifs"
-                        rightToggle={
-                            <Toggle
-                                defaultToggled={isAutoGifs}
-                                toggled={isAutoGifs}
-                                onToggle={() => toggleAutoGifs(!isAutoGifs)}
-                            />
-                        }
-                    />
-                    <ListItem
-                        disabled={true}
-                        primaryText="Randomize feed"
-                        secondaryText="Number of trending entries in feed"
-                        rightAvatar={
-                            <SelectField
-                                value={parseInt(feed_rand, 10)}
-                                style={styles.selectField}
-                                onChange={(event, key, payload) => updateValue('feed_rand', payload)} >
-                                <MenuItem value={0} primaryText="None" />
-                                <MenuItem value={1} primaryText="Small" />
-                                <MenuItem value={2} primaryText="Medium" />
-                                <MenuItem value={3} primaryText="A lot" />
-                            </SelectField>
-                        }
-                    />
-                </List>
+                {feedList}
                 <Divider />
-                <List>
-                    <Subheader><b>Notifications</b></Subheader>
-                    <ListItem
-                        disabled={true}
-                        primaryText="Allow push notifications"
-                        rightToggle={
-                            <Toggle
-                                defaultToggled={isNotify}
-                                toggled={isNotify}
-                                onToggle={() => toggleNotify(!isNotify)} />
-                        }
-                    />
-                    <ListItem
-                        disabled={true}
-                        primaryText="Allow email notifications"
-                        secondaryText='Uses default registration email address'
-                        rightToggle={
-                            <Toggle
-                                name='email_notify'
-                                defaultToggled={email_notify}
-                                toggled={email_notify}
-                                onToggle={(event, isInputChecked) =>
-                                    updateValue('email_notify', isInputChecked)} />
-                        }
-                    />
-                </List>
+                {notificationsList}
             </Paper>
-        </div>
+        </Slide>
     );
 }
 
@@ -121,10 +136,11 @@ SettingsApp.propTypes = {
     feed_rand: PropTypes.any.isRequired,
     email_notify: PropTypes.bool.isRequired,
     updateValue: PropTypes.func.isRequired,
-    toggleNotify: PropTypes.func.isRequired,
-    toggleNightMode: PropTypes.func.isRequired,
-    toggleAutoGifs: PropTypes.func.isRequired,
-    toggleFeedOneColumn: PropTypes.func.isRequired,
+    switchNotify: PropTypes.func.isRequired,
+    switchNightMode: PropTypes.func.isRequired,
+    switchAutoGifs: PropTypes.func.isRequired,
+    switchFeedOneColumn: PropTypes.func.isRequired,
+    classes: PropTypes.object.isRequired
 }
 
-export default SettingsApp
+export default withStyles(styles)(SettingsApp);

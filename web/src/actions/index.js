@@ -64,58 +64,52 @@ export const decreaseUserStats = () => {
 }
 
 
-// uiSwitchers
-export const toggleDrawer = (mode) => {
+// uiswitchers
+export const switchDrawer = (mode) => {
     return {
-        type: constants.TOGGLE_DRAWER,
+        type: constants.SWITCH_DRAWER,
         mode
     }
 }
-export const toggleLoader = (mode) => {
+export const switchLoader = (mode) => {
     return {
-        type: constants.TOGGLE_LOADER,
+        type: constants.SWITCH_LOADER,
         mode
     }
 }
-export const toggleModal = (mode) => {
-    return {
-        type: constants.TOGGLE_MODAL,
-        mode
-    }
-}
-export const toggleNightMode = (mode) => {
+export const switchNightMode = (mode) => {
     window.localStorage.setItem('isnightmode', mode);
     return {
-        type: constants.TOGGLE_NIGHT_MODE,
+        type: constants.SWITCH_NIGHT_MODE,
         mode
     }
 }
-export const toggleAutoGifs = (mode) => {
+export const switchAutoGifs = (mode) => {
     window.localStorage.setItem('isautogifs', mode);
     return {
-        type: constants.TOGGLE_AUTO_GIFS,
+        type: constants.SWITCH_AUTO_GIFS,
         mode
     }
 }
-export const toggleFeedOneColumn = (mode) => {
+export const switchFeedOneColumn = (mode) => {
     window.localStorage.setItem('isfeedonecolumn', mode);
     return {
-        type: constants.TOGGLE_FEED_ONE_COLUMN,
+        type: constants.SWITCH_FEED_ONE_COLUMN,
         mode
     }
 }
-export const toggleNotFound = (mode) => {
+export const switchNotFound = (mode) => {
     return {
-        type: constants.TOGGLE_NOT_FOUND,
+        type: constants.SWITCH_NOT_FOUND,
         mode
     }
 }
 
 // notifications
-export const toggleNotify = (mode) => {
+export const switchNotify = (mode) => {
     window.localStorage.setItem('isnotify', mode);
     return {
-        type: constants.TOGGLE_NOTIFY,
+        type: constants.SWITCH_NOTIFY,
         mode
     }
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroller'
 import { GridList } from 'material-ui/GridList';
-import CircularProgress from 'material-ui/CircularProgress';
+import { CircularProgress } from 'material-ui/Progress';
 
 import AuthorPreviewItem from './AuthorPreviewItem';
 

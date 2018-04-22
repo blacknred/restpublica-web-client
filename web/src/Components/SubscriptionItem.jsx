@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Avatar from 'material-ui/Avatar';
-import FlatButton from 'material-ui/FlatButton';
+import Button from 'material-ui/Button';
 import { ListItem } from 'material-ui/List';
 
 const Subscription = ({ subscription, removeSubscription, createSubscription }) => {
@@ -23,14 +23,14 @@ const Subscription = ({ subscription, removeSubscription, createSubscription }) 
             }
             rightIconButton={
                 subscription.my_subscription_id !== null ?
-                    <FlatButton
+                    <Button
                         secondary={true}
                         label='Unfollow'
                         onClick={() => {
                             removeSubscription(subscription.my_subscription_id, subscription.username)
                         }} />
                     :
-                    <FlatButton
+                    <Button
                         secondary={true}
                         label='Follow'
                         onClick={() => {

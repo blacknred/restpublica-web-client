@@ -2,10 +2,10 @@ import React from 'react';
 
 import { Toolbar } from 'material-ui/Toolbar';
 import DropDownMenu from 'material-ui/DropDownMenu';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from 'material-ui/Menu/MenuItem';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
-import ContentFilterListIcon from 'material-ui/svg-icons/content/filter-list';
+import ContentFilterListIcon from '@material-ui/icons/FilterList';
 
 const styles = {
     toolbar: {
@@ -106,7 +106,7 @@ const filters = (
             />
             <div style={Object.assign({}, styles.optionsRightPanel,
                 { right: drawer ? '6%' : '12%' })} >
-                <IconButton onClick={this.handleOptionsOpenToggle} >
+                <IconButton onClick={this.handleOptionsOpenSwitch} >
                     <ImageTuneIcon color={this.state.isOptionsOpen
                         ? grey600 : null} />
                 </IconButton>
@@ -135,7 +135,7 @@ const styles = {
 
 
 
-// handleOptionsOpenToggle = () => {
+// handleOptionsOpenSwitch = () => {
     //     this.setState({ isOptionsOpen: !this.state.isOptionsOpen });
     // }
     // handleFilterChange = (value) => {

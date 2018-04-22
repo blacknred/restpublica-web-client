@@ -5,11 +5,11 @@ import moment from 'moment'
 
 import { GridTile } from 'material-ui/GridList';
 import { ListItem } from 'material-ui/List';
-import { grey600 } from 'material-ui/styles/colors';
+import { grey600 } from 'material-ui/colors';
 import IconButton from 'material-ui/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/Menu/MenuItem';
 
 let countDate = (dateObj => {
     let date = moment.parseZone(dateObj)
@@ -50,8 +50,8 @@ const PostItem = ({ post, index, isFullAccess, isAuthenticated }) => {
             <MoreVertIcon color={grey600} />
         </IconButton>
     );
-    const rightIconMenu = (
-        <IconMenu iconButtonElement={iconButtonElement}>
+    const rightMenu = (
+        <Menu iconButtonElement={iconButtonElement}>
             {
                 !isFullAccess ?
                     <MenuItem>Repost</MenuItem>
@@ -61,7 +61,7 @@ const PostItem = ({ post, index, isFullAccess, isAuthenticated }) => {
                         <MenuItem>Delete</MenuItem>
                     </div>
             }
-        </IconMenu>
+        </Menu>
     );
     return (
         <GridTile
@@ -78,7 +78,7 @@ const PostItem = ({ post, index, isFullAccess, isAuthenticated }) => {
             <ListItem
                 style={styles.post}
                 disabled={true}
-                rightIconButton={!isAuthenticated ? null : rightIconMenu}
+                rightIconButton={!isAuthenticated ? null : rightMenu}
                 primaryText={<b>{post.description}</b>}
                 secondaryText={
                     <p style={styles.postSecondary}>
