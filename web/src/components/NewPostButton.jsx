@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom';
 
-import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import EditIcon from '@material-ui/icons/Edit';
+import { withStyles } from 'material-ui/styles';
 
 const styles = {
     button: {

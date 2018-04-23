@@ -1,28 +1,28 @@
 import React from 'react';
+import moment from 'moment'
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
-import moment from 'moment'
 
-import { withStyles } from 'material-ui/styles';
-import Fade from 'material-ui/transitions/Fade';
-import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card';
-import Collapse from 'material-ui/transitions/Collapse';
+import Card, { 
+    CardHeader, 
+    CardMedia, 
+    CardContent, 
+    CardActions 
+} from 'material-ui/Card';
+import Menu from 'material-ui/Menu';
+import Button from 'material-ui/Button';
 import Avatar from 'material-ui/Avatar';
 import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
-import ShareIcon from '@material-ui/icons/Share';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import SettingsIcon from '@material-ui/icons/Settings';
-
-
-import Button from 'material-ui/Button';
-
-import Menu from 'material-ui/Menu';
+import { withStyles } from 'material-ui/styles';
+import Fade from 'material-ui/transitions/Fade';
 import MenuItem from 'material-ui/Menu/MenuItem';
-
-
+import ShareIcon from '@material-ui/icons/Share';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import SettingsIcon from '@material-ui/icons/Settings';
+import Collapse from 'material-ui/transitions/Collapse';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const styles = theme => ({
     card: {

@@ -1,15 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Slide from 'material-ui/transitions/Slide';
-import { withStyles } from 'material-ui/styles';
-import ListSubheader from 'material-ui/List/ListSubheader';
-import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
-import { MenuItem } from 'material-ui/Menu';
+import List, { 
+    ListItem, 
+    ListItemText, 
+    ListItemSecondaryAction 
+} from 'material-ui/List';
+import Paper from 'material-ui/Paper';
 import Select from 'material-ui/Select';
 import Switch from 'material-ui/Switch';
-import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
+import MenuItem from 'material-ui/Menu/MenuItem';
+import { withStyles } from 'material-ui/styles';
+import ListSubheader from 'material-ui/List/ListSubheader';
 
 const styles = theme => ({
     list: {
@@ -25,7 +28,8 @@ const styles = theme => ({
 
 const SettingsApp = ({
     isNightMode, isNotify, isAutoGifs, isFeedOneColumn, classes, updateValue,
-    switchNotify, switchNightMode, switchAutoGifs, switchFeedOneColumn, ...props }) => {
+    switchNotify, switchNightMode, switchAutoGifs, switchFeedOneColumn, ...props
+}) => {
 
     const uiList = (
         <List>
@@ -44,6 +48,7 @@ const SettingsApp = ({
             </ListItem>
         </List>
     )
+
     const feedList = (
         <List>
             <ListSubheader>Feed</ListSubheader>
@@ -88,6 +93,7 @@ const SettingsApp = ({
             </ListItem>
         </List>
     )
+
     const notificationsList = (
         <List>
             <ListSubheader>Notifications</ListSubheader>
@@ -115,16 +121,15 @@ const SettingsApp = ({
             </ListItem>
         </List>
     )
+
     return (
-        <Slide direction="up" in={true} mountOnEnter unmountOnExit>
-            <Paper className={classes.list}>
-                {uiList}
-                <Divider />
-                {feedList}
-                <Divider />
-                {notificationsList}
-            </Paper>
-        </Slide>
+        <Paper className={classes.list}>
+            {uiList}
+            <Divider />
+            {feedList}
+            <Divider />
+            {notificationsList}
+        </Paper>
     );
 }
 

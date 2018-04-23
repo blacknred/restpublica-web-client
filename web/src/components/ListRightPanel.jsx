@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import ScrollToTop from 'react-scroll-up';
 
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import IconButton from 'material-ui/IconButton';
 import { withStyles } from 'material-ui/styles';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
 const styles = {
     panel: {

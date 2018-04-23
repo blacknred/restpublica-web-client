@@ -19,6 +19,7 @@ class Posts extends PureComponent {
             posts: []
         }
     }
+
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
         mode: PropTypes.oneOf(['feed', 'trending', 'search', 'u']),
@@ -27,6 +28,7 @@ class Posts extends PureComponent {
         switchLoader: PropTypes.func.isRequired,
         createMessage: PropTypes.func.isRequired
     }
+
     getPostsHandler = async (page) => {
         const { mode, query, username } = this.props
         let res
@@ -67,6 +69,7 @@ class Posts extends PureComponent {
         this.props.switchLoader(false)
         console.log(`page:${page}, count:${res.data.count}, length:${this.state.posts.length}`)
     }
+
     expandPostHandler = (id) => {
         const posts = [...this.state.posts]
         posts.forEach(post => {
@@ -74,12 +77,15 @@ class Posts extends PureComponent {
         })
         this.setState({ posts })
     }
+
     updatePostHandler = (e, child) => {
         console.log(e, child)
     }
+
     deletePostHandler = (id) => {
         console.log(id)
     }
+
     emptyMessage = () => {
         switch (this.props.mode) {
             case 'feed':
@@ -119,9 +125,9 @@ class Posts extends PureComponent {
                 );
         }
     }
+    
     componentDidMount() {
-        const { mode, username } = this.props
-        console.log(`[${mode}, ${username}] posts are mounted`)
+        console.log(`[${this.props.mode}, ${this.props.username}] posts are mounted`)
     }
 
     render() {

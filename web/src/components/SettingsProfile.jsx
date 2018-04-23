@@ -1,14 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles } from 'material-ui/styles';
-import ListSubheader from 'material-ui/List/ListSubheader';
-import List, { ListItem, ListItemText } from 'material-ui/List';
-import Divider from 'material-ui/Divider';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
-import Avatar from 'material-ui/Avatar';
-import Paper from 'material-ui/Paper';
+import List, { 
+    ListItem, 
+    ListItemText 
+} from 'material-ui/List';
 import Dialog, {
     DialogActions,
     DialogContent,
@@ -19,8 +15,14 @@ import ExpansionPanel, {
     ExpansionPanelSummary,
     ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
+import Paper from 'material-ui/Paper';
+import Button from 'material-ui/Button';
+import Avatar from 'material-ui/Avatar';
+import Divider from 'material-ui/Divider';
+import TextField from 'material-ui/TextField';
+import { withStyles } from 'material-ui/styles';
+import ListSubheader from 'material-ui/List/ListSubheader';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Slide from 'material-ui/transitions/Slide';
 
 const styles = {
     list: {
@@ -49,10 +51,12 @@ const styles = {
     }
 }
 
-const SettingsProfile = ({ values, errors, classes, isChangePasswordDialogOpen,
+const SettingsProfile = ({ 
+    values, errors, classes, isChangePasswordDialogOpen,
     isDeleteProfileDialogOpen, updateAvatar, updateValue, updatePassword,
     checkPassword, checkNewPassword, sendNewPasswordEmailConfirmation,
-    showDialog, updateEmailConfirmationCode, logoutUser }) => {
+    showDialog, updateEmailConfirmationCode, logoutUser 
+}) => {
 
     const profileList = (
             <List>
@@ -275,7 +279,6 @@ const SettingsProfile = ({ values, errors, classes, isChangePasswordDialogOpen,
     )
     
     return (
-        <Slide direction="up" in={values.fullname.length > 0} mountOnEnter unmountOnExit>
         <Paper className={classes.list} >
             {profileList}
             <Divider />
@@ -283,7 +286,6 @@ const SettingsProfile = ({ values, errors, classes, isChangePasswordDialogOpen,
             <Divider />
             {deleteAccountList}
         </Paper>
-        </Slide>
     );
 }
 

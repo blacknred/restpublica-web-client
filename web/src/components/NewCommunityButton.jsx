@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom';
 
-import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
+import { withStyles } from 'material-ui/styles';
 import ContentAddIcon from '@material-ui/icons/Add';
 
 const styles = {

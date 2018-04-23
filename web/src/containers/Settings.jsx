@@ -42,6 +42,7 @@ class Settings extends PureComponent {
             }
         };
     }
+
     static propTypes = {
         username: PropTypes.string.isRequired,
         isNightMode: PropTypes.bool.isRequired,
@@ -57,6 +58,7 @@ class Settings extends PureComponent {
         switchFeedOneColumn: PropTypes.func.isRequired,
         logoutUser: PropTypes.func.isRequired
     }
+
     showDialogHandler = (target) => {
         this.setState({
             ...this.state,
@@ -66,8 +68,8 @@ class Settings extends PureComponent {
             }
         })
     }
+
     getProfileHandler = async () => {
-        this.props.switchLoader(true)
         const res = await getUserProfile()
         if (!res.status) {
             this.props.createMessage(res)
@@ -83,8 +85,8 @@ class Settings extends PureComponent {
                 }
             }
         })
-        this.props.switchLoader(false)
     }
+
     updateProfileValueHandler = async (option, value) => {
         if (value === this.state.profile.values[option]) {
             this.setState({
@@ -141,6 +143,7 @@ class Settings extends PureComponent {
             }
         }
     }
+
     updateProfileAvatarHandler = async (event) => {
         event.preventDefault();
         let avatar = event.target.files[0];
@@ -176,6 +179,7 @@ class Settings extends PureComponent {
             this.props.createMessage('Avatar is updated')
         }
     }
+
     checkProfilePasswordHandler = async (event) => {
         event.preventDefault();
         const checkName = event.target.name
@@ -219,6 +223,7 @@ class Settings extends PureComponent {
             })
         }
     }
+
     checkProfileNewPasswordHandler = async (event) => {
         event.preventDefault();
         const checkName = event.target.name
@@ -244,6 +249,7 @@ class Settings extends PureComponent {
             }
         });
     }
+
     sendProfileNewPasswordEmailConfirmationHandler = async () => {
         const confirmationCode = Math.floor(100000 + Math.random() * 900000)
         this.setState({
@@ -263,6 +269,7 @@ class Settings extends PureComponent {
         window.sessionStorage.setItem('newPasswordEmailConfirmationCode', confirmationCode)
         //TODO: send mail with code on this.state.profile.fields.email
     }
+
     updateEmailConfirmationCodeHandler = (event) => {
         const value = event.target.value
         this.setState({
@@ -276,6 +283,7 @@ class Settings extends PureComponent {
             }
         })
     }
+
     updateProfilePasswordHandler = async (event) => {
         const confirmationCode = window.sessionStorage.getItem('newPasswordEmailConfirmationCode')
         if (confirmationCode !== this.state.profile.values.emailConfirmationCode) {
@@ -313,13 +321,24 @@ class Settings extends PureComponent {
         })
         this.showDialogHandler('isChangePasswordDialogOpen')
     }
-    
+
     componentWillMount() {
+        this.props.switchLoader(true)
         this.getProfileHandler();
     }
 
+    componentWillUpdate(prevProps, prevState) {
+        this.props.switchLoader(true)
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        this.props.switchLoader(false)
+    }
+    
+
     render() {
-        const profileSettings =
+        const profileSettings = (
+            this.state.profile.values.username.length > 0 &&
             <ProfileSettings
                 {...this.state.profile}
                 updateValue={this.updateProfileValueHandler}
@@ -332,22 +351,26 @@ class Settings extends PureComponent {
                 sendNewPasswordEmailConfirmation={this.sendProfileNewPasswordEmailConfirmationHandler}
                 updateEmailConfirmationCode={this.updateEmailConfirmationCodeHandler}
             />
-        const appSettings =
+        )
+
+        const appSettings = (
             <AppSettings
                 {...this.props}
                 feed_rand={this.state.profile.values.feed_rand}
                 email_notify={this.state.profile.values.email_notify}
                 updateValue={this.updateProfileValueHandler}
             />
+        )
+
         return (
             <Switch>
-                <Route path='/settings/profile' render={() => profileSettings} />
+                <Route path='/settings/profile' render={() => <div>{profileSettings}</div>} />
                 <Route path='/settings/app' render={() => appSettings} />
                 <Route render={() => (
-                    <span>
+                    <div>
                         {appSettings}
                         {profileSettings}
-                    </span>
+                    </div>
                 )} />
             </Switch>
         )

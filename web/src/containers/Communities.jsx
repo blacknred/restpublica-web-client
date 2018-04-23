@@ -22,12 +22,12 @@ class Communities extends PureComponent {
     }
     render() {
         return (
-            <span>
+            // <span>
+            //     <div>
+            //         Communities
+            //     </div>
                 <NewCommunityButton />
-                <div className='container'>
-                    Communities
-                </div>
-            </span>
+            // </span>
         )
     }
 

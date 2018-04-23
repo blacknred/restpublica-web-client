@@ -2,12 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroller'
 
-import Slide from 'material-ui/transitions/Slide';
-import { CircularProgress } from 'material-ui/Progress';
-import NewPostButton from '../components/NewPostButton'
 // import PostItem from './PostItem'
 import PostItem from './PostItem2'
 import ListRightPanel from './ListRightPanel'
+import NewPostButton from '../components/NewPostButton'
+import CircularProgress from 'material-ui/Progress/CircularProgress';
 
 const styles = {
     loader: {
@@ -52,40 +51,36 @@ const PostList = ({ mode, postable, isFullAccess, empty, hasMore, deletePost,
             < div > {index}</div>
     )
     return (
-        <span>
+        <div >
             {postable && <NewPostButton />}
-            <div >
-                {empty && emptyMessage()}
-                {
-                    !empty &&
-                    <Slide direction="up" in={hasMore && !empty} mountOnEnter unmountOnExit>
-                        <InfiniteScroll
-                            // key={reload}
-                            // ref={(scroll) => { this.scroll = scroll; }}
-                            pageStart={0}
-                            initialLoad={true}
-                            loadMore={getPosts}
-                            hasMore={hasMore}
-                            loader={
-                                posts.length ?
-                                    <CircularProgress
-                                        key={'loader'}
-                                        style={styles.loader} />
-                                    : null
-                            }
-                            threshold={400}
-                        >
-                            <div style={styles.postsContainer}>
-                                <div style={{ ...styles.postsGrid, flexDirection: isFeedOneColumn ? 'row' : 'column' }} >
-                                    {items}
-                                </div>
-                                {posts.length > 20 && <ListRightPanel />}
+            {empty && emptyMessage()}
+            {
+                !empty && 
+                    <InfiniteScroll
+                        // key={reload}
+                        // ref={(scroll) => { this.scroll = scroll; }}
+                        pageStart={0}
+                        initialLoad={true}
+                        loadMore={getPosts}
+                        hasMore={hasMore}
+                        loader={
+                            posts.length ?
+                                <CircularProgress
+                                    key={'loader'}
+                                    style={styles.loader} />
+                                : null
+                        }
+                        threshold={400}
+                    >
+                        <div style={styles.postsContainer}>
+                            <div style={{ ...styles.postsGrid, flexDirection: isFeedOneColumn ? 'row' : 'column' }} >
+                                {items}
                             </div>
-                        </InfiniteScroll>
-                    </Slide>
-                }
-            </div>
-        </span>
+                            {posts.length > 20 && <ListRightPanel />}
+                        </div>
+                    </InfiniteScroll>
+            }
+        </div>
     )
 }
 

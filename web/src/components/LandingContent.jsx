@@ -2,20 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom';
 
-import { withStyles } from 'material-ui/styles';
-import Button from 'material-ui/Button';
-import ExploreIcon from '@material-ui/icons/Explore';
-import Paper from 'material-ui/Paper';
-import Typography from 'material-ui/Typography';
 import List from 'material-ui/List';
+import Paper from 'material-ui/Paper';
+import Button from 'material-ui/Button';
+import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
+import ExploreIcon from '@material-ui/icons/Explore';
 
 const styles = {
     container: {
         height: '100vh',
-        width: '100%',
+        width: '100vw',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
     },
     a: {
         textDecoration: 'none',

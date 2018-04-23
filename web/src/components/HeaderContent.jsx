@@ -2,25 +2,28 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-import { withStyles } from 'material-ui/styles';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import MenuIcon from '@material-ui/icons/Menu';
-import Input, { InputAdornment } from 'material-ui/Input';
-import Button from 'material-ui/Button';
-import IconButton from 'material-ui/IconButton';
-import Menu, { MenuItem } from 'material-ui/Menu';
-import Avatar from 'material-ui/Avatar';
 import List, {
-    ListItem, ListItemIcon, ListItemText,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
     ListItemSecondaryAction,
 } from 'material-ui/List';
 import Badge from 'material-ui/Badge';
 import Switch from 'material-ui/Switch';
+import AppBar from 'material-ui/AppBar';
+import Button from 'material-ui/Button';
+import Avatar from 'material-ui/Avatar';
+import Toolbar from 'material-ui/Toolbar';
+import MenuIcon from '@material-ui/icons/Menu';
+import IconButton from 'material-ui/IconButton';
+import Typography from 'material-ui/Typography';
+import { withStyles } from 'material-ui/styles';
+import Menu, { MenuItem } from 'material-ui/Menu';
+import Slide from 'material-ui/transitions/Slide';
+import ActionSearchIcon from '@material-ui/icons/Search';
+import Input, { InputAdornment } from 'material-ui/Input';
 import ActionSettingsIcon from '@material-ui/icons/Settings';
 import ActionExitToAppIcon from '@material-ui/icons/ExitToApp';
-import ActionSearchIcon from '@material-ui/icons/Search';
 import SocialNotificationsIcon from '@material-ui/icons/Notifications';
 import SocialNotificationsOffIcon from '@material-ui/icons/NotificationsOff';
 
@@ -28,13 +31,12 @@ const styles = theme => ({
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
         boxShadow: '0 1px 8px rgba(0,0,0,.3)',
-        animation: 'topOff 0.5s',
+    },
+    toolbar: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-    },
-    toolbarGutters: {
-        padding: '0 16px'
+        margin: '0 -32px',
     },
     leftBlock: {
         flex: 1,
@@ -67,9 +69,11 @@ const styles = theme => ({
     },
 })
 
-const HeaderContent = ({ redirect, avatar, mode, query, notifications, history, classes, isDrawer,
-    isUserMenuOpen, isNotFound, isAuthenticated, userMenuOpen, logoutUser, switchNightMode,
-    switchNotFound, switchDrawer, switchNotify, createFlashMessage, ...props }) => {
+const HeaderContent = ({
+    redirect, avatar, mode, query, notifications, history, classes, isDrawer, isNotFound,
+    isUserMenuOpen, isAuthenticated, userMenuOpen, logoutUser, switchNightMode,
+    switchNotFound, switchDrawer, switchNotify, createFlashMessage, ...props
+}) => {
 
     const searchBlock = (
         <Input
@@ -210,34 +214,40 @@ const HeaderContent = ({ redirect, avatar, mode, query, notifications, history, 
             color="inherit"
             className={classes.appBar}
         >
-            <Toolbar
-                className={classes.leftBlock}
-                classes={{ gutters: classes.toolbarGutters }} >
-                <IconButton
-                    color="default"
-                    aria-label="Menu"
-                    onClick={() => switchDrawer(!isDrawer)} >
-                    <MenuIcon />
-                </IconButton>
-                <Typography
-                    variant="title"
-                    color='default'
-                    className={classes.title}>
-                    Publica
-                </Typography>
-                <Typography
-                    variant="title"
-                    color='textSecondary'
-                    className={classes.statusTitle}>
-                    {mode && mode[0].toUpperCase() + mode.substr(1)}
-                </Typography>
-                {searchBlock}
-            </Toolbar>
-            <Toolbar>
-                {isAuthenticated && userActivity}
-                {isAuthenticated && loggedUserButton}
-                {!isAuthenticated && notLoggedUserBlock}
-            </Toolbar>
+            <Slide
+                direction="down"
+                in={true}
+                timeout={400}
+            >
+                <Toolbar className={classes.toolbar}>
+                    <Toolbar className={classes.leftBlock}>
+                        <IconButton
+                            color="default"
+                            aria-label="Menu"
+                            onClick={() => switchDrawer(!isDrawer)} >
+                            <MenuIcon />
+                        </IconButton>
+                        <Typography
+                            variant="title"
+                            color='default'
+                            className={classes.title}>
+                            Publica
+                    </Typography>
+                        <Typography
+                            variant="title"
+                            color='textSecondary'
+                            className={classes.statusTitle}>
+                            {mode && mode[0].toUpperCase() + mode.substr(1)}
+                        </Typography>
+                        {searchBlock}
+                    </Toolbar>
+                    <Toolbar>
+                        {isAuthenticated && userActivity}
+                        {isAuthenticated && loggedUserButton}
+                        {!isAuthenticated && notLoggedUserBlock}
+                    </Toolbar>
+                </Toolbar>
+            </Slide>
         </AppBar>
     )
 }
