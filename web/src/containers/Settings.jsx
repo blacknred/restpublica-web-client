@@ -1,12 +1,22 @@
 import React, { PureComponent } from 'react';
+import { Switch, Route } from 'react-router-dom'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
-import { Switch, Route } from 'react-router-dom'
 
-import { getUserProfile, login, userUpdate } from '../api'
+import { 
+    getUserProfile, 
+    login, 
+    userUpdate 
+} from '../api'
 import {
-    updateUser, createFlashMessage, switchNightMode, switchLoader,
-    switchNotify, switchAutoGifs, switchFeedOneColumn, logoutUser
+    updateUser, 
+    createFlashMessage, 
+    switchNightMode, 
+    switchLoader,
+    switchNotify, 
+    switchAutoGifs, 
+    switchFeedOneColumn, 
+    logoutUser
 } from '../actions'
 import ProfileSettings from '../components/SettingsProfile'
 import AppSettings from '../components/SettingsApp'
@@ -73,6 +83,7 @@ class Settings extends PureComponent {
         const res = await getUserProfile()
         if (!res.status) {
             this.props.createMessage(res)
+            this.props.switchLoader(false)
             return
         }
         this.setState({
@@ -85,6 +96,7 @@ class Settings extends PureComponent {
                 }
             }
         })
+        this.props.switchLoader(false)
     }
 
     updateProfileValueHandler = async (option, value) => {
@@ -322,20 +334,19 @@ class Settings extends PureComponent {
         this.showDialogHandler('isChangePasswordDialogOpen')
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.switchLoader(true)
         this.getProfileHandler();
     }
 
-    componentWillUpdate(prevProps, prevState) {
-        this.props.switchLoader(true)
-    }
+    // componentWillUpdate(prevProps, prevState) {
+    //     this.props.switchLoader(true)
+    // }
 
-    componentDidUpdate(prevProps, prevState) {
-        this.props.switchLoader(false)
-    }
+    // componentDidUpdate(prevProps, prevState) {
+    //     this.props.switchLoader(false)
+    // }
     
-
     render() {
         const profileSettings = (
             this.state.profile.values.username.length > 0 &&

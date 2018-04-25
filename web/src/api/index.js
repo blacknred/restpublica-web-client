@@ -119,11 +119,11 @@ export const getSearchedPosts = asyncMddlwr((query, page) => {
 export const getTagPosts = asyncMddlwr((tag, page) => {
     instance.get(`/posts?tag=${tag}?offset=${page}`)
 })
-export const getProfilePosts = asyncMddlwr((userId, page) => {
-    instance.get(`/posts?profile=${userId}?offset=${page}`)
+export const getProfilePosts = asyncMddlwr((userName, page) => {
+    instance.get(`/posts?profile=${userName}?offset=${page}`)
 })
-export const getCommunityPosts = asyncMddlwr((communityId, page) => {
-    instance.get(`/posts?community=${communityId}?offset=${page}`)
+export const getCommunityPosts = asyncMddlwr((communityName, page) => {
+    instance.get(`/posts?community=${communityName}?offset=${page}`)
 })
 export const createPostComment = asyncMddlwr((postId, data) => {
     instance.post(`/posts/${postId}/comments`, { data })

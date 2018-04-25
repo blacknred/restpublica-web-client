@@ -1,10 +1,17 @@
 import React, { PureComponent } from 'react';
+import { withRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
-import { withRouter, Switch, Route } from 'react-router-dom';
 
-import { getBackgroundPic, login, register } from '../api'
-import { authUser, createFlashMessage } from '../actions'
+import { 
+    getBackgroundPic, 
+    login, 
+    register 
+} from '../api'
+import { 
+    authUser, 
+    createFlashMessage 
+} from '../actions'
 import LandingContent from '../components/LandingContent';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';

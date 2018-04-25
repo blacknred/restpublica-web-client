@@ -7,7 +7,7 @@ import LinearProgress from 'material-ui/Progress/LinearProgress';
 const styles = theme => ({
     root: {
         zIndex: theme.zIndex.drawer + 2,
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
     }
 })
 

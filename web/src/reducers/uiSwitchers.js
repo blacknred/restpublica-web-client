@@ -9,7 +9,7 @@ const initialState = () => {
             isNightMode: isnightmode === 'true',
             isAutoGifs: isautogifs === 'true',
             isFeedOneColumn: isfeedonecolumn === 'true',
-            isLoading: true
+            isLoading: false
         }
     }
     return {

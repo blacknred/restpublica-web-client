@@ -1,28 +1,37 @@
 import React, { PureComponent } from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
-import { withRouter, Link } from 'react-router-dom';
 
 import {
-    getDashboardPosts, getTrendingPosts,
-    getSearchedPosts, getProfilePosts
+    getDashboardPosts,
+    getTrendingPosts,
+    getSearchedPosts,
+    getProfilePosts,
+    getCommunityPosts,
+    getTagPosts
 } from '../api'
-import { createFlashMessage, switchLoader } from '../actions'
+import {
+    createFlashMessage,
+    switchLoader
+} from '../actions'
 import PostList from '../components/PostList'
+import EmptyPostsMessage from '../components/EmptyPostsMessage'
 
 class Posts extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            empty: false,
             hasMore: true,
+            empty: false,
             posts: []
         }
     }
 
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
-        mode: PropTypes.oneOf(['feed', 'trending', 'search', 'u']),
+        mode: PropTypes.string.isRequired, //PropTypes.oneOf(['feed', 'trending', 'search']),
+        specificator: PropTypes.string.isRequired,
         username: PropTypes.string.isRequired,
         query: PropTypes.string,
         switchLoader: PropTypes.func.isRequired,
@@ -30,9 +39,9 @@ class Posts extends PureComponent {
     }
 
     getPostsHandler = async (page) => {
-        const { mode, query, username } = this.props
         let res
-        this.props.switchLoader(true)
+        const { mode, specificator, query, username } = this.props
+        page === 1 && this.props.switchLoader(true)
         switch (mode) {
             case 'feed': res = await getDashboardPosts(page)
                 break
@@ -40,24 +49,25 @@ class Posts extends PureComponent {
                 break
             case 'search': res = await getSearchedPosts(query, page)
                 break
-            default:
-            // get userId
-            // res = await getProfilePosts(userId, page);
-            // communityPosts, tagPosts
+            case 'community': res = await getCommunityPosts(specificator, page)
+                break
+            case 'tag': res = await getTagPosts(specificator, page)
+                break
+            case `${username}`: res = await getProfilePosts(username, page)
+            default: res = await getProfilePosts(mode, page);
         }
+        page === 1 && this.props.switchLoader(false)
         if (!res.status) {
             this.setState({ hasMore: false });
             this.props.createMessage(res)
-            this.props.switchLoader(false)
             return
         }
         // if there are no requested posts at all view empty page 
-        if (parseInt(res.data.count, 10) === 0) {
-            this.setState({ empty: true, hasMore: false })
-            this.props.switchLoader(false)
+        if (res.data.count === '0') {
+            this.setState({ hasMore: false, empty: true })
         }
         // enlarge posts arr if there are, block loading if there are not
-        if (res.data.posts.length > 0) {
+        if (res.data.posts.length) {
             res.data.posts.forEach(post => {
                 post.isExpanded = false;
                 post.comments = []
@@ -66,7 +76,6 @@ class Posts extends PureComponent {
         } else {
             this.setState({ hasMore: false });
         }
-        this.props.switchLoader(false)
         console.log(`page:${page}, count:${res.data.count}, length:${this.state.posts.length}`)
     }
 
@@ -86,76 +95,43 @@ class Posts extends PureComponent {
         console.log(id)
     }
 
-    emptyMessage = () => {
-        switch (this.props.mode) {
-            case 'feed':
-                return (
-                    <p>
-                        Seems like you have not any subscription yet.<br /><br />
-                        Start now with <Link to='/trending'><b>Trending</b></Link>.
-                        </p>
-                );
-            case 'trending':
-                return (
-                    <p>
-                        Seems like there is no any post at all.<br /><br />
-                        If you are a developer start with posts db populating :)
-                        </p>
-                );
-            case 'search':
-                return (
-                    <p>
-                        There is nothing found by your request
-                        </p>
-                );
-            case 'me':
-                return (
-                    <p>
-                        Seems like you have no posts yet.<br /><br />
-                        Start now with
-                            <Link to={{ pathname: '/post', state: { modal: true } }}>
-                            <b>Create a post</b></Link>.
-                        </p>
-                );
-            default:
-                return (
-                    <p>
-                        There is no any post yet.
-                        </p>
-                );
-        }
-    }
-    
     componentDidMount() {
         console.log(`[${this.props.mode}, ${this.props.username}] posts are mounted`)
     }
 
     render() {
-        const { postable, isAuthenticated, mode, isAutoGifs, isFeedOneColumn } = this.props;
-        return <PostList
-            postable={postable}
-            mode={mode}
-            isFullAccess={isAuthenticated && mode === 'me'}
-            isAutoGifs={isAutoGifs}
-            isFeedOneColumn={isFeedOneColumn}
-            {...this.state}
-            getPosts={this.getPostsHandler}
-            expandPost={this.expandPostHandler}
-            updatePost={this.updatePostHandler}
-            deletePost={this.deletePostHandler}
-            emptyMessage={this.emptyMessage}
-        />
+        const {
+            isAuthenticated, mode, username, isAutoGifs, isFeedOneColumn
+        } = this.props;
+        return (
+            !this.state.empty ?
+                <PostList
+                    {...this.state}
+                    mode={mode}
+                    isAutoGifs={isAutoGifs}
+                    isFeedOneColumn={isFeedOneColumn}
+                    isFullAccess={isAuthenticated && mode === username}
+                    getPosts={this.getPostsHandler}
+                    expandPost={this.expandPostHandler}
+                    updatePost={this.updatePostHandler}
+                    deletePost={this.deletePostHandler}
+                /> :
+                <EmptyPostsMessage
+                    mode={mode}
+                    isProfileMode={isAuthenticated && mode === username}
+                />
+        )
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
     isAuthenticated: state.authentication.isAuthenticated,
     mode: ownProps.location.pathname.split('/')[1] || 'feed',
+    specificator: ownProps.location.pathname.split('/')[2] || '',
     query: ownProps.match.params.query || '',
-    username: ownProps.match.params.name || state.authentication.username,
+    username: state.authentication.username,
     isAutoGifs: state.uiSwitchers.isAutoGifs,
-    isFeedOneColumn: state.uiSwitchers.isFeedOneColumn,
-    postable: ownProps.postable || null
+    isFeedOneColumn: state.uiSwitchers.isFeedOneColumn
 })
 
 const mapDispatchToProps = dispatch => ({

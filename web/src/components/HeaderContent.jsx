@@ -1,6 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import List, {
     ListItem,
@@ -24,7 +24,7 @@ import ActionSearchIcon from '@material-ui/icons/Search';
 import Input, { InputAdornment } from 'material-ui/Input';
 import ActionSettingsIcon from '@material-ui/icons/Settings';
 import ActionExitToAppIcon from '@material-ui/icons/ExitToApp';
-import SocialNotificationsIcon from '@material-ui/icons/Notifications';
+import SocialNotificationsIcon from '@material-ui/icons/NotificationsNone';
 import SocialNotificationsOffIcon from '@material-ui/icons/NotificationsOff';
 
 const styles = theme => ({
@@ -55,7 +55,7 @@ const styles = theme => ({
         height: '36px'
     },
     searchBlock: {
-        marginLeft: '1.5em',
+        marginLeft: '2em',
         flex: 1,
         maxWidth: '600px',
         height: '48px',
@@ -98,22 +98,20 @@ const HeaderContent = ({
     )
 
     const userActivity = (
-        <Link to='/activity'>
-            <IconButton>
-                {
-                    props.isNotify ?
-                        notifications.length ?
-                            <Badge
-                                badgeContent={notifications.length}
-                                color="primary"
-                                children={' '}
-                            /> :
-                            <SocialNotificationsIcon />
-                        :
-                        <SocialNotificationsOffIcon />
-                }
-            </IconButton>
-        </Link>
+        <IconButton component={Link} to="/activity">
+            {
+                props.isNotify ?
+                    notifications.length ?
+                        <Badge
+                            badgeContent={notifications.length}
+                            color="primary"
+                            children={' '}
+                        /> :
+                        <SocialNotificationsIcon />
+                    :
+                    <SocialNotificationsOffIcon />
+            }
+        </IconButton>
     )
 
     const loggedUserButton = (
@@ -126,7 +124,7 @@ const HeaderContent = ({
                 color="inherit" >
                 <Avatar
                     className={classes.avatar}
-                    src={`data:image/png;base64, ${avatar}`} />
+                    srcSet={`data:image/png;base64,${avatar}`} />
             </IconButton>
             <Menu
                 id="userMenu"
@@ -199,19 +197,15 @@ const HeaderContent = ({
 
     const notLoggedUserBlock = (
         <span>
-            <Link to='/login'>
-                <Button color="inherit">Login</Button>
-            </Link>
-            <Link to='/register'>
-                <Button color="inherit">Register</Button>
-            </Link>
+            <Button component={Link} to="/login" >Login</Button>
+            <Button component={Link} to="/register">Register</Button>
         </span>
     )
 
     return (
         <AppBar
             position="fixed"
-            color="inherit"
+            //color="inherit"
             className={classes.appBar}
         >
             <Slide

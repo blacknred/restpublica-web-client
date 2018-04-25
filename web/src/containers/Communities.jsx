@@ -1,9 +1,7 @@
 import React, { PureComponent } from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
-import { withRouter, Link } from 'react-router-dom';
-
-import NewCommunityButton from '../components/NewCommunityButton'
 
 const styles = {
     container: {
@@ -22,12 +20,12 @@ class Communities extends PureComponent {
     }
     render() {
         return (
-            // <span>
-            //     <div>
-            //         Communities
-            //     </div>
-                <NewCommunityButton />
-            // </span>
+            <span>
+                <div>
+                    Communities
+                </div>
+                
+            </span>
         )
     }
 

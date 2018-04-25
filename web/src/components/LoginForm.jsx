@@ -6,12 +6,6 @@ import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import ListItem from 'material-ui/List/ListItem';
 
-const styles = {
-    a: {
-        textDecoration: 'none',
-    },
-}
-
 const LoginForm = ({ values, errors, inputChange, submitHandler }) => {
     return (
         <form onSubmit={submitHandler} >
@@ -42,9 +36,9 @@ const LoginForm = ({ values, errors, inputChange, submitHandler }) => {
             </ListItem>
             <ListItem>
                 <Button type='submit'>Log in</Button>
-                <Link to='/register' style={styles.a}>
-                    <Button> Need to register?</Button>
-                </Link>
+                <Button component={Link} to="/register">
+                    Need to register?
+                </Button>
             </ListItem>
         </form>
     )

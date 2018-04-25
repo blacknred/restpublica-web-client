@@ -1,32 +1,36 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
 import { Switch, Route, Redirect } from 'react-router-dom'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import Slide from 'material-ui/transitions/Slide';
-import Paper from 'material-ui/Paper';
 import './App.css';
+import { 
+    MuiThemeProvider, 
+    createMuiTheme 
+} from 'material-ui/styles';
+import Paper from 'material-ui/Paper';
+import Slide from 'material-ui/transitions/Slide';
 
-import NotFound from '../components/NotFound';
-import Loader from '../components/Loader';
-import Landing from './Landing';
-import FlashMessages from './FlashMessages';
+import Post from './Post';
+import Tags from './Tags';
+import Posts from './Posts';
 import Header from './Header';
 import Drawer from './Drawer';
-import Settings from './Settings';
-import DiscoveryTabs from '../components/DiscoveryTabs'
 import Author from './Author';
-import Activity from './Activity';
-import Communities from './Communities'
-import Tags from './Tags'
-import Posts from './Posts';
-import Subscriptions from './Subscriptions'
-import Authors from './Authors'
-import AuthorsPreview from './AuthorsPreview'
+import Landing from './Landing';
+import Authors from './Authors';
 import NewPost from './NewPost';
+import Settings from './Settings';
+import Activity from './Activity';
+import Communities from './Communities';
+import Loader from '../components/Loader';
 import NewCommunity from './NewCommunity';
-import Post from './Post';
+import Subscriptions from './Subscriptions';
+import FlashMessages from './FlashMessages';
+import AuthorsPreview from './AuthorsPreview'
+import NotFound from '../components/NotFound';
+import ContextPanel from '../components/ContextPanel';
+import DiscoveryTabs from '../components/DiscoveryTabs'
 
 class App extends Component {
     previousLocation = this.props.location
@@ -34,6 +38,7 @@ class App extends Component {
         isAuthenticated: PropTypes.bool.isRequired,
         isNightMode: PropTypes.bool.isRequired,
         isDrawer: PropTypes.bool.isRequired,
+        isLoading: PropTypes.bool.isRequired,
         isNotFound: PropTypes.bool.isRequired,
     }
 
@@ -104,7 +109,7 @@ class App extends Component {
                 {isLoading && <Loader />}
                 {isAuthenticated && !isNotFound && <Header />}
                 {isAuthenticated && !isNotFound && <Drawer />}
-                
+                <ContextPanel path={location.pathname}/>
                 <Paper className={isAuthenticated ? (isDrawer ? 'frame top left' : 'frame top') : 'frame'} >
                     {
                         isModal &&
@@ -137,8 +142,7 @@ class App extends Component {
                                 } />
                                 {/* ***** auth paths ***** */}
                                 <Route exact path='/' render={() => (
-                                    !isAuthenticated ? toLogin :
-                                        <Posts postable={isAuthenticated && !isModal} />
+                                    !isAuthenticated ? toLogin : <Posts />
                                 )} />
                                 <Route path='/activity' render={() => (
                                     !isAuthenticated ? toLogin : <Activity />

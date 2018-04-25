@@ -17,9 +17,6 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'flex-start',
     },
-    a: {
-        textDecoration: 'none',
-    },
     title: {
         fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif'
     },
@@ -44,11 +41,11 @@ const LandingContent = ({ gifUrl, classes, children }) => {
                         className={classes.title}>
                         Publica
                     </Typography>
-                    <br/>
+                    <br />
                     {children}
-                    <Link to='/trending' className={classes.a}>
-                        <Button><ExploreIcon /> &nbsp;Explore</Button>
-                    </Link>
+                    <Button component={Link} to="/trending">
+                        <ExploreIcon /> &nbsp;Explore
+                    </Button>
                 </List>
             </Paper>
         </div>

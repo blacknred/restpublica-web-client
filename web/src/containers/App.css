@@ -4,6 +4,10 @@ body{
     overflow-y: scroll;
     overflow-x: hidden;
 }
+a {
+    text-decoration: none;
+    color: inherit;
+}
 .frame{
     /* justify-content: center; */
     /* margin: 2em auto; */

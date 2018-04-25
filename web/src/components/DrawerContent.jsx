@@ -16,7 +16,6 @@ import SocialPersonIcon from '@material-ui/icons/Person';
 import ActionSettingsIcon from '@material-ui/icons/Settings';
 import ActionViewColumnIcon from '@material-ui/icons/ViewColumn';
 import SocialNotificationsIcon from '@material-ui/icons/Notifications';
-
 const styles = theme => ({
     drawer: {
         fontSize: '0.95rem',
@@ -25,18 +24,22 @@ const styles = theme => ({
     },
     container: {
         height: '100%',
-        color: theme.palette.text.secondary
+        //color: theme.palette.text.secondary
     },
     listItem: {
         paddingLeft: '28px',
     },
-    activeLink: {
+    icon: {
+        paddingRight: '8px'
+    },
+    active: {
         color: theme.palette.primary.main,
+        paddingRight: '8px'
     },
     a: {
         textDecoration: 'none',
         fontWeight: '100',
-        color: 'inherit'
+        color: 'inherit',
     },
     footer: {
         padding: '1em 2em',
@@ -49,33 +52,36 @@ const styles = theme => ({
     }
 })
 
-const DrawerContent = ({ pathname, navigate, isDrawer, username, classes }) => {
+const DrawerContent = ({ path, navigate, isDrawer, username, classes }) => {
+
     const primaryNavList = (
         <List component="nav">
             <ListItem
                 button
                 classes={{ root: classes.listItem }}
                 onClick={() => navigate('/')}>
-                <ListItemIcon className={pathname === '/' ? classes.activeLink : null}>
+                <ListItemIcon
+                    className={path === '/' ? classes.active : classes.icon}>
                     <ActionDashboardIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary='Feed'
                     disableTypography={true}
-                    className={pathname === '/' ? classes.activeLink : null}
+                    className={path === '/' ? classes.active : null}
                 />
             </ListItem>
             <ListItem
                 button
                 classes={{ root: classes.listItem }}
                 onClick={() => navigate('/trending')}>
-                <ListItemIcon className={pathname === '/trending' ? classes.activeLink : null}>
+                <ListItemIcon className={
+                    path.match(/^\/trending/) ? classes.active : classes.icon}>
                     <ActionExploreIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary="Trending"
                     disableTypography={true}
-                    className={pathname === '/trending' ? classes.activeLink : null}
+                    className={path.match(/^\/trending/) ? classes.active : null}
                 />
             </ListItem>
             <ListItem
@@ -83,14 +89,14 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, classes }) => {
                 classes={{ root: classes.listItem }}
                 onClick={() => navigate('/communities')}>
                 <ListItemIcon className={
-                    pathname.match(/^\/communities/) ? classes.activeLink : null
+                    path.match(/^\/communities/) ? classes.active : classes.icon
                 }>
                     <ActionViewColumnIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary="Communities"
                     disableTypography={true}
-                    className={pathname.match(/^\/communities/) ? classes.activeLink : null}
+                    className={path.match(/^\/communities/) ? classes.active : null}
                 />
             </ListItem>
             <ListItem
@@ -98,7 +104,7 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, classes }) => {
                 classes={{ root: classes.listItem }}
                 onClick={() => navigate(`/${username}`)}>
                 <ListItemIcon className={
-                    pathname.match(new RegExp(`^\/${username}`)) ? classes.activeLink : null
+                    path.match(new RegExp(`^/${username}`)) ? classes.active : classes.icon
                 }>
                     <SocialPersonIcon />
                 </ListItemIcon>
@@ -106,7 +112,7 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, classes }) => {
                     primary="Profile"
                     disableTypography={true}
                     className={
-                        pathname.match(new RegExp(`^\/${username}`)) ? classes.activeLink : null
+                        path.match(new RegExp(`^/${username}`)) ? classes.active : null
                     }
                 />
             </ListItem>
@@ -114,26 +120,30 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, classes }) => {
                 button
                 classes={{ root: classes.listItem }}
                 onClick={() => navigate('/activity')}>
-                <ListItemIcon className={pathname.match(/^\/activity/) ? classes.activeLink : null}>
+                <ListItemIcon className={
+                    path.match(/^\/activity/) ? classes.active : classes.icon
+                }>
                     <SocialNotificationsIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary="Activity"
                     disableTypography={true}
-                    className={pathname.match(/^\/activity/) ? classes.activeLink : null}
+                    className={path.match(/^\/activity/) ? classes.active : null}
                 />
             </ListItem>
             <ListItem
                 button
                 classes={{ root: classes.listItem }}
                 onClick={() => navigate('/settings')}>
-                <ListItemIcon className={pathname.match(/^\/settings/) ? classes.activeLink : null}>
+                <ListItemIcon className={
+                    path.match(/^\/settings/) ? classes.active : classes.icon
+                }>
                     <ActionSettingsIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary="Settings"
                     disableTypography={true}
-                    className={pathname.match(/^\/settings/) ? classes.activeLink : null}
+                    className={path.match(/^\/settings/) ? classes.active : null}
                 />
             </ListItem>
         </List>
@@ -230,7 +240,7 @@ const DrawerContent = ({ pathname, navigate, isDrawer, username, classes }) => {
 DrawerContent.propTypes = {
     isDrawer: PropTypes.bool.isRequired,
     navigate: PropTypes.func.isRequired,
-    pathname: PropTypes.string.isRequired,
+    path: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,
 }
