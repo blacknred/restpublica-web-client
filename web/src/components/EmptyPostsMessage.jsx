@@ -3,11 +3,8 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom';
 
 import Button from 'material-ui/Button';
-import Snackbar from 'material-ui/Snackbar';
 import { withStyles } from 'material-ui/styles';
-import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
-import CloseIcon from '@material-ui/icons/Close';
 import ReportIcon from '@material-ui/icons/Report';
 
 const styles = {
@@ -89,7 +86,7 @@ const EmptyPostsMessage = ({ mode, isProfileMode, classes }) => {
 
 EmptyPostsMessage.propTypes = {
     mode: PropTypes.string.isRequired,
-    isProfileMode: PropTypes.string.isRequired,
+    isProfileMode: PropTypes.bool.isRequired,
     classes: PropTypes.object.isRequired,
 }
 

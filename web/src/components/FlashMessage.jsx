@@ -13,7 +13,7 @@ const FlashMessage = ({ message, closeHandler }) => {
             horizontal: 'left',
           }}
           open={typeof message === 'object'}
-          autoHideDuration={6000}
+          autoHideDuration={3000}
           onClose={closeHandler}
           SnackbarContentProps={{
             'aria-describedby': 'message-id',

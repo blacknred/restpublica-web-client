@@ -16,27 +16,37 @@ import Toolbar from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
-import Fade from 'material-ui/transitions/Fade';
 import MenuItem from 'material-ui/Menu/MenuItem';
 import ShareIcon from '@material-ui/icons/Share';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import SettingsIcon from '@material-ui/icons/Settings';
 import Collapse from 'material-ui/transitions/Collapse';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const styles = theme => ({
     card: {
         maxWidth: '530px',
-        //width: '530px',
+        minWidth: '140px',
+        width: '100%',
         margin: '0.8em',
-        flex: '1 0 auto',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
     avatar: {
         backgroundColor: theme.palette.primary.light,
+    },
+    headerAction: {
+        '@media (max-width: 750px)': {
+            marginRight: '8px'
+        },
+    },
+    content: {
+        paddingTop: 0
+    },
+    media: {
+        height: '100%',
+        width: 'auto',
+        '@media (max-width: 800px)': {
+            width: '100%'
+        },
     },
     actions: {
         display: 'flex',
@@ -44,10 +54,25 @@ const styles = theme => ({
     },
     actionsToolbar: {
         minHeight: 'auto',
-        paddingRight: 0,
         flex: 1,
         flexDirection: 'row-reverse',
+        '@media (min-width: 600px)': {
+            paddingRight: 0,
+        },
     },
+    postLinkIcon: {
+        position: 'fixed',
+        color: 'transparent'
+    },
+    shiftOnHover: {
+        '&:hover > *': {
+            color: theme.palette.text.primary
+        },
+        '&:hover > :nth-child(1)': {
+            color: 'transparent'
+        },
+    },
+
 
 
 
@@ -59,6 +84,9 @@ const styles = theme => ({
         height: '70px',
         fontWeight: '800'
     },
+    postHeaderAction: {
+        
+    },
     postHeaderLink: {
         flex: 1,
         display: 'flex',
@@ -66,7 +94,6 @@ const styles = theme => ({
         fontSize: '13px',
     },
     postActions: {
-
         paddingBottom: '1em',
         paddingTop: '0',
         alignItems: 'center',
@@ -106,7 +133,7 @@ const countDate = dateObj => {
     let now = moment().parseZone()
     let res
     if (now.year() > date.year()) res = `${now.year() - date.year()} year`
-    else if (now.month() > date.month()) res = `${now.month() - date.month()} month`
+    else if (now.month() > date.month()) res = `${now.month() - date.month()} mon.`
     else if (now.date() > date.date() + 7) res = `${(now.date() - date.date()) / 7} w.`
     else if (now.date() > date.date()) res = `${now.date() - date.date()} d.`
     else if (now.hour() > date.hour()) res = `${date.hour()} h.`
@@ -116,10 +143,13 @@ const countDate = dateObj => {
 }
 
 const PostItem = ({ post, isFullAccess, classes, expandPost, updatePost, deletePost }) => {
-
     return (
-        <Card className={classes.card}>
+        <Card
+            elevation={0}
+            className={classes.card}
+        >
             <CardHeader
+                classes={{ action: classes.headerAction }}
                 avatar={
                     <Avatar
                         component={Link}
@@ -140,21 +170,25 @@ const PostItem = ({ post, isFullAccess, classes, expandPost, updatePost, deleteP
                     </Link>
                 }
                 action={
-                    [
-                        <Typography>{countDate(post.created_at)}</Typography>,
-                        // <IconButton aria-label="Share">
-                        //     <OpenInNewIcon />
-                        // </IconButton>
-                    ]
-                    // <Link to={`/post/${post.slug}`}>
-                    //     {/* <Button> */}
-                    //     {countDate(post.created_at)}
-                    //     {/* </Button> */}
-                    // </Link>
+                    <IconButton
+                        component={Link}
+                        to={`/post/${post.slug}`}
+                        aria-label="Share"
+                        classes={{ label: classes.shiftOnHover }}
+                    >
+                        <Typography
+                            variant='body2'
+                            color='textSecondary'
+                        >
+                            {countDate(post.created_at)}
+                        </Typography>
+                        <OpenInNewIcon className={classes.postLinkIcon} />
+                    </IconButton>
                 }
             />
-            <CardContent>
-                <Typography paragraph={post.tags.length}>
+
+            <CardContent className={classes.content}>
+                <Typography paragraph={post.tags.length > 0} variant='body2'>
                     {post.description}
                 </Typography>
                 <Typography
@@ -172,6 +206,7 @@ const PostItem = ({ post, isFullAccess, classes, expandPost, updatePost, deleteP
                     }
                 </Typography>
             </CardContent>
+
             <CardMedia
                 className={classes.media}
                 component='img' //video, audio, picture, iframe, img
@@ -180,15 +215,17 @@ const PostItem = ({ post, isFullAccess, classes, expandPost, updatePost, deleteP
             />
 
             <CardActions>
-                <Button
-                    onClick={() => expandPost(post.id)}
-                    aria-expanded={post.isExpanded}
-                >
-                    {post.commentable &&
-                        (`${post.isExpanded ? 'Hide' : 'Join'}
-                            discussion ${post.comments_cnt}`)}
-                </Button>
-
+                {
+                    post.commentable && post.comments_cnt > 0 ?
+                        <Button
+                            onClick={() => expandPost(post.id)}
+                            aria-expanded={post.isExpanded}
+                        >
+                            {`${post.isExpanded ? 'Hide' : 'Join'}
+                            discussion ${post.comments_cnt}`}
+                        </Button> :
+                        <div>Write first comment</div>
+                }
                 <Toolbar className={classes.actionsToolbar}>
                     <IconButton aria-label="Options">
                         <MoreHorizIcon />
@@ -299,6 +336,7 @@ PostItem.propTypes = {
             })
         )
     }).isRequired,
+    classes: PropTypes.object.isRequired,
     isFullAccess: PropTypes.bool.isRequired,
     expandPost: PropTypes.func.isRequired,
     deletePost: PropTypes.func.isRequired,

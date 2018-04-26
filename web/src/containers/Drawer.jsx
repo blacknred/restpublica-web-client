@@ -3,7 +3,10 @@ import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
-import { switchNotFound } from '../actions'
+import {
+    switchNotFound,
+    switchDrawer
+} from '../actions'
 import DrawerContent from '../components/DrawerContent'
 
 const Drawer = (props) => {
@@ -23,6 +26,7 @@ Drawer.propTypes = {
     isDrawer: PropTypes.bool.isRequired,
     isNotFound: PropTypes.bool.isRequired,
     switchNotFound: PropTypes.func.isRequired,
+    switchDrawer: PropTypes.func.isRequired,
     path: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired
 }
@@ -34,7 +38,8 @@ const mapStateToProps = (state, ownProps) => ({
     username: state.authentication.username
 })
 const mapDispatchToProps = dispatch => ({
-    switchNotFound: (mode) => dispatch(switchNotFound(mode))
+    switchNotFound: (mode) => dispatch(switchNotFound(mode)),
+    switchDrawer: (mode) => dispatch(switchDrawer(mode)),
 })
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Drawer))

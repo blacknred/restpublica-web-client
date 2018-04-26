@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types'
 import ScrollToTop from 'react-scroll-up';
 
-
 import Button from 'material-ui/Button';
 import EditIcon from '@material-ui/icons/Edit';
 import { withStyles } from 'material-ui/styles';
@@ -13,30 +12,41 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
 const styles = {
     panel: {
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'fixed',
-        justifyContent: 'space-between',
-        top: '90px',
-        bottom: '40px',
-        alignItems: 'left',
-        right: '2em',
         zIndex: 1
     },
     toTop: {
-        position: 'static',
+        position: 'fixed',
+        top: '90px',
+        right: '30px',
+        bottom: 'none'
+    },
+    toTopButton: {
+        backgroundColor: 'rgba(0,0,0,0.2)'
+    },
+    action: {
+        position: 'fixed',
+        bottom: '30px',
+        right: '30px',
     }
 }
 
 const ContextPanel = ({ path, classes }) => {
-
-    const actionButton = (
-        <span>
+    return (
+        <div className={classes.panel}>
+            <ScrollToTop
+                showUnder={460}
+                style={styles.toTop}
+            >
+                <IconButton className={classes.toTopButton}>
+                    <ArrowUpwardIcon />
+                </IconButton>
+            </ScrollToTop>
             {
                 path === '/' &&
                 <Button
                     variant="fab"
                     color="primary"
+                    className={classes.action}
                     component={Link}
                     to={{
                         pathname: '/post',
@@ -51,6 +61,7 @@ const ContextPanel = ({ path, classes }) => {
                 <Button
                     variant="fab"
                     color="primary"
+                    className={classes.action}
                     component={Link}
                     to={{
                         pathname: '/community',
@@ -60,20 +71,6 @@ const ContextPanel = ({ path, classes }) => {
                     <ContentAddIcon />
                 </Button>
             }
-        </span>
-    )
-
-    return (
-        <div className={classes.panel}>
-            <ScrollToTop
-                showUnder={460}
-                style={styles.toTop}
-            >
-                <IconButton>
-                    <ArrowUpwardIcon />
-                </IconButton>
-            </ScrollToTop>
-            {actionButton}
         </div>
     )
 }

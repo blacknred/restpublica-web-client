@@ -1,221 +1,286 @@
 import React from 'react';
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom';
 
 import List, {
     ListItem,
     ListItemIcon,
     ListItemText
 } from 'material-ui/List';
+import compose from 'recompose/compose';
 import Drawer from 'material-ui/Drawer';
+import Hidden from 'material-ui/Hidden';
+import Toolbar from 'material-ui/Toolbar';
 import Divider from 'material-ui/Divider';
+import HelpIcon from '@material-ui/icons/Help';
+import HomeIcon from '@material-ui/icons/Home';
+import IconButton from 'material-ui/IconButton';
+import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import Slide from 'material-ui/transitions/Slide';
-import ActionDashboardIcon from '@material-ui/icons/Home';
-import ActionExploreIcon from '@material-ui/icons/Explore';
-import SocialPersonIcon from '@material-ui/icons/Person';
-import ActionSettingsIcon from '@material-ui/icons/Settings';
-import ActionViewColumnIcon from '@material-ui/icons/ViewColumn';
-import SocialNotificationsIcon from '@material-ui/icons/Notifications';
+import PersonIcon from '@material-ui/icons/Person';
+import withWidth from 'material-ui/utils/withWidth';
+import ExploreIcon from '@material-ui/icons/Explore';
+import SettingsIcon from '@material-ui/icons/Settings';
+import FeedbackIcon from '@material-ui/icons/Feedback';
+import ViewColumnIcon from '@material-ui/icons/ViewColumn';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+
 const styles = theme => ({
     drawer: {
         fontSize: '0.95rem',
         borderWidth: 0,
         fontWeight: '700',
+        backgroundColor: 'transparent',
+        '@media (max-width: 600px)': {
+            backgroundColor: theme.palette.background.default,
+            width: '300px'
+        },
     },
     container: {
         height: '100%',
-        //color: theme.palette.text.secondary
     },
-    listItem: {
-        paddingLeft: '28px',
+    drawerHeader: {
+        justifyContent: 'space-between',
+        paddingLeft: '24px',
+        //background: '#01579b',
+        //color: '#fff',
+    },
+    drawerHeaderTitle: {
+        fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif'
     },
     icon: {
-        paddingRight: '8px'
+        color: 'inherit',
+        marginRight: '2px',
+        marginLeft: '4px'
+    },
+    notActive: {
+        color: theme.palette.text.primary,
+        opacity: '0.7'
     },
     active: {
         color: theme.palette.primary.main,
-        paddingRight: '8px'
     },
-    a: {
-        textDecoration: 'none',
-        fontWeight: '100',
-        color: 'inherit',
+    secondaryNav: {
+        color: theme.palette.text.hint
     },
-    footer: {
-        padding: '1em 2em',
-        fontSize: '0.83rem',
-        opacity: '0.6',
-        fontWeight: '100',
-        lineHeight: '1.5em',
+    footerNav: {
+        padding: '1.5em',
         position: 'absolute',
         bottom: 0,
+        color: theme.palette.text.hint
     }
 })
 
-const DrawerContent = ({ path, navigate, isDrawer, username, classes }) => {
+const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, switchDrawer }) => {
+
+    const drawerHeader = (
+        <Hidden only={['sm', 'md', 'lg']}>
+            <Toolbar className={classes.drawerHeader}>
+                <Typography
+                    variant="headline"
+                    component={Link}
+                    to="/"
+                    className={classes.drawerHeaderTitle}
+                >
+                    Publica
+                </Typography>
+                <IconButton
+                    aria-label="Menu"
+                    onClick={() => switchDrawer(!isDrawer)}
+                >
+                    <ChevronLeftIcon />
+                </IconButton>
+            </Toolbar>
+            <Divider light={true} />
+        </Hidden>
+    )
 
     const primaryNavList = (
         <List component="nav">
             <ListItem
                 button
-                classes={{ root: classes.listItem }}
-                onClick={() => navigate('/')}>
-                <ListItemIcon
-                    className={path === '/' ? classes.active : classes.icon}>
-                    <ActionDashboardIcon />
+                onClick={() => {
+                    navigate('/')
+                    width === 'xs' && switchDrawer(!isDrawer)
+                }}
+                classes={{ root: path === '/' ? classes.active : classes.notActive }}
+            >
+                <ListItemIcon className={classes.icon}>
+                    <HomeIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary='Feed'
                     disableTypography={true}
-                    className={path === '/' ? classes.active : null}
                 />
             </ListItem>
             <ListItem
                 button
-                classes={{ root: classes.listItem }}
-                onClick={() => navigate('/trending')}>
-                <ListItemIcon className={
-                    path.match(/^\/trending/) ? classes.active : classes.icon}>
-                    <ActionExploreIcon />
+                onClick={() => {
+                    navigate('/trending')
+                    width === 'xs' && switchDrawer(!isDrawer)
+                }}
+                classes={{ root: path.match(/^\/trending/) ? classes.active : classes.notActive }}
+            >
+                <ListItemIcon className={classes.icon}>
+                    <ExploreIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary="Trending"
                     disableTypography={true}
-                    className={path.match(/^\/trending/) ? classes.active : null}
                 />
             </ListItem>
             <ListItem
                 button
-                classes={{ root: classes.listItem }}
-                onClick={() => navigate('/communities')}>
-                <ListItemIcon className={
-                    path.match(/^\/communities/) ? classes.active : classes.icon
-                }>
-                    <ActionViewColumnIcon />
+                onClick={() => {
+                    navigate('/communities')
+                    width === 'xs' && switchDrawer(!isDrawer)
+                }}
+                classes={{ root: path.match(/^\/communities/) ? classes.active : classes.notActive }}
+            >
+                <ListItemIcon className={classes.icon}>
+                    <ViewColumnIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary="Communities"
                     disableTypography={true}
-                    className={path.match(/^\/communities/) ? classes.active : null}
                 />
             </ListItem>
             <ListItem
                 button
-                classes={{ root: classes.listItem }}
-                onClick={() => navigate(`/${username}`)}>
-                <ListItemIcon className={
-                    path.match(new RegExp(`^/${username}`)) ? classes.active : classes.icon
-                }>
-                    <SocialPersonIcon />
+                onClick={() => {
+                    navigate(`/${username}`)
+                    width === 'xs' && switchDrawer(!isDrawer)
+                }}
+                classes={{ root: path.match(new RegExp(`^/${username}`)) ? classes.active : classes.notActive }}
+            >
+                <ListItemIcon className={classes.icon}>
+                    <PersonIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary="Profile"
                     disableTypography={true}
-                    className={
-                        path.match(new RegExp(`^/${username}`)) ? classes.active : null
-                    }
                 />
             </ListItem>
             <ListItem
                 button
-                classes={{ root: classes.listItem }}
-                onClick={() => navigate('/activity')}>
-                <ListItemIcon className={
-                    path.match(/^\/activity/) ? classes.active : classes.icon
-                }>
-                    <SocialNotificationsIcon />
+                onClick={() => {
+                    navigate('/activity')
+                    width === 'xs' && switchDrawer(!isDrawer)
+                }}
+                classes={{ root: path.match(/^\/activity/) ? classes.active : classes.notActive }}
+            >
+                <ListItemIcon className={classes.icon}>
+                    <NotificationsIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary="Activity"
                     disableTypography={true}
-                    className={path.match(/^\/activity/) ? classes.active : null}
                 />
             </ListItem>
             <ListItem
                 button
-                classes={{ root: classes.listItem }}
-                onClick={() => navigate('/settings')}>
-                <ListItemIcon className={
-                    path.match(/^\/settings/) ? classes.active : classes.icon
-                }>
-                    <ActionSettingsIcon />
+                onClick={() => {
+                    navigate('/settings')
+                    width === 'xs' && switchDrawer(!isDrawer)
+                }}
+                classes={{ root: path.match(/^\/settings/) ? classes.active : classes.notActive }}
+            >
+                <ListItemIcon className={classes.icon}>
+                    <SettingsIcon />
                 </ListItemIcon>
                 <ListItemText
                     primary="Settings"
                     disableTypography={true}
-                    className={path.match(/^\/settings/) ? classes.active : null}
                 />
             </ListItem>
         </List>
     )
 
     const secondaryNavList = (
-        <List component="nav">
-            <a
-                href="https://github.com/blacknred/restpublica"
+        <List component="nav" className={classes.secondaryNav}>
+            <ListItem
+                button
+                component='a'
+                href='https://github.com/blacknred/restpublica'
                 target="_blank"
                 rel="noopener noreferrer"
-                className={classes.a}>
-                <ListItem
-                    button
-                    className={classes.listItem}>
-                    <ListItemText
-                        primary='Help'
-                        disableTypography={true} />
-                </ListItem>
-            </a>
-            <a
-                href="https://github.com/blacknred/restpublica/issues/new"
+            >
+                <ListItemIcon className={classes.icon}>
+                    <HelpIcon />
+                </ListItemIcon>
+                <ListItemText
+                    primary="Help"
+                    disableTypography={true}
+                />
+            </ListItem>
+            <ListItem
+                button
+                component='a'
+                href='https://github.com/blacknred/restpublica/issues/new'
                 target="_blank"
                 rel="noopener noreferrer"
-                className={classes.a}>
-                <ListItem
-                    button
-                    className={classes.listItem}>
-                    <ListItemText
-                        primary='Send feedback'
-                        disableTypography={true} />
-                </ListItem>
-            </a>
+            >
+                <ListItemIcon className={classes.icon}>
+                    <FeedbackIcon />
+                </ListItemIcon>
+                <ListItemText
+                    primary="Send feedback"
+                    disableTypography={true}
+                />
+            </ListItem>
         </List>
     )
 
-    const footerLinks = (
-        <div className={classes.footer}>
-            <span> © {(new Date()).getFullYear()} Restpublica, LLC </span>
-            <br />
-            <a
+    const footerNav = (
+        <div className={classes.footerNav}>
+            <Typography
+                variant='caption'
+                color='inherit'
+            >
+                © {(new Date()).getFullYear()} Restpublica, LLC
+            </Typography>
+            <Typography
+                component='a'
+                variant='caption'
+                color='inherit'
                 href="https://github.com/blacknred/restpublica"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={classes.a}>
+            >
                 Conditions of use
-            </a>
-            <br />
-            <a
+            </Typography>
+            <Typography
+                component='a'
+                variant='caption'
+                color='inherit'
                 href="/api"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={classes.a}>
+            >
                 API Developers
-            </a>
-            <br />
-            <a
+            </Typography>
+            <Typography
+                component='a'
+                variant='caption'
+                color='inherit'
                 href="https://github.com/blacknred/restpublica/issues/new"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={classes.a}>
+            >
                 Send feedback
-            </a>
+            </Typography>
         </div>
     )
 
     return (
-        < Drawer
-            variant="persistent"
+        <Drawer
+            variant={width === 'xs' ? 'temporary' : "persistent"}
             anchor={'left'}
             open={isDrawer}
             classes={{ paper: classes.drawer }}
+            onClose={() => switchDrawer(!isDrawer)}
         >
             <Slide
                 direction="right"
@@ -223,14 +288,17 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes }) => {
                 timeout={400}
             >
                 <div className={classes.container}>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
+                    {drawerHeader}
+                    <Hidden only='xs'>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                    </Hidden>
                     {primaryNavList}
                     <Divider light={true} />
                     {secondaryNavList}
-                    {footerLinks}
+                    {footerNav}
                 </div>
             </Slide>
         </Drawer >
@@ -243,6 +311,8 @@ DrawerContent.propTypes = {
     path: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,
+    width: PropTypes.string.isRequired,
+    switchDrawer: PropTypes.func.isRequired,
 }
 
-export default withStyles(styles)(DrawerContent);
+export default compose(withStyles(styles), withWidth())(DrawerContent);

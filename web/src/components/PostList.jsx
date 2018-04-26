@@ -22,8 +22,8 @@ const styles = {
 }
 
 const PostList = ({
-    mode, isFullAccess, isAutoGifs, isFeedOneColumn, classes, hasMore, posts,
-    getPosts, expandPost, updatePost, deletePost,
+    mode, isFullAccess, isAutoGifs, isFeedOneColumn, classes, hasMore, 
+    posts, getPosts, expandPost, updatePost, deletePost,
 }) => {
 
     const loader = (

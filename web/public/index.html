@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,13 +17,26 @@
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Product Sans:500">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ua-parser-js@0/dist/ua-parser.min.js"></script>
-    <script type="text/javascript" >
+    <script type="text/javascript">
         /* Redirect to mobile version */
-       var parser = new UAParser(window.navigator.userAgent);
-       if (parser.getDevice().type === 'mobile') { 
-           window.location = 'localhost:3005' + window.location.pathname;
+        var parser = new UAParser(window.navigator.userAgent);
+        if (parser.getDevice().type === 'mobile') {
+            window.location = 'localhost:3005' + window.location.pathname;
         }
     </script>
     <title>Restpublica</title>

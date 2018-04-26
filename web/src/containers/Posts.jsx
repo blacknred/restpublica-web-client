@@ -23,8 +23,8 @@ class Posts extends PureComponent {
         super(props);
         this.state = {
             hasMore: true,
-            empty: false,
-            posts: []
+            posts: [],
+            empty: false
         }
     }
 
@@ -54,6 +54,7 @@ class Posts extends PureComponent {
             case 'tag': res = await getTagPosts(specificator, page)
                 break
             case `${username}`: res = await getProfilePosts(username, page)
+                break
             default: res = await getProfilePosts(mode, page);
         }
         page === 1 && this.props.switchLoader(false)

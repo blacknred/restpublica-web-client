@@ -26,9 +26,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const styles = {
     list: {
-        width: '550px',
-        margin: '1em 0',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        maxWidth: '550px',
+        borderRadius: '0'
     },
     avatar: {
         width: '60px',

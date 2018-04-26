@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import List, { 
-    ListItem, 
-    ListItemText, 
-    ListItemSecondaryAction 
+import List, {
+    ListItem,
+    ListItemText,
+    ListItemSecondaryAction
 } from 'material-ui/List';
 import Paper from 'material-ui/Paper';
 import Select from 'material-ui/Select';
@@ -16,9 +16,8 @@ import ListSubheader from 'material-ui/List/ListSubheader';
 
 const styles = theme => ({
     list: {
-        width: '550px',
-        margin: '1em 0',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        maxWidth: '550px',
+        borderRadius: '0'
     },
     selectField: {
         width: '6em',
@@ -41,6 +40,7 @@ const SettingsApp = ({
                 />
                 <ListItemSecondaryAction>
                     <Switch
+                        color='primary'
                         checked={isNightMode}
                         onChange={() => switchNightMode(!isNightMode)}
                     />
@@ -59,6 +59,7 @@ const SettingsApp = ({
                 />
                 <ListItemSecondaryAction>
                     <Switch
+                        color='primary'
                         checked={isFeedOneColumn}
                         onChange={() => switchFeedOneColumn(!isFeedOneColumn)}
                     />
@@ -68,6 +69,7 @@ const SettingsApp = ({
                 <ListItemText primary="Autoload gifs" />
                 <ListItemSecondaryAction>
                     <Switch
+                        color='primary'
                         checked={isAutoGifs}
                         onChange={() => switchAutoGifs(!isAutoGifs)}
                     />
@@ -80,7 +82,6 @@ const SettingsApp = ({
                 />
                 <ListItemSecondaryAction>
                     <Select
-                        disableUnderline={true}
                         className={classes.selectField}
                         value={parseInt(props.feed_rand, 10)}
                         onChange={(event) => updateValue('feed_rand', event.target.value)} >
@@ -101,6 +102,7 @@ const SettingsApp = ({
                 <ListItemText primary="Allow push notifications" />
                 <ListItemSecondaryAction>
                     <Switch
+                        color='primary'
                         checked={isNotify}
                         onChange={() => switchNotify(!isNotify)}
                     />
@@ -113,6 +115,7 @@ const SettingsApp = ({
                 />
                 <ListItemSecondaryAction>
                     <Switch
+                        color='primary'
                         checked={props.email_notify}
                         onChange={(event) =>
                             updateValue('email_notify', !props.email_notify)}
@@ -123,12 +126,16 @@ const SettingsApp = ({
     )
 
     return (
-        <Paper className={classes.list}>
+        <Paper
+            elevation={1}
+            className={classes.list}
+        >
             {uiList}
             <Divider />
             {feedList}
             <Divider />
             {notificationsList}
+            <Divider />
         </Paper>
     );
 }
