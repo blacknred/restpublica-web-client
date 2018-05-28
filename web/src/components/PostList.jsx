@@ -1,12 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom'
 import InfiniteScroll from 'react-infinite-scroller2'
 
-import PostItem from './PostItem'
-import { withStyles } from 'material-ui/styles';
-import CircularProgress from 'material-ui/Progress/CircularProgress';
+import Post from '../containers/Post'
 
-const styles = {
+import Button from '@material-ui/core/Button';
+import Avatar from '@material-ui/core/Avatar';
+import ListItem from '@material-ui/core/ListItem';
+import { withStyles } from '@material-ui/core/styles';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+const styles = theme => ({
     loader: {
         flexBasis: '100%',
         width: '100%',
@@ -18,67 +26,97 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'flex-start',
         boxSizing: 'border-box'
+    },
+    newPostLink: {
+        maxWidth: '530px',
+        minWidth: '140px',
+        background: theme.palette.background.paper,
+        margin: '0.6em auto',
+        boxShadow: theme.shadows[1]
     }
-}
+})
 
 const PostList = ({
-    mode, isFullAccess, isAutoGifs, isFeedOneColumn, classes, hasMore, 
-    posts, getPosts, expandPost, updatePost, deletePost,
+    mode, isFeedOneColumn, classes, hasMore, isPreview,
+    posts, userAvatar, getPosts,
 }) => {
-
-    const loader = (
-        <div
-            className={classes.loader}
-            key={'loader'}>
-            <CircularProgress />
-            <br />
-        </div>
-    )
-
-    const items = posts.map((post, index) =>
-        mode === 'trending' ?
-            <div> {index}</div> :
-            <PostItem
-                key={index}
-                post={post}
-                isFullAccess={isFullAccess}
-                isAutoGifs={isAutoGifs}
-                expandPost={expandPost}
-                updatePost={updatePost}
-                deletePost={deletePost}
-            />
-    )
-
     return (
-        <InfiniteScroll
-            pageStart={0}
-            loadMore={getPosts}
-            hasMore={hasMore}
-            loader={loader}
-            className={classes.grid}
-            style={{ flexDirection: isFeedOneColumn ? 'row' : 'column' }}
+        <div>
+            {
+                posts.length > 0 && mode === 'feed' &&
+                <ListItem
+                    className={classes.newPostLink}
+                    component={Link}
+                    to={{
+                        pathname: '/post',
+                        state: {
+                            modal: true,
+                            from: 'up'
+                        }
+                    }}
+                >
+                    <Avatar srcSet={`data:image/png;base64,${userAvatar}`} />
+                    <ListItemText secondary="What's up?" />
+                    <ListItemIcon>
+                        <PhotoCameraIcon />
+                    </ListItemIcon>
+                </ListItem>
+            }
+
+            <InfiniteScroll
+                pageStart={0}
+                loadMore={getPosts}
+                hasMore={hasMore}
+                loader={
+                    <div
+                        className={classes.loader}
+                        key={'postsLoader'}>
+                        {posts.length > 0 && <CircularProgress />}
+                        <br />
+                    </div>
+                }
+                className={classes.grid}
+                style={{ flexDirection: isFeedOneColumn ? 'row' : 'column' }}
             // ref={(scroll) => { this.scroll = scroll; }}
             // threshold={200}
             // key={reload}
             // initialLoad={false}
             // useWindow={false}
-        >
-            {items}
-        </InfiniteScroll>
+            >
+                {
+                    posts.map((post, index) =>
+                        isPreview ?
+                            <div>{index}</div> :
+                            <Post
+                                key={index}
+                                post={post}
+                            />
+                    )
+                }
+            </InfiniteScroll>
+
+            {
+                posts.length > 0 && mode === 'feed' &&
+                <Button
+                    color='primary'
+                    component={Link}
+                    to="/trending">
+                    More posts
+                    </Button>
+            }
+        </div >
     )
 }
 
 PostList.propTypes = {
-    isFullAccess: PropTypes.bool.isRequired,
-    isAutoGifs: PropTypes.bool.isRequired,
-    isFeedOneColumn: PropTypes.bool.isRequired,
-    hasMore: PropTypes.bool.isRequired,
-    posts: PropTypes.arrayOf(PropTypes.object).isRequired,
-    getPosts: PropTypes.func.isRequired,
-    expandPost: PropTypes.func.isRequired,
-    updatePost: PropTypes.func.isRequired,
-    deletePost: PropTypes.func.isRequired,
+    mode: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,
+    hasMore: PropTypes.bool.isRequired,
+    userAvatar: PropTypes.string.isRequired,
+    posts: PropTypes.arrayOf(PropTypes.object).isRequired,
+    isPreview: PropTypes.bool.isRequired,
+    isFeedOneColumn: PropTypes.bool.isRequired,
+    getPosts: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(PostList)

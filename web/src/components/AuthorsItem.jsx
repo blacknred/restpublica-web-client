@@ -1,16 +1,17 @@
-/* eslint-disable no-undef */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import Avatar from 'material-ui/Avatar';
-import Button from 'material-ui/Button';
-import { GridList } from 'material-ui/GridList';
-import { ListItem } from 'material-ui/List';
-import { grey100 } from 'material-ui/colors';
 
+import PostItem from './PostItem';
+
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import GridList from '@material-ui/core/GridList';
+import ListItem from '@material-ui/core/ListItem';
+import { grey100 } from '@material-ui/core/colors';
 import NavigationChevronRightIcon from '@material-ui/icons/ChevronRight';
 
-import PostItem from './PostItem'
+
 
 const AuthorsItem = ({ author, isNightMode, isAuthenticated, removeSubscription, createSubscription }) => {
     const styles = {

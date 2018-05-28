@@ -1,25 +1,25 @@
-import React, { PureComponent } from 'react';
-import { Switch, Route } from 'react-router-dom'
-import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux'
+import React, { PureComponent } from 'react';
+import { Switch, Route } from 'react-router-dom';
 
-import { 
-    getUserProfile, 
-    login, 
-    userUpdate 
+import {
+    getUserProfile,
+    login,
+    userUpdate
 } from '../api'
 import {
-    updateUser, 
-    createFlashMessage, 
-    switchNightMode, 
+    updateUser,
+    createFlashMessage,
+    switchNightMode,
     switchLoader,
-    switchNotify, 
-    switchAutoGifs, 
-    switchFeedOneColumn, 
+    switchNotify,
+    switchAutoGifs,
+    switchFeedOneColumn,
     logoutUser
 } from '../actions'
-import ProfileSettings from '../components/SettingsProfile'
 import AppSettings from '../components/SettingsApp'
+import ProfileSettings from '../components/SettingsProfile'
 
 class Settings extends PureComponent {
     constructor(props) {
@@ -47,6 +47,7 @@ class Settings extends PureComponent {
                     newpassword: null,
                     emailConfirmationCode: null
                 },
+                isAvatarLoading: false,
                 isChangePasswordDialogOpen: false,
                 isDeleteProfileDialogOpen: false,
             }
@@ -71,7 +72,6 @@ class Settings extends PureComponent {
 
     showDialogHandler = (target) => {
         this.setState({
-            ...this.state,
             profile: {
                 ...this.state.profile,
                 [target]: !this.state.profile[target]
@@ -80,6 +80,7 @@ class Settings extends PureComponent {
     }
 
     getProfileHandler = async () => {
+        this.props.switchLoader(true)
         const res = await getUserProfile()
         if (!res.status) {
             this.props.createMessage(res)
@@ -87,7 +88,6 @@ class Settings extends PureComponent {
             return
         }
         this.setState({
-            ...this.state,
             profile: {
                 ...this.state.profile,
                 values: {
@@ -102,7 +102,6 @@ class Settings extends PureComponent {
     updateProfileValueHandler = async (option, value) => {
         if (value === this.state.profile.values[option]) {
             this.setState({
-                ...this.state,
                 profile: {
                     ...this.state.profile,
                     errors: {
@@ -164,6 +163,12 @@ class Settings extends PureComponent {
             this.props.createMessage('Maximum size is 2 mB')
             return
         }
+        this.setState({
+            profile: {
+                ...this.state.profile,
+                isAvatarLoading: true
+            } 
+        })
         const reader = new FileReader();
         reader.readAsDataURL(avatar);
         reader.onloadend = async () => {
@@ -173,12 +178,17 @@ class Settings extends PureComponent {
                 value: avatar
             }
             const res = await userUpdate(updatedData)
+            this.setState({
+                profile: {
+                    ...this.state.profile,
+                    isAvatarLoading: false
+                } 
+            })
             if (!res.status) {
                 this.props.createMessage(res)
                 return
             }
             this.setState({
-                ...this.state,
                 profile: {
                     ...this.state.profile,
                     values: {
@@ -208,7 +218,6 @@ class Settings extends PureComponent {
             if (!res.message.length) res.message = [res.message]
             res.message.forEach((failure) => {
                 this.setState({
-                    ...this.state,
                     profile: {
                         ...this.state.profile,
                         errors: {
@@ -220,7 +229,6 @@ class Settings extends PureComponent {
             })
         } else {
             this.setState({
-                ...this.state,
                 profile: {
                     ...this.state.profile,
                     values: {
@@ -247,7 +255,6 @@ class Settings extends PureComponent {
             failure = 'New password must differ previous'
         }
         this.setState({
-            ...this.state,
             profile: {
                 ...this.state.profile,
                 values: {
@@ -265,7 +272,6 @@ class Settings extends PureComponent {
     sendProfileNewPasswordEmailConfirmationHandler = async () => {
         const confirmationCode = Math.floor(100000 + Math.random() * 900000)
         this.setState({
-            ...this.state,
             profile: {
                 ...this.state.profile,
                 values: {
@@ -285,7 +291,6 @@ class Settings extends PureComponent {
     updateEmailConfirmationCodeHandler = (event) => {
         const value = event.target.value
         this.setState({
-            ...this.state,
             profile: {
                 ...this.state.profile,
                 values: {
@@ -300,7 +305,6 @@ class Settings extends PureComponent {
         const confirmationCode = window.sessionStorage.getItem('newPasswordEmailConfirmationCode')
         if (confirmationCode !== this.state.profile.values.emailConfirmationCode) {
             this.setState({
-                ...this.state,
                 profile: {
                     ...this.state.profile,
                     errors: {
@@ -314,7 +318,6 @@ class Settings extends PureComponent {
         window.sessionStorage.removeItem('newPasswordEmailConfirmationCode')
         this.updateProfileValueHandler('password', this.state.profile.values.newpassword)
         this.setState({
-            ...this.state,
             profile: {
                 ...this.state.profile,
                 values: {
@@ -335,18 +338,9 @@ class Settings extends PureComponent {
     }
 
     componentDidMount() {
-        this.props.switchLoader(true)
         this.getProfileHandler();
     }
 
-    // componentWillUpdate(prevProps, prevState) {
-    //     this.props.switchLoader(true)
-    // }
-
-    // componentDidUpdate(prevProps, prevState) {
-    //     this.props.switchLoader(false)
-    // }
-    
     render() {
         const profileSettings = (
             this.state.profile.values.username.length > 0 &&

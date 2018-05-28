@@ -1,15 +1,15 @@
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux'
 import React, { PureComponent } from 'react';
 import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types';
 
 import {
-    getDashboardPosts,
+    getFeedPosts,
     getTrendingPosts,
     getSearchedPosts,
     getProfilePosts,
     getCommunityPosts,
-    getTagPosts
+    getTagPosts,
 } from '../api'
 import {
     createFlashMessage,
@@ -23,8 +23,8 @@ class Posts extends PureComponent {
         super(props);
         this.state = {
             hasMore: true,
+            empty: false,
             posts: [],
-            empty: false
         }
     }
 
@@ -33,6 +33,7 @@ class Posts extends PureComponent {
         mode: PropTypes.string.isRequired, //PropTypes.oneOf(['feed', 'trending', 'search']),
         specificator: PropTypes.string.isRequired,
         username: PropTypes.string.isRequired,
+        userAvatar: PropTypes.string.isRequired,
         query: PropTypes.string,
         switchLoader: PropTypes.func.isRequired,
         createMessage: PropTypes.func.isRequired
@@ -41,9 +42,9 @@ class Posts extends PureComponent {
     getPostsHandler = async (page) => {
         let res
         const { mode, specificator, query, username } = this.props
-        page === 1 && this.props.switchLoader(true)
+        this.props.switchLoader(true)
         switch (mode) {
-            case 'feed': res = await getDashboardPosts(page)
+            case 'feed': res = await getFeedPosts(page)
                 break
             case 'trending': res = await getTrendingPosts(page)
                 break
@@ -57,7 +58,7 @@ class Posts extends PureComponent {
                 break
             default: res = await getProfilePosts(mode, page);
         }
-        page === 1 && this.props.switchLoader(false)
+        this.props.switchLoader(false)
         if (!res.status) {
             this.setState({ hasMore: false });
             this.props.createMessage(res)
@@ -65,57 +66,42 @@ class Posts extends PureComponent {
         }
         // if there are no requested posts at all view empty page 
         if (res.data.count === '0') {
-            this.setState({ hasMore: false, empty: true })
+            this.setState({
+                hasMore: false,
+                empty: true
+            })
         }
         // enlarge posts arr if there are, block loading if there are not
         if (res.data.posts.length) {
-            res.data.posts.forEach(post => {
-                post.isExpanded = false;
-                post.comments = []
+            await res.data.posts.forEach(post => {
+                post.showComments = false
+                post.showCommentForm = false
+                post.newComment = ''
             })
-            this.setState({ posts: this.state.posts.concat(res.data.posts) });
+            const posts = await this.state.posts.concat(...res.data.posts)
+            this.setState({ posts });
         } else {
             this.setState({ hasMore: false });
         }
-        console.log(`page:${page}, count:${res.data.count}, length:${this.state.posts.length}`)
-    }
-
-    expandPostHandler = (id) => {
-        const posts = [...this.state.posts]
-        posts.forEach(post => {
-            if (post.id === id) post.isExpanded = !post.isExpanded
-        })
-        this.setState({ posts })
-    }
-
-    updatePostHandler = (e, child) => {
-        console.log(e, child)
-    }
-
-    deletePostHandler = (id) => {
-        console.log(id)
+        console.log(`page:${page}, ${this.state.posts.length} from ${res.data.count}`)
     }
 
     componentDidMount() {
-        console.log(`[${this.props.mode}, ${this.props.username}] posts are mounted`)
+        const { mode, username } = this.props
+        console.log('posts are mounted: ', mode, username)
     }
 
     render() {
-        const {
-            isAuthenticated, mode, username, isAutoGifs, isFeedOneColumn
-        } = this.props;
+        const { isAuthenticated, mode, username, isFeedOneColumn } = this.props;
         return (
             !this.state.empty ?
                 <PostList
                     {...this.state}
                     mode={mode}
-                    isAutoGifs={isAutoGifs}
+                    userAvatar={this.props.userAvatar}
+                    isPreview={mode === 'trending'}
                     isFeedOneColumn={isFeedOneColumn}
-                    isFullAccess={isAuthenticated && mode === username}
                     getPosts={this.getPostsHandler}
-                    expandPost={this.expandPostHandler}
-                    updatePost={this.updatePostHandler}
-                    deletePost={this.deletePostHandler}
                 /> :
                 <EmptyPostsMessage
                     mode={mode}
@@ -127,11 +113,11 @@ class Posts extends PureComponent {
 
 const mapStateToProps = (state, ownProps) => ({
     isAuthenticated: state.authentication.isAuthenticated,
+    userAvatar: state.authentication.avatar,
     mode: ownProps.location.pathname.split('/')[1] || 'feed',
     specificator: ownProps.location.pathname.split('/')[2] || '',
     query: ownProps.match.params.query || '',
     username: state.authentication.username,
-    isAutoGifs: state.uiSwitchers.isAutoGifs,
     isFeedOneColumn: state.uiSwitchers.isFeedOneColumn
 })
 

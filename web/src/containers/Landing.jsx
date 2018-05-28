@@ -1,7 +1,11 @@
-import React, { PureComponent } from 'react';
-import { withRouter, Switch, Route } from 'react-router-dom';
-import { connect } from 'react-redux'
+import { 
+    withRouter, 
+    Switch, 
+    Route 
+} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux'
+import React, { PureComponent } from 'react';
 
 import { 
     getBackgroundPic, 
@@ -12,9 +16,9 @@ import {
     authUser, 
     createFlashMessage 
 } from '../actions'
-import LandingContent from '../components/LandingContent';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
+import LandingContent from '../components/LandingContent';
 
 class Landing extends PureComponent {
     constructor(props) {
@@ -52,7 +56,6 @@ class Landing extends PureComponent {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
-            ...this.state,
             values: {
                 ...this.state.values,
                 [target.name]: value

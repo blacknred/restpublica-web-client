@@ -1,14 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 
+import { 
+    grey,
+    blue,
+    teal
+} from '@material-ui/core/colors'
 import {
     MuiThemeProvider,
-    createMuiTheme
-} from 'material-ui/styles';
-import Paper from 'material-ui/Paper';
-import grey from 'material-ui/colors/grey'
-import { withStyles } from 'material-ui/styles';
-import lightBlue from 'material-ui/colors/lightBlue'
+    createMuiTheme,
+    withStyles
+} from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+
 
 const styles = {
     frame: {
@@ -16,8 +20,8 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         height: '100%',
-        minHeight: '100vh',
-        transition: 'padding 300ms',
+        minHeight: '105vh',
+        transition: 'padding-left 300ms',
     },
     light: {
         backgroundColor: grey[200]
@@ -27,7 +31,7 @@ const styles = {
     },
     left: {
         paddingLeft: '220px',
-        '@media (max-width: 600px)': {
+        '@media (max-width: 800px)': {
             paddingLeft: '0px',
         }
     },
@@ -41,8 +45,8 @@ const lightTheme = createMuiTheme({
     palette: {
         type: 'light',
         primary: {
-            main: lightBlue[900],
-        }
+            main: teal[500],
+        },
     },
 })
 
@@ -50,7 +54,7 @@ const darkTheme = createMuiTheme({
     palette: {
         type: 'dark',
         primary: {
-            main: lightBlue[900],
+            main: blue[500],
         },
     },
 })
@@ -63,7 +67,7 @@ const MuiFrame = ({ isNightMode, isAuthenticated, isDrawer, classes, children })
                     root: classes.frame,
                     elevation2: isAuthenticated ? classes.top : null
                 }}
-                className={isDrawer ? classes.left : null}
+                className={isAuthenticated && isDrawer ? classes.left : null}
                 style={isNightMode ? styles.dark : styles.light}
             >
                 {children}

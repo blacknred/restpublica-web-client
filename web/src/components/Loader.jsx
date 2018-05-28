@@ -1,13 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 
-import { withStyles } from 'material-ui/styles';
-import LinearProgress from 'material-ui/Progress/LinearProgress';
+import { withStyles } from '@material-ui/core/styles';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const styles = theme => ({
     root: {
         zIndex: theme.zIndex.drawer + 2,
-        //backgroundColor: 'transparent',
+        backgroundColor: 'transparent',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%'
     }
 })
 

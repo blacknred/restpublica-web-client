@@ -2,40 +2,43 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom';
 
-import List, {
-    ListItem,
-    ListItemIcon,
-    ListItemText
-} from 'material-ui/List';
 import compose from 'recompose/compose';
-import Drawer from 'material-ui/Drawer';
-import Hidden from 'material-ui/Hidden';
-import Toolbar from 'material-ui/Toolbar';
-import Divider from 'material-ui/Divider';
+import List from '@material-ui/core/List';
+import Slide from '@material-ui/core/Slide';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
 import HelpIcon from '@material-ui/icons/Help';
 import HomeIcon from '@material-ui/icons/Home';
-import IconButton from 'material-ui/IconButton';
-import Typography from 'material-ui/Typography';
-import { withStyles } from 'material-ui/styles';
-import Slide from 'material-ui/transitions/Slide';
-import PersonIcon from '@material-ui/icons/Person';
-import withWidth from 'material-ui/utils/withWidth';
+import Toolbar from '@material-ui/core/Toolbar';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+import PeopleIcon from '@material-ui/icons/People';
+import withWidth from '@material-ui/core/withWidth';
 import ExploreIcon from '@material-ui/icons/Explore';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 import SettingsIcon from '@material-ui/icons/Settings';
 import FeedbackIcon from '@material-ui/icons/Feedback';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import AccountIcon from '@material-ui/icons/AccountCircle';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 
 const styles = theme => ({
     drawer: {
-        fontSize: '0.95rem',
         borderWidth: 0,
-        fontWeight: '700',
         backgroundColor: 'transparent',
-        '@media (max-width: 600px)': {
+        '@media (max-width: 800px)': {
             backgroundColor: theme.palette.background.default,
-            width: '300px'
+            width: '250px',
+            borderWidth: 1,
+        },
+        '@media (max-width: 600px)': {
+            width: '300px',
+            borderWidth: 0,
         },
     },
     container: {
@@ -44,44 +47,64 @@ const styles = theme => ({
     drawerHeader: {
         justifyContent: 'space-between',
         paddingLeft: '24px',
-        //background: '#01579b',
-        //color: '#fff',
+        '& svg': {
+            fontSize: '1.5em'
+        }
     },
     drawerHeaderTitle: {
         fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif'
     },
-    icon: {
-        color: 'inherit',
-        marginRight: '2px',
-        marginLeft: '4px'
-    },
-    notActive: {
-        color: theme.palette.text.primary,
-        opacity: '0.7'
-    },
     active: {
-        color: theme.palette.primary.main,
+        color: theme.palette.primary.main
+    },
+    primaryNav: {
+        color: theme.palette.type === 'light' ?
+            theme.palette.grey[800] :
+            theme.palette.grey[300],
+        '& svg': {
+            color: 'inherit',
+            marginRight: '2px',
+            marginLeft: '4px',
+            opacity: '0.8'
+        },
+        '& h3': {
+            fontWeight: '500',
+            color: 'inherit',
+            fontSize: '0.97rem'
+        }
     },
     secondaryNav: {
-        color: theme.palette.text.hint
+        '& svg': {
+            opacity: '0.6',
+            marginRight: '2px',
+            marginLeft: '4px'
+        },
+        '& h3': {
+            opacity: '0.6',
+            fontSize: '0.96rem'
+        }
     },
     footerNav: {
         padding: '1.5em',
         position: 'absolute',
         bottom: 0,
-        color: theme.palette.text.hint
+        color: theme.palette.text.hint,
+        maxWidth: '65%',
+        '& *': {
+            marginRight: '0.5em'
+        }
     }
 })
 
 const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, switchDrawer }) => {
-
     const drawerHeader = (
-        <Hidden only={['sm', 'md', 'lg']}>
+        <Hidden only={['sm', 'md', 'lg', 'xl']}>
             <Toolbar className={classes.drawerHeader}>
                 <Typography
                     variant="headline"
                     component={Link}
                     to="/"
+                    onClick={() => switchDrawer(!isDrawer)}
                     className={classes.drawerHeaderTitle}
                 >
                     Publica
@@ -98,22 +121,19 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
     )
 
     const primaryNavList = (
-        <List component="nav">
+        <List component="nav" className={classes.primaryNav}>
             <ListItem
                 button
                 onClick={() => {
                     navigate('/')
                     width === 'xs' && switchDrawer(!isDrawer)
                 }}
-                classes={{ root: path === '/' ? classes.active : classes.notActive }}
+                className={path === '/' ? classes.active : ''}
             >
-                <ListItemIcon className={classes.icon}>
+                <ListItemIcon>
                     <HomeIcon />
                 </ListItemIcon>
-                <ListItemText
-                    primary='Feed'
-                    disableTypography={true}
-                />
+                <ListItemText primary='Feed' />
             </ListItem>
             <ListItem
                 button
@@ -121,15 +141,12 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                     navigate('/trending')
                     width === 'xs' && switchDrawer(!isDrawer)
                 }}
-                classes={{ root: path.match(/^\/trending/) ? classes.active : classes.notActive }}
+                className={path.match(/^\/trending/) ? classes.active : ''}
             >
-                <ListItemIcon className={classes.icon}>
+                <ListItemIcon>
                     <ExploreIcon />
                 </ListItemIcon>
-                <ListItemText
-                    primary="Trending"
-                    disableTypography={true}
-                />
+                <ListItemText primary='Trending' />
             </ListItem>
             <ListItem
                 button
@@ -137,15 +154,12 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                     navigate('/communities')
                     width === 'xs' && switchDrawer(!isDrawer)
                 }}
-                classes={{ root: path.match(/^\/communities/) ? classes.active : classes.notActive }}
+                className={path.match(/^\/communities/) ? classes.active : ''}
             >
-                <ListItemIcon className={classes.icon}>
+                <ListItemIcon>
                     <ViewColumnIcon />
                 </ListItemIcon>
-                <ListItemText
-                    primary="Communities"
-                    disableTypography={true}
-                />
+                <ListItemText primary='Communities' />
             </ListItem>
             <ListItem
                 button
@@ -153,15 +167,25 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                     navigate(`/${username}`)
                     width === 'xs' && switchDrawer(!isDrawer)
                 }}
-                classes={{ root: path.match(new RegExp(`^/${username}`)) ? classes.active : classes.notActive }}
+                className={path.match(new RegExp(`^/${username}`)) ? classes.active : ''}
             >
-                <ListItemIcon className={classes.icon}>
-                    <PersonIcon />
+                <ListItemIcon>
+                    <AccountIcon />
                 </ListItemIcon>
-                <ListItemText
-                    primary="Profile"
-                    disableTypography={true}
-                />
+                <ListItemText primary='Profile' />
+            </ListItem>
+            <ListItem
+                button
+                onClick={() => {
+                    navigate(`/people`)
+                    width === 'xs' && switchDrawer(!isDrawer)
+                }}
+                className={path.match(/^\/people/) ? classes.active : ''}
+            >
+                <ListItemIcon>
+                    <PeopleIcon />
+                </ListItemIcon>
+                <ListItemText primary='People' />
             </ListItem>
             <ListItem
                 button
@@ -169,15 +193,12 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                     navigate('/activity')
                     width === 'xs' && switchDrawer(!isDrawer)
                 }}
-                classes={{ root: path.match(/^\/activity/) ? classes.active : classes.notActive }}
+                className={path.match(/^\/activity/) ? classes.active : ''}
             >
-                <ListItemIcon className={classes.icon}>
+                <ListItemIcon>
                     <NotificationsIcon />
                 </ListItemIcon>
-                <ListItemText
-                    primary="Activity"
-                    disableTypography={true}
-                />
+                <ListItemText primary='Activity' />
             </ListItem>
             <ListItem
                 button
@@ -185,15 +206,12 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                     navigate('/settings')
                     width === 'xs' && switchDrawer(!isDrawer)
                 }}
-                classes={{ root: path.match(/^\/settings/) ? classes.active : classes.notActive }}
+                className={path.match(/^\/settings/) ? classes.active : ''}
             >
-                <ListItemIcon className={classes.icon}>
+                <ListItemIcon>
                     <SettingsIcon />
                 </ListItemIcon>
-                <ListItemText
-                    primary="Settings"
-                    disableTypography={true}
-                />
+                <ListItemText primary='Settings' />
             </ListItem>
         </List>
     )
@@ -203,88 +221,72 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
             <ListItem
                 button
                 component='a'
-                href='https://github.com/blacknred/restpublica'
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <ListItemIcon className={classes.icon}>
-                    <HelpIcon />
-                </ListItemIcon>
-                <ListItemText
-                    primary="Help"
-                    disableTypography={true}
-                />
-            </ListItem>
-            <ListItem
-                button
-                component='a'
                 href='https://github.com/blacknred/restpublica/issues/new'
                 target="_blank"
                 rel="noopener noreferrer"
             >
-                <ListItemIcon className={classes.icon}>
+                <ListItemIcon>
                     <FeedbackIcon />
                 </ListItemIcon>
-                <ListItemText
-                    primary="Send feedback"
-                    disableTypography={true}
-                />
+                <ListItemText primary="Send feedback" />
+            </ListItem>
+            <ListItem
+                button
+                component='a'
+                href='https://github.com/blacknred/restpublica'
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <ListItemIcon>
+                    <HelpIcon />
+                </ListItemIcon>
+                <ListItemText primary="Help" />
             </ListItem>
         </List>
     )
 
     const footerNav = (
-        <div className={classes.footerNav}>
-            <Typography
-                variant='caption'
-                color='inherit'
-            >
-                © {(new Date()).getFullYear()} Restpublica, LLC
-            </Typography>
-            <Typography
-                component='a'
-                variant='caption'
-                color='inherit'
+        <Typography
+            className={classes.footerNav}
+            variant='caption'
+            color='inherit'
+        >
+            <span>© {(new Date()).getFullYear()} Restpublica, LLC</span><br/>
+            <a
                 href="https://github.com/blacknred/restpublica"
                 target="_blank"
                 rel="noopener noreferrer"
             >
                 Conditions of use
-            </Typography>
-            <Typography
-                component='a'
-                variant='caption'
-                color='inherit'
+            </a>
+            <a
                 href="/api"
                 target="_blank"
                 rel="noopener noreferrer"
             >
                 API Developers
-            </Typography>
-            <Typography
-                component='a'
-                variant='caption'
-                color='inherit'
+            </a>
+            <a
                 href="https://github.com/blacknred/restpublica/issues/new"
                 target="_blank"
                 rel="noopener noreferrer"
             >
                 Send feedback
-            </Typography>
-        </div>
+            </a>
+        </Typography>
     )
 
     return (
         <Drawer
             variant={width === 'xs' ? 'temporary' : "persistent"}
             anchor={'left'}
-            open={isDrawer}
+            open={width === 'xs' ? !isDrawer : isDrawer}
             classes={{ paper: classes.drawer }}
             onClose={() => switchDrawer(!isDrawer)}
         >
             <Slide
                 direction="right"
-                in={isDrawer}
+                in={width === 'xs' ? !isDrawer : isDrawer}
                 timeout={400}
             >
                 <div className={classes.container}>

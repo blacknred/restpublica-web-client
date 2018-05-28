@@ -1,10 +1,10 @@
-/* eslint-disable no-undef */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import Avatar from 'material-ui/Avatar';
-import Button from 'material-ui/Button';
-import { GridTile } from 'material-ui/GridList';
+
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import GridTile from '@material-ui/core/GridList';
 
 const styles = {
     tile: {

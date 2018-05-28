@@ -1,10 +1,10 @@
-/* eslint-disable no-undef */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import Avatar from 'material-ui/Avatar';
-import Button from 'material-ui/Button';
-import { ListItem } from 'material-ui/List';
+
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import ListItem from '@material-ui/core/ListItem';
 
 const Subscription = ({ subscription, removeSubscription, createSubscription }) => {
     return (

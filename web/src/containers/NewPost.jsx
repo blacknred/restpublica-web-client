@@ -1,41 +1,620 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux'
+import URI from 'url';
+import moment from 'moment';
+import urlRegex from 'url-regex';
 import PropTypes from 'prop-types';
+import getVideoId from 'get-video-id';
+import { connect } from 'react-redux';
+import React, { PureComponent } from 'react';
+import { withRouter } from 'react-router-dom';
 
-import NewPostForm from '../components/NewPostForm'
+import {
+    createPost,
+    getProfileCommunities,
+    getProxyPageData,
+    saveFileInStorage
+} from '../api'
+import parser from '../api/parser'
+import {
+    createFlashMessage,
+    switchLoader,
+} from '../actions'
+import NewPostForm from '../components/NewPostForm';
 
 class NewPost extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            open: true,
+            isOpen: true,
+            isCloseConfirmOpen: false,
+            isPublishing: false,
+            isOptionsMenuOpen: false,
+            isAddPollDialogOpen: false,
+            isCommunitiesDialogOpen: false,
+            isAddLinkDialogOpen: false,
+            isPollEndDateDialogOpen: false,
+            availableCommunities: {
+                hasMore: true,
+                empty: false,
+                list: [],
+                selectedId: null,
+                selectedName: null
+            },
+
+            description: '',
+            archived: false,
+            commentable: true,
+            content: {
+                isLoading: false,
+                // text, file, link, poll, repost
+                type: this.props.repost ? 'repost' : 'text',
+
+                repost: this.props.repost,
+
+                files: [],
+                thumbFiles: [],
+                filesType: 'img',
+                isVideoFilePlay: false,
+
+                link: '',
+                linkType: 'page', //page, file, embed
+                linkImg: null,
+                linkTitle: null,
+                linkSrc: null,
+                linkDescription: null,
+                linkEmbed: null,
+
+                pollMode: 'text', // text, img
+                pollEndsAt: null,
+                pollAnswers: [
+                    {
+                        text: '',
+                        img: null,
+                        thumb: null
+                    },
+                    {
+                        text: '',
+                        img: null,
+                        thumb: null
+                    }
+                ]
+            }
         }
     };
 
     static propTypes = {
         close: PropTypes.func.isRequired,
+        repost: PropTypes.object,
+        isSlide: PropTypes.bool.isRequired,
+        userId: PropTypes.string.isRequired,
+        username: PropTypes.string.isRequired,
+        userAvatar: PropTypes.string.isRequired,
+        switchLoader: PropTypes.func.isRequired,
+        createMessage: PropTypes.func.isRequired,
     }
 
-    modalOpenHandler = (val) => {
-        this.setState({ open: val });
+    toggleFormHandler = () => {
+        if (!this.state.isCloseConfirmOpen &&
+            (this.state.description.length > 0 ||
+                this.state.content.type !== 'text')
+        ) {
+            this.setState({ isCloseConfirmOpen: true })
+            return
+        }
+        this.setState({ isCloseConfirmOpen: false })
+        this.setState({ isOpen: false })
         this.props.close()
-    };
+    }
+
+    toggleContextDialogHandler = (target) => {
+        this.setState({ [target]: !this.state[target] })
+    }
+
+    getProfileCommunitiesHandler = async (page) => {
+        const data = {
+            userId: this.props.userId,
+            page
+        }
+        const res = await getProfileCommunities(data)
+        if (!res.status) {
+            this.setState({
+                availableCommunities: {
+                    ...this.state.availableCommunities,
+                    hasMore: false
+                }
+            });
+            this.props.createMessage(res)
+            return
+        }
+        // if there are no requested communities
+        if (res.data.count === '0') {
+            this.setState({
+                availableCommunities: {
+                    ...this.state.availableCommunities,
+                    hasMore: false,
+                    empty: true
+                }
+            })
+        }
+        // enlarge communities arr if there are, 
+        // block loading if there are not
+        if (res.data.communities.length > 0) {
+            const list = await this.state.availableCommunities.list
+                .concat(...res.data.communities)
+            this.setState({
+                availableCommunities: {
+                    ...this.state.availableCommunities,
+                    list
+                }
+            });
+        } else {
+            this.setState({
+                availableCommunities: {
+                    ...this.state.availableCommunities,
+                    hasMore: false
+                }
+            });
+        }
+    }
+
+    setCommunityHandler = ({ id, name }) => {
+        this.setState({
+            availableCommunities: {
+                ...this.state.availableCommunities,
+                selectedId: id,
+                selectedName: name
+            }
+        })
+    }
+
+    changeDescriptionHandler = (val) => {
+        this.setState({ description: val })
+    }
+
+    toggleArchivedHandler = () => {
+        this.setState({ archived: !this.state.archived })
+    }
+
+    toggleCommentableHandler = () => {
+        this.setState({ commentable: !this.state.commentable })
+    }
+
+
+    addFileHandler = e => {
+        let filesType = 'img'
+        const files = []
+        const rowFiles = Object.values(e.target.files)
+        for (let file of rowFiles) {
+            if (file.size > 10000000) {
+                this.props.createMessage('Maximum file size is 10 mB')
+                break
+            }
+            if (file.type.match(/^video\//)) {
+                files.length = 0
+                files.push(file)
+                filesType = 'video'
+                break
+            }
+            files.push(file)
+        }
+        if (!files[0]) return
+        this.setState({
+            content: {
+                ...this.state.content,
+                type: 'file',
+                isLoading: true,
+                files,
+                filesType
+            }
+        })
+        files.forEach(async (file) => {
+            if (file.size > 2000000) {
+                const blobUrl = await URL.createObjectURL(files[0])
+                this.setState({
+                    content: {
+                        ...this.state.content,
+                        isLoading: false,
+                        thumbFiles: [
+                            ...this.state.content.thumbFiles,
+                            blobUrl
+                        ]
+                    }
+                })
+
+            } else {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = async () => {
+                    this.setState({
+                        content: {
+                            ...this.state.content,
+                            isLoading: false,
+                            thumbFiles: [
+                                ...this.state.content.thumbFiles,
+                                reader.result
+                            ]
+                        }
+                    })
+                }
+            }
+
+        })
+
+    }
+
+    playFileHandler = () => {
+        this.setState({
+            content: {
+                ...this.state.content,
+                isVideoFilePlay: !this.state.content.isVideoFilePlay
+            }
+        })
+    }
+
+    removeFileHandler = index => {
+        const files = this.state.content.files
+        const thumbFiles = this.state.content.thumbFiles
+        if (this.state.content.filesType === 'video') {
+            URL.revokeObjectURL(thumbFiles[index])
+        }
+        thumbFiles.splice(index, 1)
+        files.splice(index, 1)
+        this.setState({
+            content: {
+                ...this.state.content,
+                type: !files[0] ? 'text' : 'file',
+                thumbFiles,
+                files
+            }
+        })
+
+    }
+
+
+    addLinkHandler = async () => {
+        const url = this.state.content.link
+        let linkType = 'page'
+        let linkEmbed = null
+        if (!urlRegex({ exact: true }).test(url)) {
+            this.props.createMessage('Not valid url')
+            return
+        }
+        this.setState({
+            content: {
+                ...this.state.content,
+                isLoading: true
+            }
+        })
+        const html = await getProxyPageData(url)
+        if (!html) {
+            this.setState({
+                content: {
+                    ...this.state.content,
+                    type: 'text',
+                    isLoading: false,
+                    link: '',
+                    linkType: 'page',
+                }
+            })
+            this.props.createMessage('Not reachable url')
+            return
+        }
+        const options = {
+            title: true,
+            image: true,
+            description: true
+        }
+        const parsedObj = await parser({ url, html, options })
+        if (url.match(/.+\.(\w+)$/i)) linkType = 'file'
+        else {
+            const { id, service } = getVideoId(url);
+            console.log(id, service)
+            if (id && service) {
+                linkType = 'embed'
+                switch (service) {
+                    case 'youtube':
+                        linkEmbed = `https://www.youtube.com/embed/${id}`
+                        break;
+                    case 'vimeo':
+                        linkEmbed = `https://player.vimeo.com/video/${id}`
+                        break;
+                    case 'vine':
+                        linkEmbed = `https://vine.co/v/${id}/embed/simple`
+                        break;
+                    case 'videopress':
+                        linkEmbed = `https://videopress.com/embed/${id}`
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        this.setState({
+            content: {
+                ...this.state.content,
+                isLoading: false,
+                type: 'link',
+                linkType,
+                linkSrc: URI.parse(url).hostname,
+                linkImg: parsedObj.image,
+                linkTitle: parsedObj.title,
+                linkDescription: parsedObj.description,
+                linkEmbed
+            }
+        })
+    }
+
+    removeLinkHandler = () => {
+        this.setState({
+            content: {
+                ...this.state.content,
+                type: 'text',
+                link: '',
+                linkType: 'page',
+                linkSrc: null,
+                linkImg: null,
+                linkTitle: null,
+                linkDescription: null
+            }
+        })
+
+    }
+
+    changeContentLinkHandler = (val) => {
+        this.setState({
+            content: {
+                ...this.state.content,
+                link: val
+            }
+        })
+    }
+
+
+    addPollHandler = () => {
+        this.setState({
+            content: {
+                ...this.state.content,
+                isLoading: false,
+                type: 'poll',
+            }
+        })
+    }
+
+    removePollHandler = () => {
+        this.setState({
+            content: {
+                ...this.state.content,
+                type: 'text',
+                pollEndsAt: null,
+                pollAnswers: [
+                    {
+                        text: '',
+                        img: null,
+                        thumb: null
+                    },
+                    {
+                        text: '',
+                        img: null,
+                        thumb: null
+                    }
+                ]
+            }
+        })
+    }
+
+    addPollAnswerHandler = () => {
+        this.setState({
+            content: {
+                ...this.state.content,
+                pollAnswers: [
+                    ...this.state.content.pollAnswers,
+                    {
+                        text: '',
+                        img: null,
+                        thumb: null
+                    }
+                ]
+            }
+        })
+    }
+
+    removePollAnswerHandler = index => {
+        const pollAnswers = this.state.content.pollAnswers
+        pollAnswers.splice(index, 1)
+        this.setState({
+            content: {
+                ...this.state.content,
+                pollAnswers
+            }
+        })
+    }
+
+    changePollAnswerTextHandler = (index, val) => {
+        const pollAnswers = this.state.content.pollAnswers
+        pollAnswers[index].text = val
+        this.setState({
+            content: {
+                ...this.state.content,
+                pollAnswers
+            }
+        })
+    }
+
+    changePollAnswerImgHandler = (index, e) => {
+        const file = e.target.files[0]
+        console.log(file)
+        if (file.size > 10000000) {
+            this.props.createMessage('Maximum file size is 10 mB')
+            return false
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            const pollAnswers = this.state.content.pollAnswers
+            pollAnswers[index].img = file
+            pollAnswers[index].thumb = reader.result
+            this.setState({
+                content: {
+                    ...this.state.content,
+                    pollMode: 'img',
+                    pollAnswers
+                }
+            })
+        }
+    }
+
+    removePollAnswerImgHandler = (index) => {
+        const pollAnswers = this.state.content.pollAnswers
+        pollAnswers[index].img = null
+        pollAnswers[index].thumb = null
+        const pollAnswerWithImg = pollAnswers.filter(ans => ans.img !== null)
+        this.setState({
+            content: {
+                ...this.state.content,
+                pollMode: pollAnswerWithImg.length ? 'img' : 'text',
+                pollAnswers
+            }
+        })
+    }
+
+    changePollEndDateHandler = (val) => {
+        let newDate = val
+        let date = moment.parseZone(val)
+        let now = moment().parseZone()
+        switch (true) {
+            case (date.year() < now.year()):
+                newDate = null
+                break;
+            case (date.month() < now.month()):
+                newDate = null
+                break;
+            case (date.date() < now.date()):
+                newDate = null
+                break;
+            default:
+                break;
+        }
+        this.setState({
+            content: {
+                ...this.state.content,
+                pollEndsAt: newDate
+            }
+        })
+    }
+
+
+    createPostHandler = async () => {
+        this.setState({ isPublishing: true })
+        const post = {
+            commentable: this.state.commentable,
+            archived: this.state.archived,
+            description: this.state.description,
+            authorId: this.props.userId,
+            type: this.state.content.type
+        }
+        const formData = new FormData()
+        if (this.state.availableCommunities.selectedId) {
+            post.communityId = this.state.availableCommunities.selectedId
+        }
+        switch (this.state.content.type) {
+            case 'file':
+                post.filesType = this.state.content.filesType
+                this.state.content.files.map((file, i) => formData.append(`file_${i}`, file))
+                const res = await saveFileInStorage(formData)
+                post.files = res.data
+                break;
+            case 'link':
+                post.link = this.state.content.linkEmbed || this.state.content.link
+                post.linkType = this.state.content.linkType
+                post.linkSrc = this.state.content.linkSrc
+                if (this.state.content.linkImg) {
+                    post.linkImg = this.state.content.linkImg
+                }
+                if (this.state.content.linkTitle) {
+                    post.linkTitle = this.state.content.linkTitle
+                }
+                if (this.state.content.linkDescription) {
+                    post.linkDescription = this.state.content.linkDescription
+                }
+                break;
+            case 'poll':
+                post.pollAnswers = this.state.content.pollAnswers
+                post.pollAnswers.forEach((ans, i) => {
+                    delete ans.thumb;
+                    if (ans.img) formData.append(`file_${i}`, ans.img)
+                })
+                if (formData.length > 0) {
+                    const res = await saveFileInStorage(formData)
+                    res.data.forEach((file, i) => {
+                        post.pollAnswers[i].img = file
+                    })
+                }
+                if (this.state.content.pollEndsAt) {
+                    post.pollEndsAt = this.state.content.pollEndsAt
+                }
+                break;
+            case 'repost':
+                post.repostedId = this.state.content.repost
+                break;
+            default:
+                break;
+        }
+        const res = await createPost(post)
+        if (!res.status) {
+            this.props.createMessage(res)
+        }
+        console.log(post, res)
+        this.setState({ isOpen: false })
+        this.props.close()
+    }
 
     render() {
         return (
             <NewPostForm
                 {...this.state}
-                modalOpen={this.modalOpenHandler}
+                isSlide={this.props.isSlide}
+                username={this.props.username}
+                avatar={this.props.userAvatar}
+                toggleForm={this.toggleFormHandler}
+                toggleContextDialog={this.toggleContextDialogHandler}
+                setCommunity={this.setCommunityHandler}
+                getProfileCommunities={this.getProfileCommunitiesHandler}
+
+                toggleCommentable={this.toggleCommentableHandler}
+                toggleArchived={this.toggleArchivedHandler}
+                changeDescription={this.changeDescriptionHandler}
+                addFile={this.addFileHandler}
+                removeFile={this.removeFileHandler}
+                playFile={this.playFileHandler}
+                addLink={this.addLinkHandler}
+                removeLink={this.removeLinkHandler}
+                changeContentLink={this.changeContentLinkHandler}
+                addPoll={this.addPollHandler}
+                removePoll={this.removePollHandler}
+                addPollAnswer={this.addPollAnswerHandler}
+                removePollAnswer={this.removePollAnswerHandler}
+                changePollAnswerText={this.changePollAnswerTextHandler}
+                changePollAnswerImg={this.changePollAnswerImgHandler}
+                removePollAnswerImg={this.removePollAnswerImgHandler}
+                changePollEndDate={this.changePollEndDateHandler}
+
+                createPost={this.createPostHandler}
             />
         )
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    close: ownProps.close
+    close: ownProps.close,
+    repost: ownProps.location.state.repost || null,
+    isSlide: ownProps.location.state.isSlide || false,
+    userId: state.authentication.id,
+    username: state.authentication.username,
+    userAvatar: state.authentication.avatar,
 })
 
 const mapDispatchToProps = dispatch => ({
+    switchLoader: (mode) => dispatch(switchLoader(mode)),
+    createMessage: (text) => dispatch(createFlashMessage(text))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewPost)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NewPost))

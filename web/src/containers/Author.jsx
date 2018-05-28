@@ -1,14 +1,17 @@
-/* eslint-disable no-undef */
-import React, { Component } from 'react';
-import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux'
+import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { CircularProgress } from 'material-ui/Progress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { getUserProfile, createUserSubscription, removeUserSubscription } from '../api'
+import { 
+    getUserProfile, 
+    createUserSubscription, 
+    removeUserSubscription 
+} from '../api'
 import { setUserStats } from '../actions'
-import AuthorContent from '../components/AuthorContent';
 import AuthorTabs from '../components/AuthorTabs'
+import AuthorContent from '../components/AuthorContent';
 
 class Author extends Component {
     constructor(props) {

@@ -8,15 +8,16 @@
         "eject": "react-scripts eject"
     },
     "dependencies": {
-        "@material-ui/icons": "^1.0.0-beta.42",
+        "@material-ui/core": "^1.0.0",
+        "@material-ui/icons": "^1.0.0",
         "axios": "^0.17.1",
+        "cheerio": "^1.0.0-rc.2",
+        "get-video-id": "^3.1.0",
         "key-mirror": "^1.0.1",
-        "material-ui": "^1.0.0-beta.42",
         "moment": "^2.22.1",
         "prop-types": "^15.6.1",
         "react": "^16.3.2",
         "react-dom": "^16.3.2",
-        "react-infinite-scroller": "^1.1.4",
         "react-infinite-scroller2": "^1.1.8",
         "react-redux": "^5.0.7",
         "react-router-dom": "^4.2.2",
@@ -24,7 +25,8 @@
         "react-transition-group": "^2.3.1",
         "redux": "^3.7.2",
         "redux-logger": "^3.0.6",
-        "redux-thunk": "^2.2.0"
+        "redux-thunk": "^2.2.0",
+        "url-regex": "^4.1.1"
     },
     "devDependencies": {
         "eslint": "^4.19.1",

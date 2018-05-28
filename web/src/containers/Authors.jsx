@@ -1,12 +1,13 @@
-/* eslint-disable no-undef */
-import React, { Component } from 'react';
-import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux'
+import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import {
-    getTrendingProfiles, getSearchedProfiles,
-    createUserSubscription, removeUserSubscription
+    getTrendingProfiles, 
+    getSearchedProfiles,
+    createUserSubscription, 
+    removeUserSubscription
 } from '../api'
 import { createFlashMessage } from '../actions'
 import AuthorsList from '../components/AuthorsList';

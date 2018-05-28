@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux'
+import React, { PureComponent } from 'react';
 
 import NewCommunityForm from '../components/NewCommunityForm'
 

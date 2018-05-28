@@ -1,11 +1,16 @@
-/* eslint-disable no-undef */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import Avatar from 'material-ui/Avatar';
-import Button from 'material-ui/Button'
-import Chip from 'material-ui/Chip';
-import { grey300, grey400, grey600, grey900 } from 'material-ui/colors';
+
+import { 
+    grey300, 
+    grey400, 
+    grey600, 
+    grey900 
+} from '@material-ui/core/colors';
+import Chip from '@material-ui/core/Chip';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
 
 const styles = {
     userBlock: {

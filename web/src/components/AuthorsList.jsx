@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import InfiniteScroll from 'react-infinite-scroller'
-import { List } from 'material-ui/List';
-import { CircularProgress } from 'material-ui/Progress';
+import InfiniteScroll from 'react-infinite-scroller2';
 
 import AuthorsItem from './AuthorsItem';
+
+import List from '@material-ui/core/List';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
     loader: {

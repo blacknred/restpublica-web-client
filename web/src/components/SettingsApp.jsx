@@ -1,22 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import List, {
-    ListItem,
-    ListItemText,
-    ListItemSecondaryAction
-} from 'material-ui/List';
-import Paper from 'material-ui/Paper';
-import Select from 'material-ui/Select';
-import Switch from 'material-ui/Switch';
-import Divider from 'material-ui/Divider';
-import MenuItem from 'material-ui/Menu/MenuItem';
-import { withStyles } from 'material-ui/styles';
-import ListSubheader from 'material-ui/List/ListSubheader';
+import List from '@material-ui/core/List';
+import Paper from '@material-ui/core/Paper';
+import Select from '@material-ui/core/Select';
+import Switch from '@material-ui/core/Switch';
+import Divider from '@material-ui/core/Divider';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItem from '@material-ui/core/ListItem';
+import { withStyles } from '@material-ui/core/styles';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 const styles = theme => ({
     list: {
         maxWidth: '550px',
+        width: '100%',
         borderRadius: '0'
     },
     selectField: {

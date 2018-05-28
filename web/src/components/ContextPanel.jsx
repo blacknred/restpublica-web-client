@@ -1,13 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types'
 import ScrollToTop from 'react-scroll-up';
 
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
-import { withStyles } from 'material-ui/styles';
-import IconButton from 'material-ui/IconButton';
-import ContentAddIcon from '@material-ui/icons/Add'
+import ContentAddIcon from '@material-ui/icons/Add';
+import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
 const styles = {
@@ -25,7 +25,7 @@ const styles = {
     },
     action: {
         position: 'fixed',
-        bottom: '30px',
+        bottom: '5%',
         right: '30px',
     }
 }
@@ -37,8 +37,8 @@ const ContextPanel = ({ path, classes }) => {
                 showUnder={460}
                 style={styles.toTop}
             >
-                <IconButton className={classes.toTopButton}>
-                    <ArrowUpwardIcon />
+                <IconButton className={classes.toTopButton} color="primary">
+                    <ArrowUpwardIcon color="primary"/>
                 </IconButton>
             </ScrollToTop>
             {
@@ -50,7 +50,10 @@ const ContextPanel = ({ path, classes }) => {
                     component={Link}
                     to={{
                         pathname: '/post',
-                        state: { modal: true }
+                        state: { 
+                            modal: true,
+                            isSlide: true
+                        }
                     }}
                 >
                     <EditIcon />

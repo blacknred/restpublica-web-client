@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom';
 
-import List from 'material-ui/List';
-import Paper from 'material-ui/Paper';
-import Button from 'material-ui/Button';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
+import List from '@material-ui/core/List';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import ExploreIcon from '@material-ui/icons/Explore';
 
 const styles = {
@@ -22,7 +22,7 @@ const styles = {
     },
     form: {
         marginTop: '5%',
-        padding: '1.5em 0',
+        padding: '1.5em 0.5em',
         textAlign: 'center'
     }
 }

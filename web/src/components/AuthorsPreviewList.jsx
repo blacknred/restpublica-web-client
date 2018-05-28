@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { GridList } from 'material-ui/GridList';
-import { CircularProgress } from 'material-ui/Progress';
-import Button from 'material-ui/Button';
+
+import Button from '@material-ui/core/Button';
+import { grey100 } from '@material-ui/core/colors';
+import GridList from '@material-ui/core/GridList';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import NavigationChevronRightIcon from '@material-ui/icons/ChevronRight';
-import { grey100 } from 'material-ui/colors';
 
 import AuthorPreviewItem from './AuthorPreviewItem';
 

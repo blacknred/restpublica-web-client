@@ -3,23 +3,40 @@ import asyncMddlwr from './asyncMiddleware'
 
 const GIPHY_URL = encodeURI('https://api.giphy.com/v1/gifs/random' +
     '?api_key=dc6zaTOxFJmzC&tag=space&rating=pg-13');
+const STORAGE_HOST = process.env.STORAGE_HOST || 'http://127.0.0.1:3007'
 const FEED_RAND = window.localStorage.feedrand || 1;
-const TOKEN = window.localStorage.token
 
-axios.defaults.baseURL = 'http://localhost:3003' || process.env.API_HOST;
-axios.defaults.validateStatus = status => status >= 200 && status < 429;
+axios.defaults.timeout = 10000
+axios.defaults.baseURL = process.env.API_HOST || 'http://127.0.0.1:3003'
+axios.defaults.validateStatus = status => status >= 200 && status < 429
 const instance = axios.create({
-    timeout: 15000,
-    headers: { 'Authorization': `Bearer ${TOKEN || window.localStorage.token}` }
+    headers: {
+        'Authorization': `Bearer ${window.localStorage.token}`,
+    }
 });
 // axios.interceptors.request.use(req => console.log(req))
 // instance.interceptors.response.use(res => console.log(res))
 
+/* PROXY */
+
+export const getProxyPageData = url =>
+    axios.get('/proxy?url='  + url)
+        .then(res => res.data)
+        .catch(e => null)
+
+/* STORAGE */
+
+export const saveFileInStorage = data =>
+    axios.post(STORAGE_HOST, data)
+        .then(res => res.data)
+        .catch(e => null)
+
 /* LANDING */
 
-export const getBackgroundPic = asyncMddlwr(() =>
-    axios.get(GIPHY_URL, {})
-)
+export const getBackgroundPic = () =>
+    axios.get(GIPHY_URL)
+        .then(res => res.data)
+        .catch(e => null)
 
 /* PROFILES */
 
@@ -41,18 +58,18 @@ export const getProfile = asyncMddlwr(name =>
 export const getTrendingProfiles = asyncMddlwr(page =>
     instance.get(`/users?offset=${page}`)
 )
-export const getSearchedProfiles = asyncMddlwr((query, page) => {
-    instance.get(`/users?q=${query}?offset=${page}`)
+export const getSearchedProfiles = asyncMddlwr(data => {
+    instance.get(`/users?q=${data.query}?offset=${data.page}`)
 })
-export const createUserSubscription = asyncMddlwr((userId, data) => {
-    instance.post(`/users/${userId}/follow`, { data })
-})
-export const removeUserSubscription = asyncMddlwr((userId, subscriptionId) => {
-    instance.delete(`/users/${userId}/follow/${subscriptionId}`)
-})
-export const getUserSubscriptions = asyncMddlwr((userId, mode, page) => {
-    instance.get(`/users/${userId}/${mode}?offset=${page}`)
-})
+export const createUserSubscription = asyncMddlwr(data =>
+    instance.post(`/users/${data.userId}/follow`, { post: data.post })
+)
+export const removeUserSubscription = asyncMddlwr(data =>
+    instance.delete(`/users/${data.userId}/follow/${data.subscriptionId}`)
+)
+export const getUserSubscriptions = asyncMddlwr(data =>
+    instance.get(`/users/${data.userId}/${data.mode}?offset=${data.page}`)
+)
 
 /* COMMUNITIES */
 
@@ -74,9 +91,9 @@ export const getSearchedCommunities = asyncMddlwr((query, page) => {
 export const getAdminCommunities = asyncMddlwr((adminId, page) => {
     instance.get(`/communities?admin=${adminId}?offset=${page}`)
 })
-export const getProfileCommunities = asyncMddlwr((userId, page) => {
-    instance.get(`/communities?profile=${userId}?offset=${page}`)
-})
+export const getProfileCommunities = asyncMddlwr(data =>
+    instance.get(`/communities?profile=${data.userId}&offset=${data.page}`)
+)
 export const createCommunitySubscription = asyncMddlwr((communityId, data) => {
     instance.post(`/communities/${communityId}/follow`, { data })
 })
@@ -96,19 +113,22 @@ export const getCommunityBans = asyncMddlwr((communityId, page) => {
 /* POSTS */
 
 export const createPost = asyncMddlwr(data =>
-    instance.post(`/posts`, { data })
+    instance.post(`/posts`, data)
 )
-export const updatePost = asyncMddlwr((postId, data) => {
-    instance.put(`/posts/${postId}`, { data })
-})
+export const updatePost = asyncMddlwr(data =>
+    instance.put(`/posts/${data.postId}`, data.post)
+)
 export const deletePost = asyncMddlwr(postId =>
     instance.delete(`/posts/${postId}`)
 )
 export const getPost = asyncMddlwr(slug =>
     instance.get(`/posts/${slug}`)
 )
-export const getDashboardPosts = asyncMddlwr(page =>
+export const getFeedPosts = asyncMddlwr(page =>
     instance.get(`/posts?feed=true&offset=${page}&feed_rand=${FEED_RAND}`)
+    // axios.get(`/posts?feed=true&offset=${page}&feed_rand=${FEED_RAND}`, {
+    //     headers: { 'Authorization': `Bearer ${window.localStorage.token}` }
+    // })
 )
 export const getTrendingPosts = asyncMddlwr(page =>
     instance.get(`/posts?offset=${page}`)
@@ -125,27 +145,33 @@ export const getProfilePosts = asyncMddlwr((userName, page) => {
 export const getCommunityPosts = asyncMddlwr((communityName, page) => {
     instance.get(`/posts?community=${communityName}?offset=${page}`)
 })
-export const createPostComment = asyncMddlwr((postId, data) => {
-    instance.post(`/posts/${postId}/comments`, { data })
-})
-export const updatePostComment = asyncMddlwr((postId, commentId, data) => {
-    instance.put(`/posts/${postId}/comments/${commentId}`, { data })
-})
-export const deletePostComment = asyncMddlwr((postId, commentId) => {
-    instance.delete(`/posts/${postId}/comments/${commentId}`)
-})
-export const getPostComments = asyncMddlwr((postId, page) => {
-    instance.get(`/posts/${postId}/comments?offset=${page}`)
-})
-export const createPostLike = asyncMddlwr((postId, data) => {
-    instance.post(`/posts/${postId}/likes`, { data })
-})
-export const deletePostLike = asyncMddlwr((postId) => {
+
+
+export const createPostComment = asyncMddlwr(data =>
+    instance.post(`/posts/${data.postId}/comments`, data.body)
+)
+export const updatePostComment = asyncMddlwr(data =>
+    instance.put(`/posts/${data.postId}/comments/${data.commentId}`, data.body)
+)
+export const deletePostComment = asyncMddlwr(data =>
+    instance.delete(`/posts/${data.postId}/comments/${data.commentId}`)
+)
+export const getPostComments = asyncMddlwr(data =>
+    instance.get(`/posts/${data.postId}/comments?offset=${data.page}`)
+)
+
+
+export const createPostLike = asyncMddlwr(data =>
+    instance.post(`/posts/${data.postId}/likes`, data.body)
+)
+export const deletePostLike = asyncMddlwr(postId =>
     instance.delete(`/posts/${postId}/likes`)
-})
-export const getPostLikes = asyncMddlwr((postId, page) => {
-    instance.get(`/posts/${postId}/likes?offset=${page}`)
-})
+)
+export const getPostLikes = asyncMddlwr(data =>
+    instance.get(`/posts/${data.postId}/likes?offset=${data.page}`)
+)
+
+
 export const getTrendingTags = asyncMddlwr(page =>
     instance.get(`/tags?offset=${page}`)
 )

@@ -1,9 +1,13 @@
-import React, { Component } from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
-import { connect } from 'react-redux'
+import { 
+    Switch, 
+    Route, 
+    Redirect 
+} from 'react-router-dom'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import React, { Component } from 'react'
 
-import Slide from 'material-ui/transitions/Slide';
+import Slide from '@material-ui/core/Slide';
 
 import Post from './Post';
 import Tags from './Tags';
@@ -25,7 +29,7 @@ import FlashMessages from './FlashMessages';
 import AuthorsPreview from './AuthorsPreview'
 import NotFound from '../components/NotFound';
 import ContextPanel from '../components/ContextPanel';
-import DiscoveryTabs from '../components/DiscoveryTabs'
+import DiscoveryTabs from '../components/DiscoveryTabs';
 
 class App extends Component {
     previousLocation = this.props.location
@@ -125,11 +129,13 @@ class App extends Component {
                             <Route path='/communities' render={() => (
                                 !isAuthenticated ? toLogin : <Communities />
                             )} />
+
+                            <Route path='/post/:slug' render={() => <Post />} />
+
                             <Route path='/post' render={() => <Redirect to='/' />} />
                             <Route path='/community' render={() => <Redirect to='/' />} />
 
                             {/* ***** non auth paths ***** */}
-                            <Route path='/post/:id' component={Post} />
                             <Route path='/trending' render={() => (
                                 <div>
                                     <Route path='/trending/:mode(posts|authors|tags|communities)'

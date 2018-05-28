@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Button from 'material-ui/Button';
-import grey from 'material-ui/colors/grey';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
+import Button from '@material-ui/core/Button';
+import grey from '@material-ui/core/colors/grey';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
 
 const styles = {
@@ -13,8 +13,10 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',
-        justifyContent: 'center',
-        height: '100vh'
+        height: '100vh',
+        left: 0,
+        right: 0,
+        position: 'fixed',
     },
     icon: {
         width: '6em',

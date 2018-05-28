@@ -1,37 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import List, { 
-    ListItem, 
-    ListItemText 
-} from 'material-ui/List';
-import Dialog, {
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-} from 'material-ui/Dialog'
-import ExpansionPanel, {
-    ExpansionPanelSummary,
-    ExpansionPanelDetails,
-} from 'material-ui/ExpansionPanel';
-import Paper from 'material-ui/Paper';
-import Button from 'material-ui/Button';
-import Avatar from 'material-ui/Avatar';
-import Divider from 'material-ui/Divider';
-import TextField from 'material-ui/TextField';
-import { withStyles } from 'material-ui/styles';
-import ListSubheader from 'material-ui/List/ListSubheader';
+import List from '@material-ui/core/List';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import Avatar from '@material-ui/core/Avatar';
+import Dialog from '@material-ui/core/Dialog';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+import TextField from '@material-ui/core/TextField';
+import { withStyles } from '@material-ui/core/styles';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import ListItemText from '@material-ui/core/ListItemText';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 
 const styles = {
     list: {
         maxWidth: '550px',
+        width: '100%',
         borderRadius: '0'
     },
     avatar: {
-        width: '60px',
-        height: '60px',
+        width: '55px',
+        height: '55px',
         marginRight: '1em'
     },
     fileInput: {
@@ -51,7 +50,7 @@ const styles = {
 }
 
 const SettingsProfile = ({ 
-    values, errors, classes, isChangePasswordDialogOpen,
+    values, errors, classes, isChangePasswordDialogOpen, isAvatarLoading,
     isDeleteProfileDialogOpen, updateAvatar, updateValue, updatePassword,
     checkPassword, checkNewPassword, sendNewPasswordEmailConfirmation,
     showDialog, updateEmailConfirmationCode, logoutUser 
@@ -65,20 +64,18 @@ const SettingsProfile = ({
                         alt={values.fullname}
                         className={classes.avatar}
                         src={`data:image/png;base64, ${values.avatar}`}
+                        component={isAvatarLoading ? CircularProgress : 'div'}
                     />
                     <Button component="label">
                         Change user avatar
-                        <form
-                            accept='.jpg, .jpeg, .png'
-                            encType="multipart/form-data" >
                             <input
                                 className={classes.fileInput}
                                 key='avatar'
                                 type='file'
                                 name='avatar'
                                 accept='.jpg, .jpeg, .png'
-                                onChange={updateAvatar} />
-                        </form>
+                                onChange={updateAvatar} 
+                                />
                     </Button>
                 </ListItem>
                 <ListItem>
@@ -310,6 +307,7 @@ SettingsProfile.propTypes = {
     }).isRequired,
     isChangePasswordDialogOpen: PropTypes.bool.isRequired,
     isDeleteProfileDialogOpen: PropTypes.bool.isRequired,
+    isAvatarLoading: PropTypes.bool.isRequired,
     showDialog: PropTypes.func.isRequired,
     logoutUser: PropTypes.func.isRequired,
     checkPassword: PropTypes.func.isRequired,

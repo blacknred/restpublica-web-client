@@ -1,8 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
-import { grey600, red400 } from 'material-ui/colors';
-// import { Tabs, Tab } from 'material-ui/Tabs';
+
+import { 
+    grey600, 
+    red400 
+} from '@material-ui/core/colors';
+// import { Tabs, Tab } from '@material-ui/core/Tabs';
 
 // const styles = {
 //     tabs: {
