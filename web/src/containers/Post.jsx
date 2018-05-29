@@ -49,8 +49,7 @@ class Post extends Component {
         const slug = this.props.slug
         const res = await getPost(slug)
         this.props.switchLoader(false)
-        if (!res.status || res.status === 404) {
-            this.props.createMessage(res.message)
+        if (!res) {
             this.props.switchNotFound(true)
             return
         }
@@ -72,9 +71,9 @@ class Post extends Component {
         }
         const res = await getPostComments(data)
         console.log('ddd', res.data)
-        if (!res.status) {
+        if (!res) {
             this.setState({ hasMoreComments: false })
-            this.props.createMessage(res)
+            this.props.createMessage('Server error. Try later.')
             return
         }
         // if there are no comments left block further loading
@@ -143,8 +142,8 @@ class Post extends Component {
             body: { comment }
         }
         const res = await createPostComment(data)
-        if (!res.status) {
-            this.props.createMessage(res)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
             return
         }
         res.data.author = { 
@@ -166,8 +165,8 @@ class Post extends Component {
             body: { userId }
         }
         const res = await createPostLike(data)
-        if (!res.status) {
-            this.props.createMessage(res)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
             return
         }
         this.setState({
@@ -179,8 +178,8 @@ class Post extends Component {
 
     deletePostLikeHandler = async () => {
         const res = await deletePostLike(this.state.id)
-        if (!res.status) {
-            this.props.createMessage(res)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
             return
         }
         this.setState({

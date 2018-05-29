@@ -63,7 +63,6 @@ const styles = theme => ({
         flexDirection: 'column',
         justifyContent: 'space-between',
     },
-    ////   
     headerContent: {
         '&> *': {
             display: 'inline-block',
@@ -130,7 +129,9 @@ const styles = theme => ({
     },
 
     contentLink: {
-        border: '1px solid',
+        borderColor: theme.palette.divider,
+        borderWidth: '1px',
+        borderStyle: 'solid',
         position: 'relative'
     },
     contentLinkThumb: {
@@ -666,31 +667,33 @@ const NewPostForm = ({
             elevation={0}
             className={classes.contentLink}
         >
-            <IconButton
-                className={classes.contentRemoveButton}
-                onClick={removeLink}
-            >
-                <RemoveCircleIcon color='secondary' />
-            </IconButton>
-            {
-                content.linkEmbed &&
+            <div className={classes.contentLink}>
                 <IconButton
-                    disabled
-                    className={classes.contentCenterActionButton}
+                    className={classes.contentRemoveButton}
+                    onClick={removeLink}
                 >
-                    <PlayCircleFilledIcon
-                        color='primary'
-                        className={classes.contentBigIcon}
-                    />
+                    <RemoveCircleIcon color='secondary' />
                 </IconButton>
-            }
-            {
-                content.linkImg &&
-                <CardMedia
-                    image={content.linkImg}
-                    className={classes.contentLinkThumb}
-                />
-            }
+                {
+                    content.linkEmbed &&
+                    <IconButton
+                        disabled
+                        className={classes.contentCenterActionButton}
+                    >
+                        <PlayCircleFilledIcon
+                            color='primary'
+                            className={classes.contentBigIcon}
+                        />
+                    </IconButton>
+                }
+                {
+                    content.linkImg &&
+                    <CardMedia
+                        image={content.linkImg}
+                        className={classes.contentLinkThumb}
+                    />
+                }
+            </div>
             <CardContent>
                 <Typography variant='body1'>
                     {content.linkTitle}

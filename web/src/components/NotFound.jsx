@@ -14,13 +14,13 @@ const styles = {
         alignItems: 'center',
         flexDirection: 'column',
         height: '100vh',
+        marginTop: '10%',
         left: 0,
         right: 0,
         position: 'fixed',
     },
     icon: {
-        width: '6em',
-        height: '6em',
+        fontSize: '6em',
         color: grey[300]
     }
 }
@@ -37,7 +37,11 @@ const NotFound = ({ classes }) => (
             There is something wrong with your url.
         </Typography>
         <br />
-        <Button color="inherit" href='/' >Return Home</Button>
+        <Button 
+            color="primary" 
+            href='/' 
+        >
+        Return Home</Button>
     </div>
 )
 

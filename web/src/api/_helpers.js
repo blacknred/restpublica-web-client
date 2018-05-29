@@ -1,7 +1,18 @@
 const URL = require('url')
 const cheerio = require('cheerio')
 
-export default ({
+export const asyncMiddleware = fn => async (next) => {
+    try {
+        const { data, status } = await fn(next);
+        console.log(data)
+        return { ...data, status }
+    }
+    catch (e) {
+        console.log((e.response && e.response.data) || e.message)
+    }
+}
+
+export const Parser = ({
     url,
     html,
     options = {

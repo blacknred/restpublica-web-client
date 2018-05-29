@@ -10,10 +10,10 @@ import { withRouter } from 'react-router-dom';
 import {
     createPost,
     getProfileCommunities,
-    getProxyPageData,
+    getFetchedData,
     saveFileInStorage
 } from '../api'
-import parser from '../api/parser'
+import { Parser } from '../api/_helpers'
 import {
     createFlashMessage,
     switchLoader,
@@ -115,14 +115,14 @@ class NewPost extends PureComponent {
             page
         }
         const res = await getProfileCommunities(data)
-        if (!res.status) {
+        if (!res) {
             this.setState({
                 availableCommunities: {
                     ...this.state.availableCommunities,
                     hasMore: false
                 }
             });
-            this.props.createMessage(res)
+            this.props.createMessage('Server error. Try later.')
             return
         }
         // if there are no requested communities
@@ -182,11 +182,10 @@ class NewPost extends PureComponent {
     addFileHandler = e => {
         let filesType = 'img'
         const files = []
-        const rowFiles = Object.values(e.target.files)
-        for (let file of rowFiles) {
+        for (let file of Object.values(e.target.files)) {
             if (file.size > 10000000) {
                 this.props.createMessage('Maximum file size is 10 mB')
-                break
+                return
             }
             if (file.type.match(/^video\//)) {
                 files.length = 0
@@ -194,9 +193,12 @@ class NewPost extends PureComponent {
                 filesType = 'video'
                 break
             }
-            files.push(file)
+            if (file.type.match(/^image\//)) files.push(file)
         }
-        if (!files[0]) return
+        if (!files[0]) {
+            this.props.createMessage('Image or video has been not uploaded')
+            return
+        }
         this.setState({
             content: {
                 ...this.state.content,
@@ -284,7 +286,7 @@ class NewPost extends PureComponent {
                 isLoading: true
             }
         })
-        const html = await getProxyPageData(url)
+        const html = await getFetchedData(url)
         if (!html) {
             this.setState({
                 content: {
@@ -303,7 +305,7 @@ class NewPost extends PureComponent {
             image: true,
             description: true
         }
-        const parsedObj = await parser({ url, html, options })
+        const parsedObj = await Parser({ url, html, options })
         if (url.match(/.+\.(\w+)$/i)) linkType = 'file'
         else {
             const { id, service } = getVideoId(url);
@@ -441,10 +443,13 @@ class NewPost extends PureComponent {
 
     changePollAnswerImgHandler = (index, e) => {
         const file = e.target.files[0]
-        console.log(file)
-        if (file.size > 10000000) {
+        if (file.size > 5000000) {
             this.props.createMessage('Maximum file size is 10 mB')
-            return false
+            return
+        }
+        if (!file.type.match(/^image\//)) {
+            this.props.createMessage('Image has been not uploaded')
+            return
         }
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -539,13 +544,13 @@ class NewPost extends PureComponent {
             case 'poll':
                 post.pollAnswers = this.state.content.pollAnswers
                 post.pollAnswers.forEach((ans, i) => {
-                    delete ans.thumb;
                     if (ans.img) formData.append(`file_${i}`, ans.img)
                 })
                 if (formData.length > 0) {
                     const res = await saveFileInStorage(formData)
                     res.data.forEach((file, i) => {
-                        post.pollAnswers[i].img = file
+                        post.pollAnswers[i].img = file.file
+                        post.pollAnswers[i].thumb = file.thumb
                     })
                 }
                 if (this.state.content.pollEndsAt) {
@@ -553,14 +558,15 @@ class NewPost extends PureComponent {
                 }
                 break;
             case 'repost':
-                post.repostedId = this.state.content.repost
+                post.repostedId = this.state.content.repost.id
                 break;
             default:
                 break;
         }
         const res = await createPost(post)
-        if (!res.status) {
-            this.props.createMessage(res)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
+            return
         }
         console.log(post, res)
         this.setState({ isOpen: false })

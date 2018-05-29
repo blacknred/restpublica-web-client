@@ -82,8 +82,8 @@ class Settings extends PureComponent {
     getProfileHandler = async () => {
         this.props.switchLoader(true)
         const res = await getUserProfile()
-        if (!res.status) {
-            this.props.createMessage(res)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
             this.props.switchLoader(false)
             return
         }
@@ -117,10 +117,11 @@ class Settings extends PureComponent {
             value
         };
         const res = await userUpdate(updatedData)
-        if (!res.status) {
-            this.props.createMessage(res)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
             return
-        } else if (res.status.toString().match(/(401|409|422)/)) {
+        }
+        if (res.status.toString().match(/(401|409|422)/)) {
             if (!res.message.length) res.message = [res.message]
             res.message.forEach((failure) => {
                 this.setState({
@@ -184,8 +185,8 @@ class Settings extends PureComponent {
                     isAvatarLoading: false
                 } 
             })
-            if (!res.status) {
-                this.props.createMessage(res)
+            if (!res) {
+                this.props.createMessage('Server error. Try later.')
                 return
             }
             this.setState({
@@ -211,10 +212,11 @@ class Settings extends PureComponent {
             'password': checkValue
         };
         const res = await login(checkData)
-        if (!res.status) {
-            this.props.createMessage(res)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
             return
-        } else if (res.status.toString().match(/(401|409|422)/)) {
+        }
+        if (res.status.toString().match(/(401|409|422)/)) {
             if (!res.message.length) res.message = [res.message]
             res.message.forEach((failure) => {
                 this.setState({

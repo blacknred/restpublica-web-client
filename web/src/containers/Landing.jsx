@@ -49,7 +49,7 @@ class Landing extends PureComponent {
 
     getBackground = async () => {
         const res = await getBackgroundPic()
-        if (res.status) this.setState({ gifUrl: res.data.image_original_url })
+        if (res) this.setState({ gifUrl: res.data.image_original_url })
     }
 
     inputChangeHandler = (event) => {
@@ -78,10 +78,11 @@ class Landing extends PureComponent {
             'password': this.state.values.password
         };
         const res = await login(userData)
-        if (!res.status) {
-            this.props.createMessage(res)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
             return
-        } else if (res.status.toString().match(/(401|409|422)/)) {
+        }
+        if (res.status.toString().match(/(401|409|422)/)) {
             if (!res.message.length) res.message = [res.message]
             res.message.forEach((failure) => {
                 this.setState({
@@ -115,10 +116,11 @@ class Landing extends PureComponent {
             'password': this.state.values.password
         };
         const res = await register(userData)
-        if (!res.status) {
-            this.props.createMessage(res)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
             return
-        } else if (res.status.toString().match(/(401|409|422)/)) {
+        }
+        if (res.status.toString().match(/(401|409|422)/)) {
             if (!res.message.length) res.message = [res.message]
             res.message.forEach((failure) => {
                 this.setState({

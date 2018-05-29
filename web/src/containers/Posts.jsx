@@ -59,9 +59,9 @@ class Posts extends PureComponent {
             default: res = await getProfilePosts(mode, page);
         }
         this.props.switchLoader(false)
-        if (!res.status) {
+        if (!res) {
             this.setState({ hasMore: false });
-            this.props.createMessage(res)
+            this.props.createMessage('Server error. Try later.')
             return
         }
         // if there are no requested posts at all view empty page 
