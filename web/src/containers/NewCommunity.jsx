@@ -26,13 +26,14 @@ class NewCommunity extends PureComponent {
             <NewCommunityForm
                 {...this.state}
                 modalOpen={this.modalOpenHandler}
+                close={this.props.close}
             />
         )
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    close: ownProps.close
+    close: ownProps.history.goBack,
 })
 
 const mapDispatchToProps = dispatch => ({

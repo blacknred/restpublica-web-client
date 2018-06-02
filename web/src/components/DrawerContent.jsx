@@ -28,11 +28,10 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 
 const styles = theme => ({
-    drawer: {
+    drawerPaper: {
         borderWidth: 0,
-        backgroundColor: 'transparent',
+        backgroundColor: theme.palette.background.default,
         '@media (max-width: 800px)': {
-            backgroundColor: theme.palette.background.default,
             width: '250px',
             borderWidth: 1,
         },
@@ -40,12 +39,14 @@ const styles = theme => ({
             width: '300px',
             borderWidth: 0,
         },
-    },
-    container: {
-        height: '100%',
+        '& a': {
+            textDecoration: 'none',
+            color: 'inherit'
+        }
     },
     drawerHeader: {
         justifyContent: 'space-between',
+        color: theme.palette.text.primary,
         paddingLeft: '24px',
         '& svg': {
             fontSize: '1.5em'
@@ -53,6 +54,9 @@ const styles = theme => ({
     },
     drawerHeaderTitle: {
         fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif'
+    },
+    navMargin: {
+        height: '70px'
     },
     active: {
         color: theme.palette.primary.main
@@ -89,35 +93,34 @@ const styles = theme => ({
         position: 'absolute',
         bottom: 0,
         color: theme.palette.text.hint,
-        maxWidth: '65%',
+        maxWidth: '82%',
         '& *': {
             marginRight: '0.5em'
         }
     }
 })
 
-const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, switchDrawer }) => {
+const DrawerContent = ({
+    isDrawer, path, navigate, width, username, classes, switchDrawer
+}) => {
     const drawerHeader = (
-        <Hidden only={['sm', 'md', 'lg', 'xl']}>
-            <Toolbar className={classes.drawerHeader}>
-                <Typography
-                    variant="headline"
-                    component={Link}
-                    to="/"
-                    onClick={() => switchDrawer(!isDrawer)}
-                    className={classes.drawerHeaderTitle}
-                >
-                    Publica
+        <Toolbar className={classes.drawerHeader}>
+            <Typography
+                variant="headline"
+                component={Link}
+                to="/"
+                onClick={() => switchDrawer(isDrawer)}
+                className={classes.drawerHeaderTitle}
+            >
+                Publica
                 </Typography>
-                <IconButton
-                    aria-label="Menu"
-                    onClick={() => switchDrawer(!isDrawer)}
-                >
-                    <ChevronLeftIcon />
-                </IconButton>
-            </Toolbar>
-            <Divider light={true} />
-        </Hidden>
+            <IconButton
+                aria-label="Menu"
+                onClick={() => switchDrawer(isDrawer)}
+            >
+                <ChevronLeftIcon />
+            </IconButton>
+        </Toolbar>
     )
 
     const primaryNavList = (
@@ -126,7 +129,7 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                 button
                 onClick={() => {
                     navigate('/')
-                    width === 'xs' && switchDrawer(!isDrawer)
+                    width === 'xs' && switchDrawer(isDrawer)
                 }}
                 className={path === '/' ? classes.active : ''}
             >
@@ -139,7 +142,7 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                 button
                 onClick={() => {
                     navigate('/trending')
-                    width === 'xs' && switchDrawer(!isDrawer)
+                    width === 'xs' && switchDrawer(isDrawer)
                 }}
                 className={path.match(/^\/trending/) ? classes.active : ''}
             >
@@ -152,7 +155,7 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                 button
                 onClick={() => {
                     navigate('/communities')
-                    width === 'xs' && switchDrawer(!isDrawer)
+                    width === 'xs' && switchDrawer(isDrawer)
                 }}
                 className={path.match(/^\/communities/) ? classes.active : ''}
             >
@@ -165,7 +168,7 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                 button
                 onClick={() => {
                     navigate(`/${username}`)
-                    width === 'xs' && switchDrawer(!isDrawer)
+                    width === 'xs' && switchDrawer(isDrawer)
                 }}
                 className={path.match(new RegExp(`^/${username}`)) ? classes.active : ''}
             >
@@ -178,7 +181,7 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                 button
                 onClick={() => {
                     navigate(`/people`)
-                    width === 'xs' && switchDrawer(!isDrawer)
+                    width === 'xs' && switchDrawer(isDrawer)
                 }}
                 className={path.match(/^\/people/) ? classes.active : ''}
             >
@@ -191,7 +194,7 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                 button
                 onClick={() => {
                     navigate('/activity')
-                    width === 'xs' && switchDrawer(!isDrawer)
+                    width === 'xs' && switchDrawer(isDrawer)
                 }}
                 className={path.match(/^\/activity/) ? classes.active : ''}
             >
@@ -204,7 +207,7 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
                 button
                 onClick={() => {
                     navigate('/settings')
-                    width === 'xs' && switchDrawer(!isDrawer)
+                    width === 'xs' && switchDrawer(isDrawer)
                 }}
                 className={path.match(/^\/settings/) ? classes.active : ''}
             >
@@ -251,7 +254,7 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
             variant='caption'
             color='inherit'
         >
-            <span>© {(new Date()).getFullYear()} Restpublica, LLC</span><br/>
+            <span>© {(new Date()).getFullYear()} Restpublica, LLC</span><br />
             <a
                 href="https://github.com/blacknred/restpublica"
                 target="_blank"
@@ -278,27 +281,25 @@ const DrawerContent = ({ path, navigate, isDrawer, username, classes, width, swi
 
     return (
         <Drawer
-            variant={width === 'xs' ? 'temporary' : "persistent"}
-            anchor={'left'}
+            variant={width === 'xs' ? 'temporary' : 'persistent'}
+            anchor='left'
             open={width === 'xs' ? !isDrawer : isDrawer}
-            classes={{ paper: classes.drawer }}
+            classes={{ paper: classes.drawerPaper }}
             onClose={() => switchDrawer(!isDrawer)}
         >
             <Slide
                 direction="right"
-                in={width === 'xs' ? !isDrawer : isDrawer}
-                timeout={400}
+                in={isDrawer}
             >
-                <div className={classes.container}>
-                    {drawerHeader}
-                    <Hidden only='xs'>
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                    </Hidden>
+                <div style={{ height: '100vh' }}>
+                    <div className={classes.navMargin}>
+                        <Hidden only={['sm', 'md', 'lg', 'xl']}>
+                            {drawerHeader}
+                            <Divider light />
+                        </Hidden>
+                    </div>
                     {primaryNavList}
-                    <Divider light={true} />
+                    <Divider light />
                     {secondaryNavList}
                     {footerNav}
                 </div>

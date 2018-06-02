@@ -36,7 +36,7 @@ class Header extends Component {
         avatar: PropTypes.string.isRequired,
         mode: PropTypes.string.isRequired,
         query: PropTypes.string,
-        history: PropTypes.any,
+        updateHistory: PropTypes.func.isRequired,
         switchNotFound: PropTypes.func.isRequired,
         switchNightMode: PropTypes.func.isRequired,
         switchDrawer: PropTypes.func.isRequired,
@@ -45,9 +45,9 @@ class Header extends Component {
         logoutUser: PropTypes.func.isRequired,
     }
 
-    redirect = (path) => this.props.history.push(path)
+    redirect = path => this.props.updateHistory(path)
 
-    userMenuOpenHandler = (val) => this.setState({ isUserMenuOpen: val })
+    userMenuOpenHandler = val => this.setState({ isUserMenuOpen: val })
 
     render() {
         return <HeaderContent
@@ -69,7 +69,7 @@ const mapStateToProps = (state, ownProps) => ({
     avatar: state.authentication.avatar,
     mode: ownProps.location.pathname.split('/')[1] || 'Feed',
     query: ownProps.match.params.query || null,
-    history: ownProps.history,
+    updateHistory: ownProps.history.push,
 })
 
 const mapDispatchToProps = dispatch => {

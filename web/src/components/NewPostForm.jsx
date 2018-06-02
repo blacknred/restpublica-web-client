@@ -41,8 +41,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import GridListTile from '@material-ui/core/GridListTile';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
@@ -164,11 +164,11 @@ const styles = theme => ({
         backgroundColor: theme.palette.action.hover,
         position: 'relative',
     },
-
     repostAvatar: {
         width: '28px',
         height: '28px',
-        margin: '0 0.5em',
+        marginRight: '0.5em',
+        borderRadius: '10%'
     },
 })
 
@@ -177,7 +177,7 @@ const SlideTransition = props => <Slide direction='up' {...props} />
 const ZoomTransition = props => <Zoom {...props} />
 
 const NewPostForm = ({
-    classes, width, isSlide, username, avatar, isOpen, isCloseConfirmOpen,
+    classes, width, isSlide, username, avatar, close, isOpen, isCloseConfirmOpen,
     isCommunitiesDialogOpen, isOptionsMenuOpen, isAddLinkDialogOpen, isPublishing,
     isAddPollDialogOpen, isPollEndDateDialogOpen, availableCommunities,
     commentable, archived, description, content,
@@ -716,6 +716,7 @@ const NewPostForm = ({
                 } />
                 <ListItemSecondaryAction>
                     <IconButton
+                        size='small'
                         key='newPollDialogOpenButton'
                         onClick={() => toggleContextDialog('isAddPollDialogOpen')}
                     >
@@ -723,6 +724,7 @@ const NewPostForm = ({
                     </IconButton>
                     {addPollDialog}
                     <IconButton
+                        size='small'
                         key='newPollContentRemoveButton'
                         onClick={removePoll}
                     >
@@ -742,13 +744,15 @@ const NewPostForm = ({
     const formRepostContent = (
         content.repost &&
         <ListItem disableGutters>
-            <Typography variant='button'>repost from</Typography>
             <Avatar
                 className={classes.repostAvatar}
                 srcSet={`data:image/png;base64,${content.repost.author.avatar}`}
             />
             <Typography variant='button'>
-                {content.repost.author.username}
+                {content.repost.author.username}&nbsp;&nbsp;
+            </Typography>
+            <Typography variant='button' color='textSecondary'>
+                published this entry first
             </Typography>
         </ListItem>
     )
@@ -830,6 +834,7 @@ const NewPostForm = ({
             keepMounted
             open={isOpen}
             onClose={toggleForm}
+            onExited={close}
             fullScreen={width === 'xs' ? true : false}
             TransitionComponent={isSlide ? SlideTransition : ZoomTransition}
         >
@@ -887,26 +892,26 @@ NewPostForm.propTypes = {
         selectedId: PropTypes.number,
         selectedName: PropTypes.string,
     }).isRequired,
-
     description: PropTypes.string.isRequired,
     commentable: PropTypes.bool.isRequired,
     archived: PropTypes.bool.isRequired,
     content: PropTypes.shape({
         isLoading: PropTypes.bool.isRequired,
         type: PropTypes.oneOf(['text', 'file', 'link', 'poll', 'repost']),
-
+        repost: PropTypes.object,
         thumbFiles: PropTypes.array.isRequired,
         isVideoFilePlay: PropTypes.bool.isRequired,
-
-        repost: PropTypes.object,
-
         link: PropTypes.string.isRequired,
-
+        linkImg: PropTypes.string,
+        linkTitle: PropTypes.string,
+        linkSrc: PropTypes.string,
+        linkDescription: PropTypes.string,
+        linkEmbed: PropTypes.string,
         pollMode: PropTypes.string.isRequired,
+        pollEndsAt: PropTypes.string,
         pollAnswers: PropTypes.array.isRequired
-
     }).isRequired,
-
+    close: PropTypes.func.isRequired,
     toggleContextDialog: PropTypes.func.isRequired,
     toggleForm: PropTypes.func.isRequired,
     setCommunity: PropTypes.func.isRequired,

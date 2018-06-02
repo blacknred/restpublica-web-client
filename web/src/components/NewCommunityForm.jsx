@@ -20,15 +20,14 @@ const styles = {
     }
 }
 
-const NewCommunityForm = ({ open, modalOpen }) => {
+const NewCommunityForm = ({ close, open, modalOpen }) => {
     return (
         <Dialog
             open={open}
             transition={Transition}
             keepMounted
             onClose={() => modalOpen(false)}
-            aria-labelledby="alert-dialog-slide-title"
-            aria-describedby="alert-dialog-slide-description"
+            onExited={close}
         >
             <DialogTitle id="alert-dialog-slide-title">
                 {"Use Google's location service?"}
@@ -54,6 +53,7 @@ const NewCommunityForm = ({ open, modalOpen }) => {
 NewCommunityForm.propTypes = {
     open: PropTypes.bool.isRequired,
     modalOpen: PropTypes.func.isRequired,
+    close: PropTypes.func.isRequired,
 }
 
 export default NewCommunityForm 

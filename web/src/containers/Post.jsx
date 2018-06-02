@@ -162,7 +162,7 @@ class Post extends Component {
         const userId = this.props.userId
         const data = {
             postId: this.state.id,
-            body: { userId }
+            data: { userId }
         }
         const res = await createPostLike(data)
         if (!res) {

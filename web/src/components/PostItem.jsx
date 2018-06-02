@@ -12,6 +12,7 @@ import Hidden from '@material-ui/core/Hidden';
 import LinkIcon from '@material-ui/icons/Link';
 import ShareIcon from '@material-ui/icons/Share';
 import ImageIcon from '@material-ui/icons/Image';
+import GridList from '@material-ui/core/GridList';
 import MenuItem from '@material-ui/core/MenuItem';
 import Collapse from '@material-ui/core/Collapse';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -25,6 +26,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import GridListTile from '@material-ui/core/GridListTile';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
@@ -37,6 +39,10 @@ const styles = theme => ({
         '@media (max-width: 600px)': {
             margin: '0.6em 0'
         },
+        '& a': {
+            textDecoration: 'none',
+            color: 'inherit'
+        }
     },
     headerAvatar: {
         backgroundColor: theme.palette.primary.light,
@@ -54,12 +60,12 @@ const styles = theme => ({
         }
     },
     headerAction: {
-        '@media (max-width: 750px)': {
+        '@media (max-width: 600px)': {
             marginRight: 0
         },
     },
     headerPostLinkIcon: {
-        position: 'fixed',
+        position: 'absolute',
         color: 'transparent'
     },
     headerShiftOnHover: {
@@ -70,14 +76,19 @@ const styles = theme => ({
             color: 'transparent'
         },
     },
-    content: {
+    description: {
         paddingTop: 0,
         '& a': {
             color: theme.palette.primary.main
         }
     },
+
+
+
+
     media: {
         width: '100%',
+        height: '100%'
     },
 
 
@@ -181,76 +192,137 @@ const PostItem = ({
     )
 
 
-
-
-    return (
-        <Card
-            elevation={1}
-            className={classes.card}
-        >
-            {/* header */}
-            <CardHeader
-                classes={{
-                    action: classes.headerAction,
-                    content: classes.headerContent
-                }}
-                avatar={
-                    <Avatar
-                        component={Link}
-                        to={`/${post.author.username}/posts`}
-                        className={classes.headerAvatar}
-                        srcSet={`data:image/png;base64,${post.author.avatar}`}
-                        aria-label={post.author.username}
-                    />
-                }
-                title={
-                    <Link to={`/${post.author.username}/posts`} >
-                        {post.author.username}
-                    </Link>
-                }
-                subheader={
-                    post.community_name &&
-                    <Link to={`/community/${post.community_name}/posts`}>
-                        {post.community_name}
-                    </Link>
-                }
-                action={
-                    <IconButton
-                        component={Link}
-                        to={`/post/${post.slug}`}
-                        aria-label="Share"
-                        classes={{ label: classes.headerShiftOnHover }}
+    const postHeader = (
+        <CardHeader
+            classes={{
+                action: classes.headerAction,
+                content: classes.headerContent
+            }}
+            avatar={
+                <Avatar
+                    component={Link}
+                    to={`/${post.author.username}/posts`}
+                    className={classes.headerAvatar}
+                    srcSet={`data:image/png;base64,${post.author.avatar}`}
+                    aria-label={post.author.username}
+                />
+            }
+            title={
+                <Link to={`/${post.author.username}/posts`} >
+                    {post.author.username}
+                </Link>
+            }
+            subheader={
+                post.community_name &&
+                <Link to={`/community/${post.community_name}/posts`}>
+                    {post.community_name}
+                </Link>
+            }
+            action={
+                <IconButton
+                    component={Link}
+                    to={`/post/${post.slug}`}
+                    aria-label="Share"
+                    classes={{ label: classes.headerShiftOnHover }}
+                >
+                    <Typography
+                        variant='body2'
+                        color='textSecondary'
                     >
-                        <Typography
-                            variant='body2'
-                            color='textSecondary'
-                        >
-                            {formateDate(post.created_at)}
-                        </Typography>
-                        <OpenInNewIcon className={classes.headerPostLinkIcon} />
-                    </IconButton>
-                }
-            />
+                        {formateDate(post.created_at)}
+                    </Typography>
+                    <OpenInNewIcon className={classes.headerPostLinkIcon} />
+                </IconButton>
+            }
+        />
+    )
 
-            {/* description */}
-            <CardContent className={classes.content}>
-                <Typography variant='body2'>
-                    {
-                        post.description.trim().split(' ').map((word) => {
-                            if (word[0] !== '#') return `${word} `;
-                            return (
-                                <Link
-                                    to={`/search/${word}/tags`}
-                                    key={word} >
-                                    {word}&nbsp;
+    const postDescription = (
+        <CardContent className={classes.description}>
+            <Typography variant='body2'>
+                {
+                    post.description.trim().split(' ').map((word) => {
+                        if (word.charAt(0) !== '#') return `${word} `;
+                        return (
+                            <Link
+                                to={`/search/${word.substr(1)}/tags`}
+                                key={word} >
+                                {word}&nbsp;
                                 </Link>
-                            )
-                        })
-                    }
-                </Typography>
-            </CardContent>
+                        )
+                    })
+                }
+            </Typography>
+        </CardContent>
+    )
 
-            {/* <div className="ez-player ez-domain-youtube_com ez-block" data-placeholder="&lt;iframe class=&quot;ez-player-frame&quot; src=&quot;https://www.youtube.com/embed/JrZSfMiVC88?feature=oembed&amp;amp;autoplay=1&quot; allowfullscreen&gt;&lt;/iframe&gt;">
+    const postFileContent = (
+        !post.content ? null :
+            post.content.length === 1 ?
+                <Link to={{
+                    pathname: '/album',
+                    state: {
+                        modal: true,
+                        currentIndex: 0,
+                        files: post.content,
+                        postId: post.id,
+                        author: post.author,
+                        postStats: {
+                            likes_cnt: post.likes_cnt,
+                            comments_cnt: post.comments_cnt,
+                            reposts_cnt: post.reposts_cnt
+                        }
+                    }
+                }}>
+                    <CardMedia
+                        component='img' //video, audio, picture, iframe, img
+                        src={post.content[0].file}
+                    />
+                </Link> :
+                <GridList /* cellHeight='auto' */>
+                    {
+                        post.content.map((file, i) =>
+                            <GridListTile
+                                key={file.thumb}
+                                cols={
+                                    post.content.length === 2 ? 1 :
+                                        i === 0 ? 2 : 2 / (post.content.length - 1)
+                                }
+                                rows={
+                                    post.content.length === 2 ? 1.8 :
+                                        i === 0 ? 2 : post.content.length > 3 ? 0.5 : 1
+                                }
+                            >
+                                <Link to={{
+                                    pathname: '/album',
+                                    state: {
+                                        modal: true,
+                                        currentIndex: i,
+                                        files: post.content,
+                                        postId: post.id,
+                                        author: post.author,
+                                        postStats: {
+                                            likes_cnt: post.likes_cnt,
+                                            comments_cnt: post.comments_cnt,
+                                            reposts_cnt: post.reposts_cnt
+                                        }
+                                    }
+                                }}>
+                                    <CardMedia
+                                        className={classes.media}
+                                        image={file.thumb}
+                                    />
+                                </Link>
+                            </GridListTile>
+                        )
+                    }
+                </GridList>
+    )
+
+    const postLinkContent = (
+        <div>link</div>
+
+        /* <div className="ez-player ez-domain-youtube_com ez-block" data-placeholder="&lt;iframe class=&quot;ez-player-frame&quot; src=&quot;https://www.youtube.com/embed/JrZSfMiVC88?feature=oembed&amp;amp;autoplay=1&quot; allowfullscreen&gt;&lt;/iframe&gt;">
                 <div className="ez-player-container" style={{ paddingBottom: '74.9455%'}}>
                     <a className="ez-player-placeholder" target="_blank" href="https://www.youtube.com/watch?v=JrZSfMiVC88" rel="nofollow">
                         <div className="ez-player-picture" style={{ backgroundImage: 'url("https://i.ytimg.com/vi/JrZSfMiVC88/hqdefault.jpg")' }}></div>
@@ -266,15 +338,31 @@ const PostItem = ({
 
                     </a>
                 </div>
-            </div> */}
+            </div> */
+    )
+
+    const postPollContent = (
+        <div>poll</div>
+    )
+
+    const postRepostContent = (
+        <div>repost</div>
+    )
+
+    return (
+        <Card
+            elevation={1}
+            className={classes.card}
+        >
+            {postHeader}
+
+            {post.description && postDescription}
 
             {/* media */}
-            <CardMedia
-                className={classes.media}
-                component='img' //video, audio, picture, iframe, img
-                src={post.content[0].file}
-                title={post.content.file}
-            />
+            {post.type === 'file' && postFileContent}
+            {post.type === 'link' && postLinkContent}
+            {post.type === 'poll' && postPollContent}
+            {post.type === 'repost' && postRepostContent}
 
 
             {/* comments */}
@@ -310,8 +398,6 @@ const PostItem = ({
                     />
                 </Hidden>
             }
-
-
 
             {/* actions */}
             <CardActions className={classes.actions}>
@@ -361,7 +447,6 @@ const PostItem = ({
                     {actionsButtons}
                 </Collapse>
             </CardActions>
-
 
             {/* comment form */}
             <Collapse in={post.showCommentForm}>

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 import List from '@material-ui/core/List';
 import Menu from '@material-ui/core/Menu';
-import Slide from '@material-ui/core/Slide';
 import Input from '@material-ui/core/Input';
 import Badge from '@material-ui/core/Badge';
 import Switch from '@material-ui/core/Switch';
@@ -41,13 +40,19 @@ const styles = theme => ({
         '@media (max-width: 600px)': {
             margin: '0 -24px',
         },
+        '& a': {
+            textDecoration: 'none',
+            color: 'inherit'
+        },
+        color: theme.palette.text.primary
     },
     leftBlock: {
         flex: 1,
     },
     title: {
         margin: '0 1.3em 0 0.5em',
-        fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif'
+        fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif',
+
     },
     statusTitle: {
         borderLeft: '1px solid #bbb',
@@ -76,9 +81,10 @@ const styles = theme => ({
 })
 
 const HeaderContent = ({
-    redirect, avatar, mode, query, notifications, history, classes, isDrawer, isNotFound,
-    isUserMenuOpen, isAuthenticated, userMenuOpen, logoutUser, switchNightMode,
-    switchNotFound, switchDrawer, switchNotify, createFlashMessage, ...props
+    redirect, avatar, mode, query, notifications, history, classes, isDrawer, 
+    isNotFound, isNotify, isNightMode, isUserMenuOpen, isAuthenticated,
+    userMenuOpen, logoutUser, switchNightMode, switchNotFound, switchDrawer,
+    switchNotify, createFlashMessage,
 }) => {
 
     const title = (
@@ -87,7 +93,7 @@ const HeaderContent = ({
                 variant="headline"
                 component={Link}
                 to="/"
-                // color="textSecondary"
+                color="primary"
                 className={classes.title}
             >
                 Publica
@@ -116,7 +122,7 @@ const HeaderContent = ({
                 disableUnderline={true}
                 startAdornment={
                     <InputAdornment position="start" >
-                        <ActionSearchIcon color="disabled"/>
+                        <ActionSearchIcon color="disabled" />
                     </InputAdornment>
                 }
                 onKeyPress={(ev) => {
@@ -136,7 +142,7 @@ const HeaderContent = ({
             <IconButton
                 component={Link}
                 to="/s"
-                //color="inherit"
+            //color="inherit"
             >
                 <ActionSearchIcon />
             </IconButton>
@@ -149,7 +155,7 @@ const HeaderContent = ({
             to="/activity"
         >
             {
-                props.isNotify ?
+                isNotify ?
                     notifications.length ?
                         <Badge
                             badgeContent={notifications.length}
@@ -217,11 +223,11 @@ const HeaderContent = ({
                         <ListItemSecondaryAction>
                             <Switch
                                 color='primary'
-                                checked={props.isNotify}
+                                checked={isNotify}
                                 onChange={() => {
-                                    switchNotify(!props.isNotify);
+                                    switchNotify(!isNotify);
                                     createFlashMessage(`Notifications are turn 
-                                    ${!props.isNotify === true ? 'on' : 'off'}`)
+                                    ${!isNotify === true ? 'on' : 'off'}`)
                                     userMenuOpen(false)
                                 }}
                             />
@@ -232,11 +238,11 @@ const HeaderContent = ({
                         <ListItemSecondaryAction>
                             <Switch
                                 color='primary'
-                                checked={props.isNightMode}
+                                checked={isNightMode}
                                 onChange={() => {
-                                    switchNightMode(!props.isNightMode);
+                                    switchNightMode(!isNightMode);
                                     createFlashMessage(`Night mode is 
-                                        ${!props.isNightMode === true ? 'on' : 'off'}`)
+                                        ${!isNightMode === true ? 'on' : 'off'}`)
                                     userMenuOpen(false)
                                 }}
                             />
@@ -261,32 +267,26 @@ const HeaderContent = ({
             color='inherit'
             classes={{ root: classes.appBar }}
         >
-            <Slide
-                direction="down"
-                in={true}
-                timeout={400}
-            >
-                <Toolbar className={classes.toolbar}>
-                    <Toolbar className={classes.leftBlock}>
-                        <IconButton
-                            //color="inherit"
-                            aria-label="Menu"
-                            onClick={() => switchDrawer(!isDrawer)}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        {title}
-                        {statusTitle}
-                        {searchBlock}
-                    </Toolbar>
-                    <Toolbar>
-                        {searchLink}
-                        {isAuthenticated && userActivity}
-                        {isAuthenticated && loggedUserButton}
-                        {!isAuthenticated && notLoggedUserBlock}
-                    </Toolbar>
+            <Toolbar className={classes.toolbar}>
+                <Toolbar className={classes.leftBlock}>
+                    <IconButton
+                        //color="inherit"
+                        aria-label="Menu"
+                        onClick={() => switchDrawer(!isDrawer)}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    {title}
+                    {statusTitle}
+                    {searchBlock}
                 </Toolbar>
-            </Slide>
+                <Toolbar>
+                    {searchLink}
+                    {isAuthenticated && userActivity}
+                    {isAuthenticated && loggedUserButton}
+                    {!isAuthenticated && notLoggedUserBlock}
+                </Toolbar>
+            </Toolbar>
         </AppBar>
     )
 }

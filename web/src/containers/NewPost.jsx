@@ -102,7 +102,6 @@ class NewPost extends PureComponent {
         }
         this.setState({ isCloseConfirmOpen: false })
         this.setState({ isOpen: false })
-        this.props.close()
     }
 
     toggleContextDialogHandler = (target) => {
@@ -570,7 +569,6 @@ class NewPost extends PureComponent {
         }
         console.log(post, res)
         this.setState({ isOpen: false })
-        this.props.close()
     }
 
     render() {
@@ -580,6 +578,7 @@ class NewPost extends PureComponent {
                 isSlide={this.props.isSlide}
                 username={this.props.username}
                 avatar={this.props.userAvatar}
+                close={this.props.close}
                 toggleForm={this.toggleFormHandler}
                 toggleContextDialog={this.toggleContextDialogHandler}
                 setCommunity={this.setCommunityHandler}
@@ -610,7 +609,7 @@ class NewPost extends PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    close: ownProps.close,
+    close: ownProps.history.goBack,
     repost: ownProps.location.state.repost || null,
     isSlide: ownProps.location.state.isSlide || false,
     userId: state.authentication.id,
