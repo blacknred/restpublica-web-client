@@ -1,4 +1,5 @@
 import URI from 'url';
+import path from 'path';
 import moment from 'moment';
 import urlRegex from 'url-regex';
 import PropTypes from 'prop-types';
@@ -45,7 +46,6 @@ class NewPost extends PureComponent {
             commentable: true,
             content: {
                 isLoading: false,
-                // text, file, link, poll, repost
                 type: this.props.repost ? 'repost' : 'text',
 
                 repost: this.props.repost,
@@ -273,8 +273,6 @@ class NewPost extends PureComponent {
 
     addLinkHandler = async () => {
         const url = this.state.content.link
-        let linkType = 'page'
-        let linkEmbed = null
         if (!urlRegex({ exact: true }).test(url)) {
             this.props.createMessage('Not valid url')
             return
@@ -285,30 +283,34 @@ class NewPost extends PureComponent {
                 isLoading: true
             }
         })
-        const html = await getFetchedData(url)
-        if (!html) {
-            this.setState({
-                content: {
-                    ...this.state.content,
-                    type: 'text',
-                    isLoading: false,
-                    link: '',
-                    linkType: 'page',
-                }
-            })
-            this.props.createMessage('Not reachable url')
-            return
-        }
-        const options = {
-            title: true,
-            image: true,
-            description: true
-        }
-        const parsedObj = await Parser({ url, html, options })
-        if (url.match(/.+\.(\w+)$/i)) linkType = 'file'
-        else {
+        let linkType, linkEmbed, linkImg, parsedObj = {}
+        const extname = path.extname(URI.parse(url).pathname)
+        if (extname && extname !== '.html') {
+            linkType = 'file'
+            if (extname.match(/^(.jpeg|.jpg|.png)$/)) linkImg = url
+        } else {
+            linkType = 'page'
+            const html = await getFetchedData(url)
+            if (!html) {
+                this.setState({
+                    content: {
+                        ...this.state.content,
+                        type: 'text',
+                        isLoading: false,
+                        link: '',
+                        linkType: 'page',
+                    }
+                })
+                this.props.createMessage('Not reachable url')
+                return
+            }
+            const options = {
+                title: true,
+                image: true,
+                description: true
+            }
+            parsedObj = await Parser({ url, html, options })
             const { id, service } = getVideoId(url);
-            console.log(id, service)
             if (id && service) {
                 linkType = 'embed'
                 switch (service) {
@@ -329,6 +331,7 @@ class NewPost extends PureComponent {
                 }
             }
         }
+        console.log(linkType, linkEmbed, linkImg)
         this.setState({
             content: {
                 ...this.state.content,
@@ -336,7 +339,7 @@ class NewPost extends PureComponent {
                 type: 'link',
                 linkType,
                 linkSrc: URI.parse(url).hostname,
-                linkImg: parsedObj.image,
+                linkImg: linkImg || parsedObj.image,
                 linkTitle: parsedObj.title,
                 linkDescription: parsedObj.description,
                 linkEmbed
@@ -542,10 +545,9 @@ class NewPost extends PureComponent {
                 break;
             case 'poll':
                 post.pollAnswers = this.state.content.pollAnswers
-                post.pollAnswers.forEach((ans, i) => {
-                    if (ans.img) formData.append(`file_${i}`, ans.img)
-                })
-                if (formData.length > 0) {
+                post.pollAnswers.forEach((ans) => ans.img)
+                if (this.state.content.pollMode === 'img') {
+                    post.pollAnswers.forEach((ans, i) => formData.append(`file_${i}`, ans.img))
                     const res = await saveFileInStorage(formData)
                     res.data.forEach((file, i) => {
                         post.pollAnswers[i].img = file.file
@@ -562,13 +564,14 @@ class NewPost extends PureComponent {
             default:
                 break;
         }
+        console.log(post)
         const res = await createPost(post)
+        this.setState({ isOpen: false })
         if (!res) {
             this.props.createMessage('Server error. Try later.')
             return
         }
-        console.log(post, res)
-        this.setState({ isOpen: false })
+        console.log(res)
     }
 
     render() {

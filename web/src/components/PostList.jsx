@@ -24,7 +24,6 @@ const styles = theme => ({
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        alignItems: 'flex-start',
         boxSizing: 'border-box'
     },
     newPostLink: {
@@ -33,11 +32,15 @@ const styles = theme => ({
         background: theme.palette.background.paper,
         margin: '0.6em auto',
         boxShadow: theme.shadows[1]
+    },
+    morePostsLink: {
+        width: '100%',
+        margin: '2em 0'
     }
 })
 
 const PostList = ({
-    mode, isFeedOneColumn, classes, hasMore, isPreview,
+    mode, isFeedMultiColumn, classes, hasMore, isPreview,
     posts, userAvatar, getPosts,
 }) => {
     return (
@@ -76,7 +79,10 @@ const PostList = ({
                     </div>
                 }
                 className={classes.grid}
-                style={{ flexDirection: isFeedOneColumn ? 'row' : 'column' }}
+                style={{
+                    alignItems: isFeedMultiColumn ? 'flex-start' : 'center',
+                    flexDirection: isFeedMultiColumn ? 'row' : 'column'
+                }}
             // ref={(scroll) => { this.scroll = scroll; }}
             // threshold={200}
             // key={reload}
@@ -96,8 +102,9 @@ const PostList = ({
             </InfiniteScroll>
 
             {
-                posts.length > 0 && mode === 'feed' &&
+                posts.length > 0 && mode === 'feed' && !hasMore &&
                 <Button
+                    className={classes.morePostsLink}
                     color='primary'
                     component={Link}
                     to="/trending">
@@ -115,7 +122,7 @@ PostList.propTypes = {
     userAvatar: PropTypes.string.isRequired,
     posts: PropTypes.arrayOf(PropTypes.object).isRequired,
     isPreview: PropTypes.bool.isRequired,
-    isFeedOneColumn: PropTypes.bool.isRequired,
+    isFeedMultiColumn: PropTypes.bool.isRequired,
     getPosts: PropTypes.func.isRequired,
 }
 

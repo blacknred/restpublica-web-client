@@ -34,6 +34,7 @@ export const getFetchedData = url => axios.get('/proxy?url=' + url)
 /* STORAGE */
 
 export const saveFileInStorage = data => axios.post(STORAGE_HOST, data)
+export const deleteFileFromStorage = url => axios.delete(url)
 
 /* PROFILES */
 
@@ -43,7 +44,7 @@ export const register = data =>
 export const login = data =>
     instance.post(`/users/login`, data, { headers: { 'Authorization': '' } })
 
-export const userUpdate = data => instance.put(`/users`, data)
+export const updateUser = data => instance.put(`/users`, data)
 
 export const getUserProfile = () => instance.get(`/users/profile`)
 
@@ -118,16 +119,16 @@ export const getFeedPosts = page =>
 export const getTrendingPosts = page => instance.get(`/posts?offset=${page}`)
 
 export const getSearchedPosts = ({ query, page }) =>
-    instance.get(`/posts?q=${query}?offset=${page}`)
+    instance.get(`/posts?q=${query}&offset=${page}`)
 
 export const getTagPosts = ({ tag, page }) =>
-    instance.get(`/posts?tag=${tag}?offset=${page}`)
+    instance.get(`/posts?tag=${tag}&offset=${page}`)
 
-export const getProfilePosts = ({ userName, page }) =>
-    instance.get(`/posts?profile=${userName}?offset=${page}`)
+export const getProfilePosts = ({ userId, page }) =>
+    instance.get(`/posts?profile=${userId}&offset=${page}`)
 
 export const getCommunityPosts = ({ communityName, page }) =>
-    instance.get(`/posts?community=${communityName}?offset=${page}`)
+    instance.get(`/posts?community=${communityName}&offset=${page}`)
 
 export const createPostComment = ({ postId, data }) =>
     instance.post(`/posts/${postId}/comments`, data)
@@ -148,6 +149,15 @@ export const deletePostLike = postId => instance.delete(`/posts/${postId}/likes`
 
 export const getPostLikes = ({ postId, page }) =>
     instance.get(`/posts/${postId}/likes?offset=${page}`)
+
+export const createPostVote = ({ postId, data }) =>
+    instance.post(`/posts/${postId}/votes`, data)
+
+export const deletePostVote = ({ postId, optionId }) =>
+    instance.delete(`/posts/${postId}/votes/${optionId}`)
+
+export const getPostVotes = ({ postId, page }) =>
+    instance.get(`/posts/${postId}/votes?offset=${page}`)
 
 export const getTrendingTags = page => instance.get(`/tags?offset=${page}`)
 

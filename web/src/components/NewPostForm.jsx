@@ -208,8 +208,8 @@ const NewPostForm = ({
                 <Divider />
                 <ListItem>
                     <Input
-                        fullWidth={true}
-                        disableUnderline={true}
+                        fullWidth
+                        disableUnderline
                         //value={ans.text}
                         placeholder='Search community'
                     />
@@ -277,7 +277,7 @@ const NewPostForm = ({
             </DialogTitle>
             <DialogContent>
                 <Input
-                    fullWidth={true}
+                    fullWidth
                     autoFocus
                     value={content.link}
                     onChange={(ev) => changeContentLink(ev.target.value)}
@@ -408,8 +408,8 @@ const NewPostForm = ({
                             !(!isAddPollDialogOpen && !ans.text) &&
                             <CardActions>
                                 <Input
-                                    fullWidth={true}
-                                    disableUnderline={true}
+                                    fullWidth
+                                    disableUnderline
                                     disabled={!isAddPollDialogOpen}
                                     value={ans.text}
                                     placeholder={
@@ -475,8 +475,8 @@ const NewPostForm = ({
                         }
                         <ListItemText>
                             <Input
-                                fullWidth={true}
-                                disableUnderline={true}
+                                fullWidth
+                                disableUnderline
                                 value={ans.text}
                                 disabled={!isAddPollDialogOpen}
                                 placeholder='Add new answer variant'
@@ -485,10 +485,13 @@ const NewPostForm = ({
                         </ListItemText>
                         {
                             i > 1 && isAddPollDialogOpen &&
-                            <IconButton onClick={() => removePollAnswer(i)}>
-                                <RemoveCircleIcon />
-                            </IconButton>
+                            <ListItemSecondaryAction>
+                                <IconButton onClick={() => removePollAnswer(i)}>
+                                    <RemoveCircleIcon />
+                                </IconButton>
+                            </ListItemSecondaryAction>
                         }
+
                     </ListItem>
                 )
             }
@@ -588,7 +591,7 @@ const NewPostForm = ({
         <Input
             className={classes.contentDescription}
             classes={{ input: classes.contentDescription }}
-            fullWidth={true}
+            fullWidth
             placeholder={
                 content.type === 'text' ?
                     "What's up" :
@@ -596,8 +599,9 @@ const NewPostForm = ({
                         'Ask question' :
                         'Add description'
             }
-            disableUnderline={true}
-            multiline={true}
+            disableUnderline
+            multiline
+            autoFocus
             value={description}
             onChange={(ev) => changeDescription(ev.target.value)}
         />
@@ -667,7 +671,7 @@ const NewPostForm = ({
             elevation={0}
             className={classes.contentLink}
         >
-            <div className={classes.contentLink}>
+            <div style={{ position: 'relative' }}>
                 <IconButton
                     className={classes.contentRemoveButton}
                     onClick={removeLink}

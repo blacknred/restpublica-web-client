@@ -1,14 +1,14 @@
 import constants from '../constants/index.js'
 
 const initialState = () => {
-    const { token, isnightmode, isautogifs, isfeedonecolumn } = window.localStorage;
+    const { token, isnightmode, isautogifs, isFeedMultiColumn } = window.localStorage;
     if (token) {
         return {
             isDrawer: true,
             isNotFound: false,
             isNightMode: isnightmode === 'true',
             isAutoGifs: isautogifs === 'true',
-            isFeedOneColumn: isfeedonecolumn === 'true',
+            isFeedMultiColumn: isFeedMultiColumn === 'true',
             isLoading: false
         }
     }
@@ -17,7 +17,7 @@ const initialState = () => {
         isNotFound: false,
         isNightMode: false,
         isAutoGifs: true,
-        isFeedOneColumn: true,
+        isFeedMultiColumn: true,
         isLoading: false
     }
 }
@@ -34,7 +34,7 @@ const uiSwitchers = (state = initialState(), action) => {
         case constants.SWITCH_AUTO_GIFS:
             return { ...state, isAutoGifs: action.mode }
         case constants.SWITCH_FEED_ONE_COLUMN:
-            return { ...state, isFeedOneColumn: action.mode }
+            return { ...state, isFeedMultiColumn: action.mode }
         case constants.SWITCH_NOT_FOUND:
             return { ...state, isNotFound: action.mode }
         default:

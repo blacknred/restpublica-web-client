@@ -304,7 +304,7 @@ HeaderContent.propTypes = {
             text: PropTypes.string.isRequired
         })
     ).isRequired,
-    avatar: PropTypes.string.isRequired,
+    avatar: PropTypes.string,
     mode: PropTypes.string.isRequired,
     query: PropTypes.string,
     history: PropTypes.any,

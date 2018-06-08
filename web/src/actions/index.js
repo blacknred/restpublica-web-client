@@ -22,7 +22,7 @@ export const authUser = (userData) => {
         }
     }
 }
-export const updateUser = (userData) => {
+export const updateLoggedUser = (userData) => {
     if (userData.username) {
         window.localStorage.setItem('username', userData.username)
     }
@@ -92,7 +92,7 @@ export const switchAutoGifs = (mode) => {
     }
 }
 export const switchFeedOneColumn = (mode) => {
-    window.localStorage.setItem('isfeedonecolumn', mode);
+    window.localStorage.setItem('isFeedMultiColumn', mode);
     return {
         type: constants.SWITCH_FEED_ONE_COLUMN,
         mode

@@ -26,7 +26,7 @@ const styles = theme => ({
 })
 
 const SettingsApp = ({
-    isNightMode, isNotify, isAutoGifs, isFeedOneColumn, classes, updateValue,
+    isNightMode, isNotify, isAutoGifs, isFeedMultiColumn, classes, updateValue,
     switchNotify, switchNightMode, switchAutoGifs, switchFeedOneColumn, ...props
 }) => {
 
@@ -60,8 +60,8 @@ const SettingsApp = ({
                 <ListItemSecondaryAction>
                     <Switch
                         color='primary'
-                        checked={isFeedOneColumn}
-                        onChange={() => switchFeedOneColumn(!isFeedOneColumn)}
+                        checked={isFeedMultiColumn}
+                        onChange={() => switchFeedOneColumn(!isFeedMultiColumn)}
                     />
                 </ListItemSecondaryAction>
             </ListItem>
@@ -144,7 +144,7 @@ SettingsApp.propTypes = {
     isNotify: PropTypes.bool.isRequired,
     isNightMode: PropTypes.bool.isRequired,
     isAutoGifs: PropTypes.bool.isRequired,
-    isFeedOneColumn: PropTypes.bool.isRequired,
+    isFeedMultiColumn: PropTypes.bool.isRequired,
     feed_rand: PropTypes.any.isRequired,
     email_notify: PropTypes.bool.isRequired,
     updateValue: PropTypes.func.isRequired,

@@ -32,6 +32,7 @@ class Posts extends PureComponent {
         isAuthenticated: PropTypes.bool.isRequired,
         mode: PropTypes.string.isRequired, //PropTypes.oneOf(['feed', 'trending', 'search']),
         specificator: PropTypes.string.isRequired,
+        userId: PropTypes.any.isRequired,
         username: PropTypes.string.isRequired,
         userAvatar: PropTypes.string.isRequired,
         query: PropTypes.string,
@@ -41,7 +42,7 @@ class Posts extends PureComponent {
 
     getPostsHandler = async (page) => {
         let res
-        const { mode, specificator, query, username } = this.props
+        const { mode, specificator, query, username, userId } = this.props
         this.props.switchLoader(true)
         switch (mode) {
             case 'feed': res = await getFeedPosts(page)
@@ -54,9 +55,9 @@ class Posts extends PureComponent {
                 break
             case 'tag': res = await getTagPosts(specificator, page)
                 break
-            case `${username}`: res = await getProfilePosts(username, page)
+            case `${username}`: res = await getProfilePosts({ userId, page })
                 break
-            default: res = await getProfilePosts(mode, page);
+            default: res = await getProfilePosts({ userId, page });
         }
         this.props.switchLoader(false)
         if (!res) {
@@ -73,11 +74,6 @@ class Posts extends PureComponent {
         }
         // enlarge posts arr if there are, block loading if there are not
         if (res.data.posts.length) {
-            await res.data.posts.forEach(post => {
-                post.showComments = false
-                post.showCommentForm = false
-                post.newComment = ''
-            })
             const posts = await this.state.posts.concat(...res.data.posts)
             this.setState({ posts });
         } else {
@@ -88,11 +84,11 @@ class Posts extends PureComponent {
 
     componentDidMount() {
         const { mode, username } = this.props
-        console.log('posts are mounted: ', mode, username)
+        console.log('posts are mounted:', mode)
     }
 
     render() {
-        const { isAuthenticated, mode, username, isFeedOneColumn } = this.props;
+        const { isAuthenticated, mode, username, isFeedMultiColumn } = this.props;
         return (
             !this.state.empty ?
                 <PostList
@@ -100,7 +96,7 @@ class Posts extends PureComponent {
                     mode={mode}
                     userAvatar={this.props.userAvatar}
                     isPreview={mode === 'trending'}
-                    isFeedOneColumn={isFeedOneColumn}
+                    isFeedMultiColumn={isFeedMultiColumn}
                     getPosts={this.getPostsHandler}
                 /> :
                 <EmptyPostsMessage
@@ -118,7 +114,8 @@ const mapStateToProps = (state, ownProps) => ({
     specificator: ownProps.location.pathname.split('/')[2] || '',
     query: ownProps.match.params.query || '',
     username: state.authentication.username,
-    isFeedOneColumn: state.uiSwitchers.isFeedOneColumn
+    userId: state.authentication.id,
+    isFeedMultiColumn: state.uiSwitchers.isFeedMultiColumn
 })
 
 const mapDispatchToProps = dispatch => ({

@@ -116,6 +116,7 @@ class App extends Component {
                                 <Route path='/(login|register)' render={() =>
                                     isAuthenticated ? <Redirect to='/' /> : <Landing />
                                 } />
+
                                 {/* ***** auth paths ***** */}
                                 <Route exact path='/' render={() => (
                                     !isAuthenticated ? toLogin : <Posts />
@@ -129,14 +130,26 @@ class App extends Component {
                                 <Route path='/communities' render={() => (
                                     !isAuthenticated ? toLogin : <Communities />
                                 )} />
-
-                                <Route path='/post/:slug' render={() => <Post />} />
-
+                                <Route path='/people' render={() => (
+                                    <div>
+                                        people
+                                        {/* <Switch location={location} key={location.key}>
+                                            <Route path='/:username/posts' component={Posts} />
+                                            {
+                                                isAuthenticated &&
+                                                <Route path='/:username/:mode(followers|followin)'
+                                                    component={Subscriptions} />
+                                            }
+                                            <Route render={() => (<Redirect to={`${match.url}/posts`} />)} />
+                                        </Switch> */}
+                                    </div>
+                                )} />
                                 <Route path='/post' render={() => <Redirect to='/' />} />
                                 <Route path='/community' render={() => <Redirect to='/' />} />
-                                <Route path='/album' render={() => <Redirect to='/' />} />
 
                                 {/* ***** non auth paths ***** */}
+                                <Route path='/post/:slug' render={() => <Post />} />
+                                <Route path='/album' render={() => <Redirect to='/' />} />
                                 <Route path='/trending' render={() => (
                                     <div>
                                         <Route path='/trending/:mode(posts|authors|tags|communities)'
@@ -171,19 +184,18 @@ class App extends Component {
                                                 </Switch>
                                             </div>
                                 )} />
-                                <Route path='/:username/:mode' render={({ match }) => (
-                                    <div>
-                                        <Author />
-                                        <Switch location={location} key={location.key}>
-                                            <Route path='/:username/posts' component={Posts} />
-                                            {
-                                                isAuthenticated &&
-                                                <Route path='/:username/:mode(followers|followin)'
-                                                    component={Subscriptions} />
-                                            }
-                                            <Route render={() => (<Redirect to={`${match.url}/posts`} />)} />
-                                        </Switch>
-                                    </div>
+                                <Route path='/:username' render={() => (
+                                    <Switch >
+                                        <Route path='/:username/communities' render={() => (
+                                            <div>communities</div>
+                                        )} />
+                                        <Route render={() => (
+                                            <div>
+                                                <Author />
+                                                <Posts />
+                                            </div>
+                                        )} />
+                                    </Switch>
                                 )} />
                             </Switch>
                         </Slide>

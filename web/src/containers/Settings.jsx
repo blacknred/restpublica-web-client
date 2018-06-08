@@ -6,10 +6,10 @@ import { Switch, Route } from 'react-router-dom';
 import {
     getUserProfile,
     login,
-    userUpdate
+    updateUser
 } from '../api'
 import {
-    updateUser,
+    updateLoggedUser,
     createFlashMessage,
     switchNightMode,
     switchLoader,
@@ -59,7 +59,7 @@ class Settings extends PureComponent {
         isNightMode: PropTypes.bool.isRequired,
         isNotify: PropTypes.bool.isRequired,
         isAutoGifs: PropTypes.bool.isRequired,
-        isFeedOneColumn: PropTypes.bool.isRequired,
+        isFeedMultiColumn: PropTypes.bool.isRequired,
         update: PropTypes.func.isRequired,
         createMessage: PropTypes.func.isRequired,
         switchNightMode: PropTypes.func.isRequired,
@@ -116,7 +116,7 @@ class Settings extends PureComponent {
             option,
             value
         };
-        const res = await userUpdate(updatedData)
+        const res = await updateUser(updatedData)
         if (!res) {
             this.props.createMessage('Server error. Try later.')
             return
@@ -178,7 +178,7 @@ class Settings extends PureComponent {
                 option: 'avatar',
                 value: avatar
             }
-            const res = await userUpdate(updatedData)
+            const res = await updateUser(updatedData)
             this.setState({
                 profile: {
                     ...this.state.profile,
@@ -389,11 +389,11 @@ const mapStateToProps = (state) => ({
     isNightMode: state.uiSwitchers.isNightMode,
     isNotify: state.notifications.isNotify,
     isAutoGifs: state.uiSwitchers.isAutoGifs,
-    isFeedOneColumn: state.uiSwitchers.isFeedOneColumn
+    isFeedMultiColumn: state.uiSwitchers.isFeedMultiColumn
 })
 
 const mapDispatchToProps = dispatch => ({
-    update: (profileData) => dispatch(updateUser(profileData)),
+    update: (profileData) => dispatch(updateLoggedUser(profileData)),
     createMessage: (text) => dispatch(createFlashMessage(text)),
     switchNightMode: (mode) => dispatch(switchNightMode(mode)),
     switchNotify: (mode) => dispatch(switchNotify(mode)),

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
 import {
     MuiThemeProvider,
@@ -19,6 +18,9 @@ const lightTheme = createMuiTheme({
         primary: {
             main: teal[500],
         },
+        secondary: {
+            main: blue[500]
+        }
     },
 })
 
@@ -31,6 +33,9 @@ const darkTheme = createMuiTheme({
         primary: {
             main: blue[500],
         },
+        secondary: {
+            main: teal[500]
+        }
     },
 })
 

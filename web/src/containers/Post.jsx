@@ -6,10 +6,18 @@ import { withRouter } from 'react-router-dom';
 
 import {
     getPost,
+    updatePost,
+    deletePost,
     getPostComments,
     createPostComment,
+    deletePostComment,
     createPostLike,
+    getPostLikes,
     deletePostLike,
+    getPostVotes,
+    createPostVote,
+    deletePostVote,
+    deleteFileFromStorage
 } from '../api'
 import {
     createFlashMessage,
@@ -23,11 +31,14 @@ class Post extends Component {
         super(props);
         this.state = {
             ...this.props.post,
+            isOptionsMenuOpen: false,
+            isEditingModeOn: false,
             listMode: true,
             hasMoreComments: true,
             showComments: false,
             showCommentForm: false,
-            newComment: ''
+            newComment: '',
+            newDescription: this.props.post && this.props.post.description || ''
         }
     }
 
@@ -35,7 +46,7 @@ class Post extends Component {
         post: PropTypes.object,
         slug: PropTypes.string,
         isAuthenticated: PropTypes.bool.isRequired,
-        userId: PropTypes.string.isRequired,
+        userId: PropTypes.any.isRequired,
         username: PropTypes.string.isRequired,
         userAvatar: PropTypes.string.isRequired,
         isAutoGifs: PropTypes.bool.isRequired,
@@ -55,12 +66,7 @@ class Post extends Component {
         }
         this.setState({
             ...res.data,
-            listMode: false,
-            comments: [],
-            hasMoreComments: true,
-            showComments: true,
-            showCommentForm: false,
-            newComment: ''
+            newDescription: res.data.description
         });
     }
 
@@ -89,30 +95,16 @@ class Post extends Component {
     }
 
     formateDateHandler = dateObj => {
-        let date = moment.parseZone(dateObj)
-        let now = moment().parseZone()
-        switch (true) {
-            case (now.year() > date.year()):
-                return (now.year() - date.year()) + ' year'
-                break;
-            case (now.month() > date.month()):
-                return `${now.month() - date.month()} mon.`
-                break;
-            case (now.date() > date.date() + 7):
-                return parseInt((now.date() - date.date()) / 7, 10) + ' w.'
-                break;
-            case (now.date() > date.date()):
-                return `${now.date() - date.date()} d.`
-                break;
-            case (now.hour() > date.hour()):
-                return `${now.hour() - date.hour()} h.`
-                break;
-            case (now.minute() > date.minute()):
-                return `${now.minute() > date.minute()} min.`
-                break;
-            default:
-                return `${date.secounds} sec.`
-                break;
+        const output = moment(dateObj, "YYYY-MM-DD hh:mm:ss").fromNow(true)
+        const outputArr = output.split(' ')
+        switch (outputArr[1]) {
+            case 'secounds': return outputArr[0] + ' sec';
+            case 'minutes': return outputArr[0] + ' min';
+            case 'hours': return outputArr[0] + ' h';
+            case 'days': return outputArr[0] + ' d';
+            case 'monthes': return outputArr[0] + ' mon';
+            case 'years': return outputArr[0] + ' y';
+            default: return output
         }
     }
 
@@ -120,8 +112,16 @@ class Post extends Component {
 
 
 
-    togglePostCommentsHandler = () => {
-        this.setState({ showComments: !this.state.showComments })
+    togglePostValueHandler = (target) => {
+        this.setState({ [target]: !this.state[target] })
+    }
+
+
+
+
+
+    changePostDescriptionHandler = (value) => {
+        this.setState({ newDescription: value })
     }
 
     togglePostNewCommentFormHandler = () => {
@@ -146,7 +146,7 @@ class Post extends Component {
             this.props.createMessage('Server error. Try later.')
             return
         }
-        res.data.author = { 
+        res.data.author = {
             username: this.props.username,
             avatar: this.props.userAvatar
         }
@@ -189,16 +189,84 @@ class Post extends Component {
         this.props.createMessage('You deleted like from post')
     }
 
-
-
-   
-
-    updatePostHandler = async (e, child) => {
-        console.log(e, child)
+    updatePostHandler = async (option, value) => {
+        const data = {
+            postId: this.state.id,
+            data: {
+                option,
+                value
+            }
+        }
+        this.setState({ [option]: value })
+        const res = await updatePost(data)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
+            return
+        }
+        this.props.createMessage('Post updated')
     }
 
-    deletePostHandler = async (id) => {
-        console.log(id)
+    deletePostHandler = async () => {
+        const res = await deletePost(this.state.id)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
+            return
+        }
+        if (res.data.filesToDelete) {
+            Promise.all(res.data.filesToDelete
+                .map(file => deleteFileFromStorage(file)))
+        }
+        this.setState({ id: null })
+        this.props.createMessage('Post deleted')
+    }
+
+    createPostVoteHandler = async (optionId) => {
+        const userId = this.props.userId
+        const data = {
+            postId: this.state.id,
+            data: { optionId, userId }
+        }
+        const res = await createPostVote(data)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
+            return
+        }
+        const content = this.state.content;
+
+        if (content.every(ans => !ans.my_vote)) {
+            content.forEach((ans) => {
+                if (ans.id === optionId)++ans.count;
+            })
+        }
+        content.forEach((ans) => {
+            ans.my_vote = null
+            if (ans.id === optionId) {
+                ans.my_vote = res.data.id
+            }
+        })
+        this.setState({ content: content })
+        this.props.createMessage('You voted a post')
+    }
+
+    deletePostVoteHandler = async (optionId) => {
+        const data = {
+            postId: this.state.id,
+            optionId
+        }
+        const res = await deletePostVote(data)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
+            return
+        }
+        const content = this.state.content;
+        content.forEach((ans) => {
+            if (ans.id === optionId) {
+                ans.my_vote = null
+                --ans.count;
+            }
+        })
+        this.setState({ content: content })
+        this.props.createMessage('You deleted vote from post')
     }
 
     componentDidMount() {
@@ -208,24 +276,29 @@ class Post extends Component {
 
     render() {
         return (
-            this.state.author ?
+            (this.state.id && !this.state.archived) ?
                 <PostItem
                     {...this.props}
                     post={this.state}
-                    isFullAccess={this.props.isAuthenticated &&
-                        this.state.author_id === this.props.userId}
+                    isFullAccess={
+                        this.props.isAuthenticated &&
+                        (this.state.author_id == this.props.userId)
+                    }
                     getComments={this.getPostCommentsHandler}
-                    toggleComments={this.togglePostCommentsHandler}
+                    togglePostValue={this.togglePostValueHandler}
+                    changePostDescription={this.changePostDescriptionHandler}
                     toggleNewCommentForm={this.togglePostNewCommentFormHandler}
                     changeNewComment={this.changePostNewCommentHandler}
                     postNewComment={this.addNewPostCommentHandler}
                     formateDate={this.formateDateHandler}
                     createLike={this.createPostLikeHandler}
                     deleteLike={this.deletePostLikeHandler}
+                    createVote={this.createPostVoteHandler}
+                    deleteVote={this.deletePostVoteHandler}
                     updatePost={this.updatePostHandler}
                     deletePost={this.deletePostHandler}
-                />
-                : <div />
+                /> :
+                <div />
         )
     }
 }

@@ -2,130 +2,135 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { 
-    grey300, 
-    grey400, 
-    grey600, 
-    grey900 
-} from '@material-ui/core/colors';
 import Chip from '@material-ui/core/Chip';
+import List from '@material-ui/core/List';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import ListItem from '@material-ui/core/ListItem';
+import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Typography from '@material-ui/core/Typography';
+import ListSubheader from '@material-ui/core/ListSubheader';
 
 const styles = {
-    userBlock: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        width: '100%'
+    root: {
+        maxWidth: '1000px',
+        margin: '0 auto'
     },
-    left: {
-        display: 'flex',
-        width: '60%',
-        justifyContent: 'space-between'
+    avatar: {
+        height: '4em',
+        width: '4em'
     },
-    leftInfo: {
-        width: '82%',
+    description: {
+        maxWidth: '80%'
     },
-    leftInfoHeader: {
-        fontSize: '1.6em',
-    },
-    leftInfoChips: {
-        display: 'flex'
-    },
-    leftInfoChip: {
+    chip: {
         marginRight: '1em'
     },
-    button: {
-        opacity: '0.6'
+    subheader: {
+        display: 'flex',
+        justifyContent: 'space-between'
     }
 }
 
-const AuthorContent = ({ author, counts, isAuthenticated, isMine,
-    isNightMode, removeSubscription, createSubscription }) => {
-
-    const userBlockButton = (
-        !isAuthenticated ? null :
-            isMine ?
-                <Button
-                    primary={true}
-                    style={styles.button}
-                    label={<Link to='/settings/profile'>Edit profile</Link>} />
-                :
-                author.mySubscriptionId ?
-                    <Button
-                        secondary={true}
-                        style={styles.button}
-                        label='Unfollow'
-                        onClick={() => removeSubscription(author.mySubscriptionId, author.username)} />
-                    :
-                    <Button
-                        primary={true}
-                        style={styles.button}
-                        label='Follow'
-                        onClick={() => createSubscription(author.id, author.username)} />
-    );
-
-    return (
-        <div className='container'>
-            <div style={styles.userBlock}>
-                <div style={styles.left}>
-                    <Avatar
-                        size={90}
-                        src={author.avatar}
-                        alt={author.username}
-                    />
-                    <section style={
-                        Object.assign({}, styles.leftInfo,
-                            { color: isNightMode ? grey400 : grey600 })}>
-                        <strong style={
-                            Object.assign({}, styles.leftInfoHeader,
-                                { color: isNightMode ? grey300 : grey900 })}>
-                            {author.fullname}
-                            <small><small>{' @' + author.username}</small></small>
-                            <br /><br />
-                        </strong>
-                        <div style={styles.leftInfoChips}>
-                            <Chip style={styles.leftInfoChip}>
-                                Posts: {counts.posts}
-                            </Chip>
-                            <Chip style={styles.leftInfoChip}>
-                                Followers: {counts.followers}
-                            </Chip>
-                            <Chip style={styles.leftInfoChip}>
-                                Followin: {counts.followin}
-                            </Chip>
-                        </div>
-                        <br />
-                        {author.description}
-                    </section>
-                </div>
-                <div>
-                    {userBlockButton}
-                </div>
-            </div>
-        </div>
-    );
-}
+const AuthorContent = ({
+    avatar, username, fullname, description, isMine, classes,
+    posts_cnt, followers_cnt, followin_cnt, my_subscription,
+    createSubscription, removeSubscription
+}) =>
+    <List className={classes.root}>
+        <ListItem>
+            <Avatar
+                srcSet={`data:image/png;base64,${avatar}`}
+                className={classes.avatar}
+            />
+            <ListItemText>
+                <Typography
+                    variant='title'
+                    paragraph
+                >
+                    {fullname}
+                    <small>{` @${username}`}</small>
+                </Typography>
+                <Typography
+                    variant='body1'
+                    className={classes.description}
+                >
+                    {description}
+                </Typography>
+            </ListItemText>
+            <ListItemSecondaryAction>
+                {
+                    isMine ?
+                        <Button
+                            color='primary'
+                            component={Link}
+                            to='/settings/profile'
+                        >
+                            Edit profile
+                         </Button>
+                        :
+                        my_subscription ?
+                            <Button
+                                color='primary'
+                                onClick={removeSubscription}
+                            >
+                                Unfollow
+                                </Button>
+                            :
+                            <Button
+                                color='primary'
+                                onClick={createSubscription}
+                            >
+                                Follow
+                                 </Button>
+                }
+            </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem>
+            <Chip
+                className={classes.chip}
+                label={posts_cnt + ' Posts'}
+            />
+            <Chip
+                className={classes.chip}
+                label={followers_cnt + ' Followers'}
+            />
+            <Chip
+                className={classes.chip}
+                label={followin_cnt + ' Followin'}
+            />
+        </ListItem>
+        <ListSubheader className={classes.subheader}>
+            Communities
+            <Button
+                color='primary'
+                component={Link}
+                to={`/${username}/communities`}
+            >
+                View all
+            </Button>
+        </ListSubheader>
+        <br />
+        <ListSubheader>Posts</ListSubheader>
+    </List>
 
 AuthorContent.propTypes = {
-    author: PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        username: PropTypes.string.isRequired,
-        fullname: PropTypes.string.isRequired,
-        description: PropTypes.string.isRequired,
-        avatar: PropTypes.string.isRequired,
-        mySubscriptionId: PropTypes.number
-    }).isRequired,
-    counts: PropTypes.shape({
-        posts: PropTypes.number.isRequired,
-        followers: PropTypes.number.isRequired,
-        followin: PropTypes.number.isRequired
-    }).isRequired,
-    isAuthenticated: PropTypes.bool.isRequired,
+    id: PropTypes.number.isRequired,
+    username: PropTypes.string.isRequired,
+    fullname: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    avatar: PropTypes.string.isRequired,
+    posts_cnt: PropTypes.any.isRequired,
+    followers_cnt: PropTypes.any.isRequired,
+    followin_cnt: PropTypes.any.isRequired,
+    my_subscription: PropTypes.number,
+
     isMine: PropTypes.bool.isRequired,
-    isNightMode: PropTypes.bool.isRequired,
     removeSubscription: PropTypes.func.isRequired,
     createSubscription: PropTypes.func.isRequired
 }
 
-export default AuthorContent;
+export default withStyles(styles)(AuthorContent);

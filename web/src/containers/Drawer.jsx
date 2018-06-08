@@ -10,10 +10,6 @@ import {
 import DrawerContent from '../components/DrawerContent'
 
 class Drawer extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     static propTypes = {
         isDrawer: PropTypes.bool.isRequired,
         isNotFound: PropTypes.bool.isRequired,
