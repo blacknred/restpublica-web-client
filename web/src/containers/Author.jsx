@@ -7,9 +7,11 @@ import {
     getProfile,
     createUserSubscription,
     removeUserSubscription,
-    getProfileCommunities
 } from '../api'
-import { createFlashMessage } from '../actions'
+import {
+    createFlashMessage,
+    switchNotFound
+} from '../actions'
 import AuthorContent from '../components/AuthorContent';
 
 class Author extends Component {
@@ -22,16 +24,18 @@ class Author extends Component {
         loggedUserId: PropTypes.string.isRequired,
         loggedUsername: PropTypes.string.isRequired,
         author: PropTypes.string.isRequired,
+        switchNotFound: PropTypes.func.isRequired
     }
 
     getUserDataHandler = async () => {
         const author = this.props.author
         const res = await getProfile(author)
         if (!res) {
+            this.props.switchNotFound(true)
             this.props.createMessage('Server error. Try later.')
             return
         }
-        this.setState({ ...res.data})
+        this.setState({ ...res.data })
     }
 
     createSubscriptionHandler = async () => {
@@ -45,7 +49,7 @@ class Author extends Component {
             this.props.createMessage('Server error. Try later.')
             return
         }
-        this.setState({ 
+        this.setState({
             followers_cnt: parseInt(this.state.followers_cnt, 10) + 1,
             my_subscription: parseInt(res.data, 10)
         })
@@ -100,6 +104,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => ({
     createMessage: (text) => dispatch(createFlashMessage(text)),
+    switchNotFound: (mode) => dispatch(switchNotFound(mode)),
 })
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Author))

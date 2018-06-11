@@ -1,23 +1,27 @@
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import {
-    switchNotFound, 
-    switchNightMode, 
+    switchNotFound,
+    switchNightMode,
     switchDrawer,
-    switchNotify, 
-    logoutUser, 
+    switchNotify,
+    logoutUser,
     createFlashMessage
 } from '../actions'
+import { getTrendingTags } from '../api'
 import HeaderContent from '../components/HeaderContent'
 
 class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isUserMenuOpen: false
+            isUserMenuOpen: false,
+            isTrendingMenuOpen: false,
+            query: '',
+            trendingTags: []
         }
     }
 
@@ -26,7 +30,6 @@ class Header extends Component {
         isAuthenticated: PropTypes.bool.isRequired,
         isNotify: PropTypes.bool.isRequired,
         isNightMode: PropTypes.bool.isRequired,
-        isNotFound: PropTypes.bool.isRequired,
         notifications: PropTypes.arrayOf(
             PropTypes.shape({
                 date: PropTypes.number.isRequired,
@@ -34,28 +37,50 @@ class Header extends Component {
             })
         ).isRequired,
         avatar: PropTypes.string,
-        mode: PropTypes.string.isRequired,
-        query: PropTypes.string,
+        path: PropTypes.array.isRequired,
         updateHistory: PropTypes.func.isRequired,
-        switchNotFound: PropTypes.func.isRequired,
         switchNightMode: PropTypes.func.isRequired,
         switchDrawer: PropTypes.func.isRequired,
         switchNotify: PropTypes.func.isRequired,
         createFlashMessage: PropTypes.func.isRequired,
         logoutUser: PropTypes.func.isRequired,
+        goBack: PropTypes.func.isRequired,
     }
 
     redirect = path => this.props.updateHistory(path)
 
-    userMenuOpenHandler = val => this.setState({ isUserMenuOpen: val })
+    toggleMenuOpenHandler = (target) => {
+        setTimeout(() => this.setState({ [target]: !this.state[target] }), 150)
+    }
+
+    changeSearchQueryHandler = (e) => {
+        this.setState({ query: e.target.value })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.path !== this.props.path) {
+            const { path } = nextProps
+            const query = path[1] === 'search' ? path[2] : ''
+            this.setState({ query })
+        }
+    }
+
+    componentDidMount() {
+        const { path } = this.props
+        const query = path[1] === 'search' ? path[2] : ''
+        this.setState({ query })
+    }
 
     render() {
-        return <HeaderContent
-            {...this.props}
-            {...this.state}
-            redirect={this.redirect}
-            userMenuOpen={this.userMenuOpenHandler}
-        />
+        return (
+            <HeaderContent
+                {...this.props}
+                {...this.state}
+                redirect={this.redirect}
+                toggleMenuOpen={this.toggleMenuOpenHandler}
+                changeSearchQuery={this.changeSearchQueryHandler}
+            />
+        )
     }
 }
 
@@ -64,17 +89,16 @@ const mapStateToProps = (state, ownProps) => ({
     isAuthenticated: state.authentication.isAuthenticated,
     isNotify: state.notifications.isNotify,
     isNightMode: state.uiSwitchers.isNightMode,
-    isNotFound: state.uiSwitchers.isNotFound,
     notifications: state.notifications.notificationsList,
+    username: state.authentication.username,
     avatar: state.authentication.avatar,
-    mode: ownProps.location.pathname.split('/')[1] || 'Feed',
-    query: ownProps.match.params.query || null,
+    path: ownProps.location.pathname.split('/'),
     updateHistory: ownProps.history.push,
+    goBack: ownProps.history.goBack
 })
 
 const mapDispatchToProps = dispatch => {
     return {
-        switchNotFound: (mode) => dispatch(switchNotFound(mode)),
         switchNightMode: (mode) => dispatch(switchNightMode(mode)),
         switchDrawer: (mode) => dispatch(switchDrawer(mode)),
         switchNotify: (mode) => dispatch(switchNotify(mode)),

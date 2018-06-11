@@ -31,18 +31,22 @@ const styles = theme => ({
     drawerPaper: {
         borderWidth: 0,
         backgroundColor: theme.palette.background.default,
-        '@media (max-width: 800px)': {
-            width: '250px',
-            borderWidth: 1,
-        },
-        '@media (max-width: 600px)': {
-            width: '300px',
-            borderWidth: 0,
-        },
+    },
+    drawerPaperMobile: {
+        width: '300px',
         '& a': {
             textDecoration: 'none',
             color: 'inherit'
-        }
+        },
+        height: '100vh'
+    },
+    drawerRoot: {
+        height: '100vh',
+        marginTop: '4.5em',
+    },
+    drawerRoot2: {
+        height: '100vh',
+        marginTop: '7.5em',
     },
     drawerHeader: {
         justifyContent: 'space-between',
@@ -54,9 +58,6 @@ const styles = theme => ({
     },
     drawerHeaderTitle: {
         fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif'
-    },
-    navMargin: {
-        height: '70px'
     },
     active: {
         color: theme.palette.primary.main
@@ -96,27 +97,32 @@ const styles = theme => ({
         maxWidth: '82%',
         '& *': {
             marginRight: '0.5em'
-        }
+        },
+        '& a': {
+            textDecoration: 'none',
+            color: 'inherit'
+        },
     }
 })
 
 const DrawerContent = ({
-    isDrawer, path, navigate, width, username, classes, switchDrawer
+    isDrawer, path, width, username, classes, switchDrawer
 }) => {
+
     const drawerHeader = (
         <Toolbar className={classes.drawerHeader}>
             <Typography
                 variant="headline"
                 component={Link}
                 to="/"
-                onClick={() => switchDrawer(isDrawer)}
+                onClick={() => switchDrawer(!isDrawer)}
                 className={classes.drawerHeaderTitle}
             >
                 Publica
                 </Typography>
             <IconButton
                 aria-label="Menu"
-                onClick={() => switchDrawer(isDrawer)}
+                onClick={() => switchDrawer(!isDrawer)}
             >
                 <ChevronLeftIcon />
             </IconButton>
@@ -126,11 +132,10 @@ const DrawerContent = ({
     const primaryNavList = (
         <List component="nav" className={classes.primaryNav}>
             <ListItem
+                component={Link}
+                to='/'
                 button
-                onClick={() => {
-                    navigate('/')
-                    width === 'xs' && switchDrawer(isDrawer)
-                }}
+                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
                 className={path === '/' ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -139,11 +144,10 @@ const DrawerContent = ({
                 <ListItemText primary='Feed' />
             </ListItem>
             <ListItem
+                component={Link}
+                to='/trending'
                 button
-                onClick={() => {
-                    navigate('/trending')
-                    width === 'xs' && switchDrawer(isDrawer)
-                }}
+                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
                 className={path.match(/^\/trending/) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -152,11 +156,10 @@ const DrawerContent = ({
                 <ListItemText primary='Trending' />
             </ListItem>
             <ListItem
+                component={Link}
+                to='/communities'
                 button
-                onClick={() => {
-                    navigate('/communities')
-                    width === 'xs' && switchDrawer(isDrawer)
-                }}
+                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
                 className={path.match(/^\/communities/) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -165,11 +168,10 @@ const DrawerContent = ({
                 <ListItemText primary='Communities' />
             </ListItem>
             <ListItem
+                component={Link}
+                to={`/${username}`}
                 button
-                onClick={() => {
-                    navigate(`/${username}`)
-                    width === 'xs' && switchDrawer(isDrawer)
-                }}
+                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
                 className={path.match(new RegExp(`^/${username}`)) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -178,11 +180,10 @@ const DrawerContent = ({
                 <ListItemText primary='Profile' />
             </ListItem>
             <ListItem
+                component={Link}
+                to='/people'
                 button
-                onClick={() => {
-                    navigate(`/people`)
-                    width === 'xs' && switchDrawer(isDrawer)
-                }}
+                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
                 className={path.match(/^\/people/) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -191,11 +192,10 @@ const DrawerContent = ({
                 <ListItemText primary='People' />
             </ListItem>
             <ListItem
+                component={Link}
+                to='/activity'
                 button
-                onClick={() => {
-                    navigate('/activity')
-                    width === 'xs' && switchDrawer(isDrawer)
-                }}
+                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
                 className={path.match(/^\/activity/) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -204,11 +204,10 @@ const DrawerContent = ({
                 <ListItemText primary='Activity' />
             </ListItem>
             <ListItem
+                component={Link}
+                to='/settings'
                 button
-                onClick={() => {
-                    navigate('/settings')
-                    width === 'xs' && switchDrawer(isDrawer)
-                }}
+                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
                 className={path.match(/^\/settings/) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -279,38 +278,59 @@ const DrawerContent = ({
         </Typography>
     )
 
+    const drawer = (
+        <div>
+            {primaryNavList}
+            <Divider light />
+            {secondaryNavList}
+            {footerNav}
+        </div>
+    )
+
     return (
-        <Drawer
-            variant={width === 'xs' ? 'temporary' : 'persistent'}
-            anchor='left'
-            open={width === 'xs' ? !isDrawer : isDrawer}
-            classes={{ paper: classes.drawerPaper }}
-            onClose={() => switchDrawer(!isDrawer)}
-        >
-            <Slide
-                direction="right"
-                in={isDrawer}
-            >
-                <div style={{ height: '100vh' }}>
-                    <div className={classes.navMargin}>
-                        <Hidden only={['sm', 'md', 'lg', 'xl']}>
-                            {drawerHeader}
-                            <Divider light />
-                        </Hidden>
-                    </div>
-                    {primaryNavList}
+        <div>
+            <Hidden mdUp>
+                <Drawer
+                    variant="temporary"
+                    anchor='left'
+                    open={!isDrawer}
+                    onClose={() => switchDrawer(!isDrawer)}
+                    classes={{ paper: classes.drawerPaperMobile }}
+                    ModalProps={{ keepMounted: true }}
+                >
+                    {drawerHeader}
                     <Divider light />
-                    {secondaryNavList}
-                    {footerNav}
-                </div>
-            </Slide>
-        </Drawer >
+                    {drawer}
+                </Drawer>
+            </Hidden>
+            <Hidden smDown implementation="css">
+                <Drawer
+                    variant="permanent"
+                    anchor='left'
+                    open={isDrawer}
+                    classes={{ paper: classes.drawerPaper }}
+                    onClose={() => switchDrawer(!isDrawer)}
+                >
+                    <Slide
+                        direction="right"
+                        in={isDrawer}
+                        timeout={400}
+                        className={
+                            path.split('/')[3] ?
+                                classes.drawerRoot2 :
+                                classes.drawerRoot
+                        }
+                    >
+                        {drawer}
+                    </Slide>
+                </Drawer>
+            </Hidden>
+        </div>
     )
 }
 
 DrawerContent.propTypes = {
     isDrawer: PropTypes.bool.isRequired,
-    navigate: PropTypes.func.isRequired,
     path: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,

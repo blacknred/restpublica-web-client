@@ -13,6 +13,7 @@ const instance = axios.create();
 instance.defaults.timeout = 20000
 instance.defaults.validateStatus = status => status >= 200 && status < 429
 instance.defaults.headers.common['Authorization'] = 'Bearer ' + window.localStorage.token
+
 instance.interceptors.response.use(
     (res) => {
         const { data, status } = res;

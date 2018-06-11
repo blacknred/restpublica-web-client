@@ -12,6 +12,7 @@ import {
     updateLoggedUser,
     createFlashMessage,
     switchNightMode,
+    switchDrawer,
     switchLoader,
     switchNotify,
     switchAutoGifs,
@@ -50,6 +51,7 @@ class Settings extends PureComponent {
                 isAvatarLoading: false,
                 isChangePasswordDialogOpen: false,
                 isDeleteProfileDialogOpen: false,
+                isDeleteProfileResponsibilityCheck: false
             }
         };
     }
@@ -62,6 +64,7 @@ class Settings extends PureComponent {
         isFeedMultiColumn: PropTypes.bool.isRequired,
         update: PropTypes.func.isRequired,
         createMessage: PropTypes.func.isRequired,
+        switchDrawer: PropTypes.func.isRequired,
         switchNightMode: PropTypes.func.isRequired,
         switchNotify: PropTypes.func.isRequired,
         switchLoader: PropTypes.func.isRequired,
@@ -70,7 +73,7 @@ class Settings extends PureComponent {
         logoutUser: PropTypes.func.isRequired
     }
 
-    showDialogHandler = (target) => {
+    toggleDialogHandler = (target) => {
         this.setState({
             profile: {
                 ...this.state.profile,
@@ -168,7 +171,7 @@ class Settings extends PureComponent {
             profile: {
                 ...this.state.profile,
                 isAvatarLoading: true
-            } 
+            }
         })
         const reader = new FileReader();
         reader.readAsDataURL(avatar);
@@ -183,7 +186,7 @@ class Settings extends PureComponent {
                 profile: {
                     ...this.state.profile,
                     isAvatarLoading: false
-                } 
+                }
             })
             if (!res) {
                 this.props.createMessage('Server error. Try later.')
@@ -339,6 +342,13 @@ class Settings extends PureComponent {
         this.showDialogHandler('isChangePasswordDialogOpen')
     }
 
+    logoutHandler = () => {
+        this.props.switchNightMode(false)
+        this.props.logoutUser()
+        this.props.switchDrawer(false)
+        this.props.createMessage('You are now logged out.')
+    }
+
     componentDidMount() {
         this.getProfileHandler();
     }
@@ -353,8 +363,8 @@ class Settings extends PureComponent {
                 updatePassword={this.updateProfilePasswordHandler}
                 checkPassword={this.checkProfilePasswordHandler}
                 checkNewPassword={this.checkProfileNewPasswordHandler}
-                logoutUser={this.props.logoutUser}
-                showDialog={this.showDialogHandler}
+                logoutUser={this.logoutHandler}
+                toggleDialog={this.toggleDialogHandler}
                 sendNewPasswordEmailConfirmation={this.sendProfileNewPasswordEmailConfirmationHandler}
                 updateEmailConfirmationCode={this.updateEmailConfirmationCodeHandler}
             />
@@ -396,6 +406,7 @@ const mapDispatchToProps = dispatch => ({
     update: (profileData) => dispatch(updateLoggedUser(profileData)),
     createMessage: (text) => dispatch(createFlashMessage(text)),
     switchNightMode: (mode) => dispatch(switchNightMode(mode)),
+    switchDrawer: (mode) => dispatch(switchDrawer(mode)),
     switchNotify: (mode) => dispatch(switchNotify(mode)),
     switchLoader: (mode) => dispatch(switchLoader(mode)),
     switchAutoGifs: (mode) => dispatch(switchAutoGifs(mode)),

@@ -10,26 +10,23 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         transition: 'padding-left 300ms',
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
+        marginTop: '1em',
     },
     left: {
-        '@media (min-width: 800px)': {
+        '@media (min-width: 960px)': {
             paddingLeft: '220px',
         }
     },
-    top: {
-        paddingTop: '5em',
-    }
 }
 
-const Frame = ({ isAuthenticated, isDrawer, classes, children }) => {
+const Frame = ({ isDrawer, classes, children }) => {
     return (
         <Paper
             elevation={0}
             className={classes.frame}
             classes={{
-                root: isAuthenticated && isDrawer ? classes.left : null,
-                elevation0: isAuthenticated ? classes.top : null,                
+                root: isDrawer ? classes.left : null,
             }}
         >
             {children}
@@ -38,7 +35,6 @@ const Frame = ({ isAuthenticated, isDrawer, classes, children }) => {
 }
 
 Frame.propTypes = {
-    isAuthenticated: PropTypes.bool.isRequired,
     isDrawer: PropTypes.bool.isRequired,
     classes: PropTypes.object.isRequired,
 };

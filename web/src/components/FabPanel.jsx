@@ -12,11 +12,11 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
 const styles = {
     panel: {
-        zIndex: 1
+        zIndex: 1,
+        position: 'fixed',
     },
     toTop: {
-        position: 'fixed',
-        top: '90px',
+        top: '150px',
         right: '30px',
         bottom: 'none'
     },
@@ -30,11 +30,12 @@ const styles = {
     }
 }
 
-const ContextPanel = ({ path, classes }) => {
+const FabPanel = ({ path, classes }) => {
     return (
         <div className={classes.panel}>
             <ScrollToTop
                 showUnder={460}
+                topPosition={170}
                 style={styles.toTop}
             >
                 <IconButton className={classes.toTopButton} color="primary">
@@ -78,9 +79,9 @@ const ContextPanel = ({ path, classes }) => {
     )
 }
 
-ContextPanel.propTypes = {
+FabPanel.propTypes = {
     classes: PropTypes.object.isRequired,
     path: PropTypes.string.isRequired
 };
 
-export default withStyles(styles)(ContextPanel)
+export default withStyles(styles)(FabPanel)

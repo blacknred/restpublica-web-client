@@ -203,10 +203,10 @@ const styles = theme => ({
 
 
 const PostItem = ({
-    post, isAutoGifs, isFullAccess, userAvatar, classes, togglePostValue, formateDate,
+    post, isAutoGifs, isFullAccess, userAvatar, classes, togglePostValue,
     getComments, toggleNewCommentForm, changeNewComment, changePostDescription,
     postNewComment, createVote, deleteVote, createLike, deleteLike, updatePost,
-    deletePost,
+    deletePost, formateDate,
 }) => {
 
     const postOptionsMenu = (
@@ -338,7 +338,7 @@ const PostItem = ({
                             if (word.charAt(0) !== '#') return `${word} `;
                             return (
                                 <Link
-                                    to={`/search/${word.substr(1)}/tags`}
+                                    to={`/s/${word.substr(1)}/tags`}
                                     key={word} >
                                     {word}&nbsp;
                                 </Link>
@@ -727,7 +727,7 @@ const PostItem = ({
 
             {/* comments */}
             {
-                post.commentable &&
+                !post.commentable &&
                 post.comments_cnt > 0 &&
                 <Hidden
                     only={post.listMode ? 'xs' : null}

@@ -12,41 +12,36 @@ import DrawerContent from '../components/DrawerContent'
 class Drawer extends Component {
     static propTypes = {
         isDrawer: PropTypes.bool.isRequired,
-        isNotFound: PropTypes.bool.isRequired,
-        switchNotFound: PropTypes.func.isRequired,
+        // isNotFound: PropTypes.bool.isRequired,
+        // switchNotFound: PropTypes.func.isRequired,
         switchDrawer: PropTypes.func.isRequired,
         path: PropTypes.string.isRequired,
-        updateHistory: PropTypes.func.isRequired,
+        // updateHistory: PropTypes.func.isRequired,
         username: PropTypes.string.isRequired
     }
 
-    navigateHandler = (path) => {
-        const { isNotFound, switchNotFound, updateHistory } = this.props
-        if (isNotFound) switchNotFound(true);
-        updateHistory(path)
-    }
+    // navigateHandler = (path) => {
+    //     const { isNotFound, switchNotFound, updateHistory } = this.props
+    //     if (isNotFound) switchNotFound(true);
+    //     updateHistory(path)
+    // }
 
     render() {
-        return (
-            <DrawerContent
-                {...this.props}
-                navigate={this.navigateHandler}
-            />
-        )
+        return <DrawerContent {...this.props} />
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
     isDrawer: state.uiSwitchers.isDrawer,
-    isNotFound: state.uiSwitchers.isNotFound,
+    // isNotFound: state.uiSwitchers.isNotFound,
     isNightMode: state.uiSwitchers.isNightMode,
     path: ownProps.location.pathname,
-    updateHistory: ownProps.history.push,
+    // updateHistory: ownProps.history.push,
     username: state.authentication.username
 })
 
 const mapDispatchToProps = dispatch => ({
-    switchNotFound: (mode) => dispatch(switchNotFound(mode)),
+    // switchNotFound: (mode) => dispatch(switchNotFound(mode)),
     switchDrawer: (mode) => dispatch(switchDrawer(mode)),
 })
 

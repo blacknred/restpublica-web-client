@@ -8,7 +8,7 @@ const styles = {
 }
 
 
-class Activity extends Component {
+class Notifications extends Component {
     constructor(props) {
         super(props);
         this.state = {}
@@ -16,11 +16,11 @@ class Activity extends Component {
     render() {
         return (
             <div style={styles.container}>
-                Activity
+                Notifications
             </div>
         )
     }
 
 }
 
-export default Activity;
+export default Notifications;
