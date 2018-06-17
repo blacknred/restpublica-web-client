@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import SearchBlock from '../containers/SearchBlock';
+import Tags from '../containers/Tags';
 import ContentTabs from './ContentTabs';
 
 import List from '@material-ui/core/List';
@@ -50,7 +50,9 @@ const styles = theme => ({
         '&:after': {
             content: "''",
             margin: '0 0.6em 0 1.1em',
-            border: '1px solid #ddd',
+            borderWidth: '0.03rem',
+            borderStyle: 'solid',
+            borderColor: theme.palette.text.hint
         }
 
     },
@@ -71,7 +73,7 @@ const styles = theme => ({
         marginRight: '1em',
         paddingLeft: '1em',
         borderRadius: '4px',
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)', //theme.palette.text.hint
         display: 'flex',
         alignItems: 'center'
     },
@@ -81,7 +83,7 @@ const styles = theme => ({
 })
 
 const HeaderContent = ({
-    redirect, avatar, path, notifications, username, history, classes, isDrawer,
+    searchRedirect, avatar, path, notifications, username, history, classes, isDrawer,
     query, isNotFound, isNotify, isNightMode, isUserMenuOpen, isTrendingMenuOpen,
     goBack, isAuthenticated, toggleMenuOpen, logoutUser, switchNightMode,
     switchNotFound, switchDrawer, switchNotify, createFlashMessage, changeSearchQuery
@@ -118,33 +120,27 @@ const HeaderContent = ({
                     id='searchField'
                     placeholder="Search in Publica"
                     value={query}
-                    disableUnderline={true}
+                    disableUnderline
                     startAdornment={
                         <InputAdornment position="start" >
                             <ActionSearchIcon color="disabled" />
                         </InputAdornment>
                     }
                     onChange={changeSearchQuery}
-                    onKeyPress={(ev) => {
-                        if (ev.key === 'Enter') {
-                            const val = ev.target.value
-                            if (val) redirect(`/search/${val}/posts`)
-                            ev.preventDefault();
-                        }
-                    }}
+                    onKeyPress={searchRedirect}
                     onFocus={() => toggleMenuOpen('isTrendingMenuOpen')}
-                    onBlur={() => toggleMenuOpen('isTrendingMenuOpen')}
+                    onBlur={() => {
+                        isTrendingMenuOpen &&
+                            toggleMenuOpen('isTrendingMenuOpen')
+                    }}
                 />
-                {
-                    isTrendingMenuOpen &&
-                    <SearchBlock/>
-                }
+                {isTrendingMenuOpen && <Tags isHeader={true} />}
             </div>
         </Hidden>
     )
 
     const searchLink = (
-        <Hidden only={['md', 'lg']}>
+        <Hidden mdUp>
             <IconButton
                 component={Link}
                 to={{
@@ -205,10 +201,9 @@ const HeaderContent = ({
                 onClose={() => toggleMenuOpen('isUserMenuOpen')}
             >
                 <MenuItem
-                    onClick={() => {
-                        toggleMenuOpen('isUserMenuOpen')
-                        redirect('/settings/profile')
-                    }} >
+                    component={Link}
+                    to='/settings/profile'
+                >
                     <ListItemIcon>
                         <ActionSettingsIcon />
                     </ListItemIcon>
@@ -264,7 +259,7 @@ const HeaderContent = ({
     )
 
     const loggedUserLink = (
-        <Hidden only={['md', 'lg']}>
+        <Hidden mdUp>
             <IconButton
                 component={Link}
                 to='/settings/profile'
@@ -320,7 +315,10 @@ const HeaderContent = ({
                     {!isAuthenticated && notLoggedUserBlock}
                 </Toolbar>
             </Toolbar>
-            {path[3] && <ContentTabs path={path.join('/')} />}
+            {
+                path[1].match(/(trending|search|people)/) &&
+                <ContentTabs path={path.join('/')} />
+            }
         </AppBar>
     )
 }
@@ -346,7 +344,7 @@ HeaderContent.propTypes = {
     switchNotify: PropTypes.func.isRequired,
     createFlashMessage: PropTypes.func.isRequired,
     logoutUser: PropTypes.func.isRequired,
-    redirect: PropTypes.func.isRequired,
+    searchRedirect: PropTypes.func.isRequired,
     toggleMenuOpen: PropTypes.func.isRequired,
     changeSearchQuery: PropTypes.func.isRequired,
     classes: PropTypes.object.isRequired,

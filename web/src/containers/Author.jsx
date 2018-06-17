@@ -21,14 +21,14 @@ class Author extends Component {
     }
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
-        loggedUserId: PropTypes.string.isRequired,
-        loggedUsername: PropTypes.string.isRequired,
+        userId: PropTypes.string.isRequired,
+        username: PropTypes.string.isRequired,
         author: PropTypes.string.isRequired,
         switchNotFound: PropTypes.func.isRequired
     }
 
     getUserDataHandler = async () => {
-        const author = this.props.author
+        const { author } = this.props
         const res = await getProfile(author)
         if (!res) {
             this.props.switchNotFound(true)
@@ -39,51 +39,56 @@ class Author extends Component {
     }
 
     createSubscriptionHandler = async () => {
-        const { loggedUserId } = this.props
+        const { id, username, followers_cnt } = this.state
+        const { userId, createMessage } = this.props
         const data = {
-            userId: this.state.id,
-            data: { userId: loggedUserId }
+            userId: id,
+            data: { userId }
         }
         const res = await createUserSubscription(data)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
         this.setState({
-            followers_cnt: parseInt(this.state.followers_cnt, 10) + 1,
+            followers_cnt: parseInt(followers_cnt, 10) + 1,
             my_subscription: parseInt(res.data, 10)
         })
+        createMessage(`You are reading ${username} from now`)
     }
 
     removeSubscriptionHandler = async () => {
+        const { id, username, my_subscription, followers_cnt } = this.state
+        const { createMessage } = this.props
         const data = {
-            userId: this.state.id,
-            subscriptionId: this.state.my_subscription
+            userId: id,
+            subscriptionId: my_subscription
         }
         const res = await removeUserSubscription(data)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
         this.setState({
-            followers_cnt: this.state.followers_cnt - 1,
+            followers_cnt: followers_cnt - 1,
             my_subscription: null
         })
+        createMessage(`You are not reading ${username} from now`)
     }
 
     componentDidMount() {
-        console.log(`${this.props.author} page is mounted`)
+        console.log(`author page is mounted: ${this.props.author} `)
         this.getUserDataHandler();
     }
 
     render() {
-        const { isAuthenticated, loggedUsername, author } = this.props
+        const { isAuthenticated, username, author } = this.props
         return (
             this.state.username ?
                 <AuthorContent
                     {...this.state}
                     {...this.props}
-                    isMine={isAuthenticated && loggedUsername === author}
+                    isMine={isAuthenticated && username === author}
                     removeSubscription={this.removeSubscriptionHandler}
                     createSubscription={this.createSubscriptionHandler}
                 /> :
@@ -95,10 +100,9 @@ class Author extends Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         isAuthenticated: state.authentication.isAuthenticated,
-        loggedUsername: state.authentication.username,
-        loggedUserId: state.authentication.id,
+        username: state.authentication.username,
+        userId: state.authentication.id,
         author: ownProps.match.params.username
-        //author: ownProps.match.url.substring(0, ownProps.match.url.lastIndexOf('/'))
     }
 }
 

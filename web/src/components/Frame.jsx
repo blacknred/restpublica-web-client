@@ -11,7 +11,7 @@ const styles = {
         alignItems: 'center',
         transition: 'padding-left 300ms',
         backgroundColor: 'transparent',
-        marginTop: '1em',
+        margin: '1em 0',
     },
     left: {
         '@media (min-width: 960px)': {

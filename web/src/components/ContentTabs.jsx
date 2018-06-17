@@ -39,9 +39,9 @@ const ContentTabs = ({ path, classes }) => {
             />
             <Tab
                 component={Link}
-                to={basePath + `tags`}
-                label="tags"
-                value={basePath + `tags`}
+                to={basePath + `communities`}
+                label="communities"
+                value={basePath + `communities`}
                 classes={{ label: classes.tab }}
             />
             <Tab
@@ -51,13 +51,13 @@ const ContentTabs = ({ path, classes }) => {
                 value={basePath + `authors`}
                 classes={{ label: classes.tab }}
             />
-            <Tab
+            {/* <Tab
                 component={Link}
-                to={basePath + `communities`}
-                label="communities"
-                value={basePath + `communities`}
+                to={basePath + `tags`}
+                label="tags"
+                value={basePath + `tags`}
                 classes={{ label: classes.tab }}
-            />
+            /> */}
 
 
 

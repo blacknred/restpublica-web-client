@@ -54,7 +54,10 @@ export const getProfile = name => instance.get(`/users/${name}`)
 export const getTrendingProfiles = page => instance.get(`/users?offset=${page}`)
 
 export const getSearchedProfiles = ({ query, page }) =>
-    instance.get(`/users?q=${query}?offset=${page}`)
+    instance.get(`/users?q=${query}&offset=${page}`)
+
+export const getSubscriptionsProfiles = ({ userId, mode, page }) =>
+    instance.get(`/users/${userId}/${mode}?offset=${page}`)
 
 export const createUserSubscription = ({ userId, data }) =>
     instance.post(`/users/${userId}/follow`, data)
@@ -62,8 +65,6 @@ export const createUserSubscription = ({ userId, data }) =>
 export const removeUserSubscription = ({ userId, subscriptionId }) =>
     instance.delete(`/users/${userId}/follow/${subscriptionId}`)
 
-export const getUserSubscriptions = ({ userId, mode, page }) =>
-    instance.get(`/users/${userId}/${mode}?offset=${page}`)
 
 /* COMMUNITIES */
 
@@ -72,13 +73,15 @@ export const createCommunity = data => instance.post(`/communities`, data)
 export const updateCommunity = ({ communityId, data }) =>
     instance.put(`/communities/${communityId}`, data)
 
-export const getCommunity = name => instance.get(`/community/${name}`)
+export const getCommunity = name => instance.get(`/communities/${name}`)
+
+
 
 export const getTrendingCommunities = page =>
     instance.get(`/communities?offset=${page}`)
 
 export const getSearchedCommunities = ({ query, page }) =>
-    instance.get(`/communities?q=${query}?offset=${page}`)
+    instance.get(`/communities?q=${query}&offset=${page}`)
 
 export const getAdminCommunities = ({ adminId, page }) =>
     instance.get(`/communities?admin=${adminId}?offset=${page}`)
@@ -86,14 +89,16 @@ export const getAdminCommunities = ({ adminId, page }) =>
 export const getProfileCommunities = ({ userId, page }) =>
     instance.get(`/communities?profile=${userId}&offset=${page}`)
 
+export const getSubscriptionsCommunities = ({ communityId, page }) =>
+    instance.get(`/communities/${communityId}/followers?offset=${page}`)
+
+
+
 export const createCommunitySubscription = ({ communityId, data }) =>
     instance.post(`/communities/${communityId}/follow`, data)
 
-export const deleteCommunitySubscription = ({ communityId, subscriptionId }) =>
+export const removeCommunitySubscription = ({ communityId, subscriptionId }) =>
     instance.delete(`/communities/${communityId}/follow/${subscriptionId}`)
-
-export const getCommunitySubscriptions = ({ communityId, page }) =>
-    instance.get(`/communities/${communityId}/followers?offset=${page}`)
 
 export const createCommunityBan = ({ communityId, data }) =>
     instance.post(`/communities/${communityId}/ban`, data)
@@ -128,8 +133,8 @@ export const getTagPosts = ({ tag, page }) =>
 export const getProfilePosts = ({ userId, page }) =>
     instance.get(`/posts?profile=${userId}&offset=${page}`)
 
-export const getCommunityPosts = ({ communityName, page }) =>
-    instance.get(`/posts?community=${communityName}&offset=${page}`)
+export const getCommunityPosts = ({ communityId, page }) =>
+    instance.get(`/posts?community=${communityId}&offset=${page}`)
 
 export const createPostComment = ({ postId, data }) =>
     instance.post(`/posts/${postId}/comments`, data)
@@ -163,7 +168,7 @@ export const getPostVotes = ({ postId, page }) =>
 export const getTrendingTags = page => instance.get(`/tags?offset=${page}`)
 
 export const getSearchedTags = ({ query, page }) =>
-    instance.get(`/tags?query=${query}&offset=${page}`)
+    instance.get(`/tags?q=${query}&offset=${page}`)
 
 /* PARTNERS API */
 

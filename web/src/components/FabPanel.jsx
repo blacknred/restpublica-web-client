@@ -35,7 +35,7 @@ const FabPanel = ({ path, classes }) => {
         <div className={classes.panel}>
             <ScrollToTop
                 showUnder={460}
-                topPosition={170}
+                // topPosition={170}
                 style={styles.toTop}
             >
                 <IconButton className={classes.toTopButton} color="primary">

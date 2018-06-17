@@ -1,26 +1,50 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 
-const styles = {
-    container: {
-        display: 'flex', minHeight: '10vh',
-        alignItems: 'center', justifyContent: 'center'
-    }
-}
-
+import {
+    getTrendingTags,
+    getSearchedTags
+} from '../api'
+import SearchBlockContent from '../components/SearchBlockContent';
+import TagsContent from '../components/TagsContent';
 
 class Tags extends Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            trendingTags: []
+        }
     }
+
+    static propTypes = {
+        location: PropTypes.object.isRequired
+    }
+
+    getTrendingTagsHandler = async () => {
+        const { location } = this.props
+        const path = location.pathname.split('/')
+        const mode = path[1]
+        const query = path[2]
+        let res
+        if ( mode === 'search') res = await getSearchedTags({ query })
+        else res = await getTrendingTags()
+        if (!res) return
+        this.setState({ trendingTags: res.data })
+    }
+
+    componentDidMount() {
+        this.getTrendingTagsHandler();
+    }
+
     render() {
+        const { isHeader } = this.props
         return (
-            <div style={styles.container}>
-                Tags
-            </div>
+            isHeader ?
+                <SearchBlockContent {...this.state} /> :
+                <TagsContent {...this.state} />
         )
     }
-
 }
 
-export default Tags;
+export default withRouter(Tags);

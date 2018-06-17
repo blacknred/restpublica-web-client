@@ -24,7 +24,7 @@ import {
     switchLoader,
     switchNotFound
 } from '../actions'
-import PostItem from '../components/PostItem'
+import PostContent from '../components/PostContent'
 
 class Post extends Component {
     constructor(props) {
@@ -44,7 +44,7 @@ class Post extends Component {
 
     static propTypes = {
         post: PropTypes.object,
-        slug: PropTypes.string,
+        path: PropTypes.array.isRequired,
         isAuthenticated: PropTypes.bool.isRequired,
         userId: PropTypes.any.isRequired,
         username: PropTypes.string.isRequired,
@@ -56,12 +56,13 @@ class Post extends Component {
     }
 
     getPostHandler = async () => {
-        this.props.switchLoader(true)
-        const slug = this.props.slug
+        const { path, switchLoader, switchNotFound } = this.props
+        switchLoader(true)
+        const slug = path[2]
         const res = await getPost(slug)
-        this.props.switchLoader(false)
+        switchLoader(false)
         if (!res) {
-            this.props.switchNotFound(true)
+            switchNotFound(true)
             return
         }
         this.setState({
@@ -277,13 +278,14 @@ class Post extends Component {
     render() {
         return (
             (this.state.id && !this.state.archived) ?
-                <PostItem
+                <PostContent
                     {...this.props}
                     post={this.state}
                     isFullAccess={
                         this.props.isAuthenticated &&
                         (this.state.author_id == this.props.userId)
                     }
+                    searchQuery={this.props.path[1] === 'search' ? this.props.path[2] : ''}
                     getComments={this.getPostCommentsHandler}
                     togglePostValue={this.togglePostValueHandler}
                     changePostDescription={this.changePostDescriptionHandler}
@@ -306,7 +308,7 @@ class Post extends Component {
 const mapStateToProps = (state, ownProps) => ({
     post: ownProps.post || null,
     isAuthenticated: state.authentication.isAuthenticated,
-    slug: ownProps.location.pathname.split('/')[2] || null,
+    path: ownProps.location.pathname.split('/'),
     userId: state.authentication.id,
     username: state.authentication.username,
     userAvatar: state.authentication.avatar,

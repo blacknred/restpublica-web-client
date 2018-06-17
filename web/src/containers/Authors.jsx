@@ -6,128 +6,143 @@ import { withRouter } from 'react-router-dom';
 import {
     getTrendingProfiles, 
     getSearchedProfiles,
+    getSubscriptionsProfiles,
     createUserSubscription, 
     removeUserSubscription
 } from '../api'
-import { createFlashMessage } from '../actions'
+import {
+    createFlashMessage,
+    switchLoader
+} from '../actions'
 import AuthorsList from '../components/AuthorsList';
+import EmptyContentMessage from '../components/EmptyContentMessage'
 
 class Authors extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId: null,
+            mode: this.props.path[1],
             empty: false,
             hasMore: true,
             authors: []
         };
     }
+
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
-        isNightMode: PropTypes.bool.isRequired,
-        mode: PropTypes.oneOf(['trending', 'search']),
-        query: PropTypes.string
+        path: PropTypes.array.isRequired,
+        userId: PropTypes.any.isRequired,
     }
+
     getAuthorsHandler = async (page) => {
-        let _res, res
-        const { mode, query } = this.props
+        let res
+        const { mode, authors } = this.state
+        const { path, userId, switchLoader, createMessage } = this.props
         switch (mode) {
-            case 'trending': _res = await getTrendingProfiles({ page, filter: false })
+            case 'search': res = await getSearchedProfiles({ query: path[2], page })
                 break
-            case 'search': _res = await getSearchedProfiles({ query, page, filter: false })
+            case 'followers':
+            case 'followin': res = await getSubscriptionsProfiles({ userId, mode, page })
                 break
-            default: ;
+            default: res = await getTrendingProfiles(page)
         }
-        res = _res.data.data
+        switchLoader(false)
         if (!res) {
             this.setState({ hasMore: false });
+            createMessage('Server error. Try later.')
             return
         }
         // if there are no requested authors at all view empty page 
-        if (parseInt(res.count, 10) === 0) {
-            this.setState({ empty: true, hasMore: false })
+        if (res.data.count === '0') {
+            this.setState({
+                hasMore: false,
+                empty: true
+            })
         }
         // enlarge authors arr if there are, block loading if there are not
-        if (res.users.length > 0) {
-            this.setState({
-                authors: this.state.authors.concat(res.users)
-            })
+        if (res.data.profiles.length) {
+            this.setState({ authors: authors.concat(...res.data.profiles) });
         } else {
             this.setState({ hasMore: false });
         }
-        console.log(`Authors - page:${page}, count:${res.count}, length:${this.state.authors.length}`)
+        console.log(`page:${page}, ${this.state.authors.length} from ${res.data.count}`)
     }
-    createSubscriptionHandler = async (id, name) => {
-        let _res, res, authors
-        _res = await createUserSubscription(id)
-        res = _res.data.data
-        if (!res) return
-        authors = this.state.authors
-        authors.forEach((u) => {
-            if (u.user_id === id) u.my_subscription_id = res
-        })
-        this.setState({ authors })
-        this.props.createFlashMessage(`You are reading ${name} from now`)
-    }
-    removeSubscriptionHandler = async (id, name) => {
-        let _res, res, authors
-        _res = await removeUserSubscription(id)
-        res = _res.data.data
-        if (!res) return
-        authors = this.state.authors
-        authors.forEach((u) => {
-            if (u.my_subscription_id === id) u.my_subscription_id = null
-        })
-        this.setState({ authors })
-        this.props.createFlashMessage(`You are not reading ${name} from now`)
-    }
-    emptyMessage = () => {
-        switch (this.props.mode) {
-            case 'trending':
-                return (
-                    <p>
-                        Seems like there is no any post at all.<br /><br />
-                        If you are a developer start with posts db populating :)
-                        </p>
-                );
-            case 'search':
-                return (
-                    <p>
-                        There is nothing found by your request
-                        </p>
-                );
-            default:
-                return (
-                    <p>
-                        There is no any post yet.
-                        </p>
-                );
+
+    createSubscriptionHandler = async ({ id, username }) => {
+        const { authors } = this.state
+        const { userId, createMessage } = this.props
+        const data = {
+            userId: id,
+            data: { userId }
         }
+        const res = await createUserSubscription(data)
+        if (!res) {
+            createMessage('Server error. Try later.')
+            return
+        }
+        authors.forEach((author) => {
+            if (author.id === id) {
+                author.followers_cnt = parseInt(author.followers_cnt, 10) + 1,
+                author.my_subscription = parseInt(res.data, 10)
+            }
+        })
+        this.setState({ authors })
+        createMessage(`You are read ${username} from now`)
     }
+
+    removeSubscriptionHandler = async ({ id, username }) => {
+        const { authors } = this.state
+        const { userId, createMessage } = this.props
+        const data = {
+            userId: id,
+            subscriptionId: authors.find(a => a.id === id).my_subscription
+        }
+        const res = await removeUserSubscription(data)
+        if (!res) {
+            createMessage('Server error. Try later.')
+            return
+        }
+        authors.forEach((author) => {
+            if (author.id === id) {
+                author.followers_cnt = parseInt(author.followers_cnt, 10) - 1,
+                author.my_subscription = null
+            }
+        })
+        this.setState({ authors })
+        createMessage(`You are not read ${username} from now`)
+    }
+
     componentDidMount() {
-        console.log('authors are mounted')
+        this.props.switchLoader(true)
+        console.log('authors are mounted:', this.state.mode)
     }
 
     render() {
+        const { empty } = this.state
+        const { isAuthenticated } = this.props
         return (
+            !empty ?
             <AuthorsList
                 {...this.state}
-                {...this.props}
+                isAuthenticated={isAuthenticated}
                 getAuthors={this.getAuthorsHandler}
-                removeSubscription={this.removeSubscriptionHandler}
                 createSubscription={this.createSubscriptionHandler}
-                emptyMessage={this.emptyMessage}
-            />
+                removeSubscription={this.removeSubscriptionHandler}
+            /> :
+            <EmptyContentMessage/>
         )
     }
 }
+
 const mapStateToProps = (state, ownProps) => ({
     isAuthenticated: state.authentication.isAuthenticated,
-    isNightMode: state.uiSwitchers.isNightMode,
-    mode: ownProps.location.pathname.split('/')[1],
-    query: ownProps.match.params.query || ''
+    path: ownProps.location.pathname.split('/'),
+    userId: state.authentication.id,
 })
+
 const mapDispatchToProps = dispatch => ({
-    createFlashMessage: (message) => dispatch(createFlashMessage(message))
+    switchLoader: (mode) => dispatch(switchLoader(mode)),
+    createMessage: (message) => dispatch(createFlashMessage(message))
 })
+
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Authors))

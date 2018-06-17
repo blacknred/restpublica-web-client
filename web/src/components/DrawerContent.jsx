@@ -13,7 +13,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import PeopleIcon from '@material-ui/icons/People';
-import withWidth from '@material-ui/core/withWidth';
 import ExploreIcon from '@material-ui/icons/Explore';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -26,11 +25,12 @@ import AccountIcon from '@material-ui/icons/AccountCircle';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 
 const styles = theme => ({
     drawerPaper: {
         borderWidth: 0,
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: 'transparent',
     },
     drawerPaperMobile: {
         width: '300px',
@@ -135,7 +135,7 @@ const DrawerContent = ({
                 component={Link}
                 to='/'
                 button
-                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
+                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
                 className={path === '/' ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -145,9 +145,9 @@ const DrawerContent = ({
             </ListItem>
             <ListItem
                 component={Link}
-                to='/trending'
+                to='/trending/posts'
                 button
-                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
+                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
                 className={path.match(/^\/trending/) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -159,7 +159,7 @@ const DrawerContent = ({
                 component={Link}
                 to='/communities'
                 button
-                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
+                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
                 className={path.match(/^\/communities/) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -171,7 +171,7 @@ const DrawerContent = ({
                 component={Link}
                 to={`/${username}`}
                 button
-                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
+                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
                 className={path.match(new RegExp(`^/${username}`)) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -183,7 +183,7 @@ const DrawerContent = ({
                 component={Link}
                 to='/people'
                 button
-                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
+                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
                 className={path.match(/^\/people/) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -195,7 +195,7 @@ const DrawerContent = ({
                 component={Link}
                 to='/activity'
                 button
-                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
+                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
                 className={path.match(/^\/activity/) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -207,7 +207,7 @@ const DrawerContent = ({
                 component={Link}
                 to='/settings'
                 button
-                onClick={() => width === 'sm' && switchDrawer(!isDrawer)}
+                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
                 className={path.match(/^\/settings/) ? classes.active : ''}
             >
                 <ListItemIcon>
@@ -316,7 +316,7 @@ const DrawerContent = ({
                         in={isDrawer}
                         timeout={400}
                         className={
-                            path.split('/')[3] ?
+                            path.split('/')[1].match(/(trending|search|people)/) ?
                                 classes.drawerRoot2 :
                                 classes.drawerRoot
                         }

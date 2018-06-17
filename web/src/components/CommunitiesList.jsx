@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroller2';
 
-import AuthorPreview from './AuthorPreview';
+import CommunityPreview from './CommunityPreview';
 
 import GridList from '@material-ui/core/GridList';
 import { withStyles } from '@material-ui/core/styles';
@@ -20,8 +20,8 @@ const styles = {
     }
 }
 
-const AuthorsList = ({
-    isAuthenticated, empty, hasMore, authors, getAuthors,
+const CommunitiesList = ({
+    isAuthenticated, empty, hasMore, communities, getCommunities,
     createSubscription, removeSubscription, classes
 }) => {
 
@@ -30,26 +30,26 @@ const AuthorsList = ({
             className={classes.loader}
             key={'postsLoader'}
         >
-            {authors.length > 0 && <CircularProgress />}
+            {communities.length > 0 && <CircularProgress />}
         </div>
     )
 
     return (
         <InfiniteScroll
             pageStart={0}
-            loadMore={getAuthors}
+            loadMore={getCommunities}
             hasMore={hasMore}
             loader={loader}
         >
             <GridList
                 className={classes.grid}
-                style={{ flexWrap: authors.length < 5 ? 'nowrap' : 'wrap' }}
+                style={{ flexWrap: communities.length < 5 ? 'nowrap' : 'wrap' }}
             >
                 {
-                    authors.map((author, index) => (
-                        <AuthorPreview
+                    communities.map((community, index) => (
+                        <CommunityPreview
                             key={index}
-                            author={author}
+                            community={community}
                             isAuthenticated={isAuthenticated}
                             removeSubscription={removeSubscription}
                             createSubscription={createSubscription}
@@ -61,14 +61,14 @@ const AuthorsList = ({
     )
 }
 
-AuthorsList.propTypes = {
+CommunitiesList.propTypes = {
     isAuthenticated: PropTypes.bool.isRequired,
     empty: PropTypes.bool.isRequired,
     hasMore: PropTypes.bool.isRequired,
-    authors: PropTypes.arrayOf(PropTypes.object).isRequired,
-    getAuthors: PropTypes.func.isRequired,
+    communities: PropTypes.arrayOf(PropTypes.object).isRequired,
+    getCommunities: PropTypes.func.isRequired,
     createSubscription: PropTypes.func.isRequired,
     removeSubscription: PropTypes.func.isRequired,
 }
 
-export default withStyles(styles)(AuthorsList)
+export default withStyles(styles)(CommunitiesList)

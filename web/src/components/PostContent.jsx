@@ -1,18 +1,24 @@
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+
 import CommentsList from './CommentsList'
 
 import Card from '@material-ui/core/Card';
 import Menu from '@material-ui/core/Menu';
+import List from '@material-ui/core/List';
+import Chip from '@material-ui/core/Chip';
 import Input from '@material-ui/core/Input';
+import GifIcon from '@material-ui/icons/Gif';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import Hidden from '@material-ui/core/Hidden';
 import LinkIcon from '@material-ui/icons/Link';
+import Divider from '@material-ui/core/Divider';
 import ShareIcon from '@material-ui/icons/Share';
 import ImageIcon from '@material-ui/icons/Image';
+import ListItem from '@material-ui/core/ListItem';
 import GridList from '@material-ui/core/GridList';
 import MenuItem from '@material-ui/core/MenuItem';
 import Collapse from '@material-ui/core/Collapse';
@@ -28,26 +34,20 @@ import CardActions from '@material-ui/core/CardActions';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import GridListTile from '@material-ui/core/GridListTile';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import GifIcon from '@material-ui/icons/Gif';
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
-import PauseCircleFilledIcon from '@material-ui/icons/PauseCircleFilled';
-import Divider from '@material-ui/core/Divider';
-import Chip from '@material-ui/core/Chip';
 import ListItemText from '@material-ui/core/ListItemText';
 import DialogActions from '@material-ui/core/DialogActions';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
+import PauseCircleFilledIcon from '@material-ui/icons/PauseCircleFilled';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-
 
 const styles = theme => ({
     card: {
         maxWidth: '530px',
-        minWidth: '140px',
+        minWidth: '250px',
         width: '100%',
         margin: '0.6em',
         '@media (max-width: 600px)': {
@@ -68,8 +68,9 @@ const styles = theme => ({
             color: theme.palette.primary.main
         },
         '&> :nth-child(2):before': {
-            content: '"\\203A"',
-            margin: '0 0.5em'
+            content: '"\\1f892"',
+            margin: '0 0.5em',
+            fontSize: '1.3em'
         },
         '& a': {
             color: 'inherit'
@@ -95,6 +96,9 @@ const styles = theme => ({
     description: {
         paddingTop: 0,
         '& a': {
+            color: theme.palette.primary.main
+        },
+        '& span': {
             color: theme.palette.primary.main
         }
     },
@@ -202,11 +206,11 @@ const styles = theme => ({
 })
 
 
-const PostItem = ({
+const PostContent = ({
     post, isAutoGifs, isFullAccess, userAvatar, classes, togglePostValue,
     getComments, toggleNewCommentForm, changeNewComment, changePostDescription,
     postNewComment, createVote, deleteVote, createLike, deleteLike, updatePost,
-    deletePost, formateDate,
+    deletePost, formateDate, searchQuery
 }) => {
 
     const postOptionsMenu = (
@@ -334,12 +338,17 @@ const PostItem = ({
             <CardContent className={classes.description}>
                 <Typography variant='body2'>
                     {
-                        post.description.trim().split(' ').map((word) => {
-                            if (word.charAt(0) !== '#') return `${word} `;
+                        post.description.trim().split(' ').map((word, index) => {
+
+                            if (word.charAt(0) !== '#') {
+                                if (searchQuery !== word) return `${word} `
+                                return <span key={word + index}>{`${word} `}</span>
+                            }
                             return (
                                 <Link
-                                    to={`/s/${word.substr(1)}/tags`}
-                                    key={word} >
+                                    to={`/search/${word.substr(1)}`}
+                                    key={word}
+                                >
                                     {word}&nbsp;
                                 </Link>
                             )
@@ -545,13 +554,14 @@ const PostItem = ({
     )
 
     const postPollContent = (
+        post.content &&
         <div>
             <CardContent className={classes.mediaPollStatus}>
                 {
-                    post.content.some(ans => parseInt(ans.count)) ?
+                    post.content.some(ans => parseInt(ans.count, 10)) ?
                         <Typography component='a' href='#'>
                             {post.content.reduce((a, b) =>
-                                parseInt(a.count) + parseInt(b.count))}
+                                parseInt(a.count, 10) + parseInt(b.count, 10))}
                             &nbsp;voices
                                 </Typography> :
                         <Typography color='textSecondary'>
@@ -658,9 +668,9 @@ const PostItem = ({
                                             variant="determinate"
                                             //style={{ position: 'absolute' }}
                                             value={
-                                                (parseInt(ans.count) * 100) /
+                                                (parseInt(ans.count, 10) * 100) /
                                                 (post.content.reduce((a, b) =>
-                                                    parseInt(a.count) + parseInt(b.count)))
+                                                    parseInt(a.count, 10) + parseInt(b.count, 10)))
                                             }
                                         />
                                         <ListItemText
@@ -682,15 +692,15 @@ const PostItem = ({
                                             {
                                                 moment(Date.now())
                                                     .isSameOrAfter(post.content[0].ends_at, 'days') ?
-                                                    (parseInt(ans.count) * 100) /
+                                                    (parseInt(ans.count, 10) * 100) /
                                                     (post.content.reduce((a, b) =>
-                                                        parseInt(a.count) + parseInt(b.count)))
+                                                        parseInt(a.count, 10) + parseInt(b.count, 10)))
                                                     :
-                                                    post.content.some(ans => parseInt(ans.my_vote)) ?
+                                                    post.content.some(ans => parseInt(ans.my_vote, 10)) ?
 
-                                                        (parseInt(ans.count) * 100) /
+                                                        (parseInt(ans.count, 10) * 100) /
                                                         (post.content.reduce((a, b) =>
-                                                            parseInt(a.count) + parseInt(b.count)))
+                                                            parseInt(a.count, 10) + parseInt(b.count, 10)))
                                                         : null
                                             }
                                         </ListItemText>
@@ -839,8 +849,9 @@ const PostItem = ({
     )
 }
 
-PostItem.propTypes = {
+PostContent.propTypes = {
     post: PropTypes.shape({
+        id: PropTypes.number.isRequired,
         archived: PropTypes.bool.isRequired,
         author: PropTypes.shape({
             username: PropTypes.string.isRequired,
@@ -893,6 +904,7 @@ PostItem.propTypes = {
     classes: PropTypes.object.isRequired,
     userAvatar: PropTypes.string.isRequired,
     isFullAccess: PropTypes.bool.isRequired,
+    searchQuery: PropTypes.string.isRequired,
 
     formateDate: PropTypes.func.isRequired,
     getComments: PropTypes.func.isRequired,
@@ -910,4 +922,4 @@ PostItem.propTypes = {
     updatePost: PropTypes.func.isRequired,
 }
 
-export default withStyles(styles)(PostItem);
+export default withStyles(styles)(PostContent);

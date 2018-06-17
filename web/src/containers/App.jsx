@@ -31,7 +31,6 @@ import FlashMessages from './FlashMessages';
 import ThemeRoot from '../components/AppRoot';
 import NotFound from '../components/NotFound';
 import FabPanel from '../components/FabPanel';
-import SearchBlock from './SearchBlock';
 
 
 class App extends Component {
@@ -85,7 +84,7 @@ class App extends Component {
                 <Route path="/community" component={NewCommunity} />
                 <Route path="/p/:id" component={Post} />
                 <Route path="/album" component={Album} />
-                <Route path="/search" component={SearchBlock} />
+                <Route path="/search" component={Tags} />
             </Switch>
         )
 
@@ -96,85 +95,95 @@ class App extends Component {
                     key={isModal ? this.previousLocation.key : location.key}
                     direction="up"
                     in={!isLoading}
+                    mountOnEnter
+                    unmountOnExit
                 >
                     <Switch
                         key={isModal ? this.previousLocation.key : location.key}
-                        location={isModal ? this.previousLocation : location} >
+                        location={isModal ? this.previousLocation : location}
+                    >
+
                         {/* ***** auth paths ***** */}
                         {/* ***** non auth paths ***** */}
+
                         <Route path='/(login|register)' render={() =>
                             isAuthenticated ? <Redirect to='/' /> : <Landing />
                         } />
-
-
                         <Route exact path='/' render={() => (
-                            !isAuthenticated ? toLogin : <Posts />
+                            isAuthenticated ? <Posts /> : toLogin
                         )} />
-                        <Route path='/trending' render={() => (
-                            <Switch>
-                                <Route path='/trending/posts' component={Posts} />
-                                <Route path='/trending/authors' component={Authors} />
-                                <Route path='/trending/tags' component={Tags} />
-                                <Route path='/trending/communities' component={Communities} />
-                                <Route render={() => <Redirect to='/trending/posts' />} />
-                            </Switch>
+                        <Route path='/settings' render={() => (
+                            isAuthenticated ? <Settings /> : toLogin
                         )} />
-                        <Route path='/search/:query' render={({ match }) => (
-                            match.params.query === '' ? <Redirect to='/' /> :
-                                <Switch>
-                                    <Route path='/search/:query/posts' component={Posts} />
-                                    <Route path='/search/:query/authors' component={Authors} />
-                                    <Route path='/search/:query/tags' component={Tags} />
-                                    <Route path='/search/:query/communities' component={Communities} />
-                                    <Route render={() => <Redirect to={`${match.url}/posts`} />} />
-                                </Switch>
-                        )} />
+                        <Route path='/trending/posts' render={() =>
+                            <div>
+                                <Tags />
+                                <Posts />
+                            </div>
+                        } />
+                        <Route path='/trending/communities' component={Communities} />
+                        <Route path='/trending/authors' component={Authors} />
+                        <Route path='/trending' render={() =>
+                            <Redirect to='/trending/posts' />
+                        } />
 
-
-
-                        <Route path='/communities' render={() => (
-                            !isAuthenticated ? toLogin : <Communities />
-                        )} />
-                        <Route path='/people' render={() => (
-                            !isAuthenticated ? toLogin : <Authors />
-                        )} />
-                        <Route path='/activity' render={() => (
-                            !isAuthenticated ? toLogin : <Notifications />
-                        )} />
+                        <Route path='/search/:query/posts' render={() =>
+                            <div>
+                                <Tags />
+                                <Posts />
+                            </div>
+                        } />
+                        <Route path='/search/:query/communities' component={Communities} />
+                        <Route path='/search/:query/authors' component={Authors} />
+                        <Route path='/search/:query' render={({ match }) =>
+                            match.params.query ?
+                                <Redirect to={`${match.url}/posts`} /> :
+                                <Redirect to='/' />
+                        } />
+                        <Route path='/search' render={() => <Redirect to='/' />} />
 
 
                         <Route path='/post/:slug' render={() => <Post />} />
-
+                        <Route path='/community/:name/members' component={Authors} />
+                        <Route path='/community/:name' render={() =>
+                            <div>
+                                <Community />
+                                <Posts />
+                            </div>
+                        } />
 
                         <Route path='/post' render={() => <Redirect to='/' />} />
-                        <Route path='/community' render={() => <Redirect to='/' />} />
                         <Route path='/album' render={() => <Redirect to='/' />} />
-                        <Route path='/search' render={() => <Redirect to='/' />} />
-                        <Route path='/settings' render={() => (
-                            !isAuthenticated ? toLogin : <Settings />
+                        <Route path='/community' render={() => <Redirect to='/' />} />
+
+                        <Route path='/activity' render={() =>
+                            isAuthenticated ? <Notifications /> : toLogin
+                        } />
+
+                        <Route path='/:username/communities' render={() =>
+                            isAuthenticated ? <Communities /> : toLogin
+                        } />
+                        <Route path='/:username/(followers|following)' render={() =>
+                            isAuthenticated ? <Authors /> : toLogin
+                        } />
+                        <Route path='/:username' render={() =>
+                            <div>
+                                <Author />
+                                <Posts />
+                            </div>
+                        } />
+
+
+                        {/* <Route path='/communities' render={() => (
+                            isAuthenticated ?  <Communities /> : toLogin
                         )} />
-                        <Route path='/community/:slug' render={() => (
-                            <Switch >
-                                <Route path='/community/:slug/people' component={Authors} /> {/* //back */}
-                                <Route render={() => (
-                                    <div>
-                                        <Community />
-                                        <Posts />
-                                    </div>
-                                )} />
-                            </Switch>
+                        <Route path='/(followers|following)' render={() => (
+                            isAuthenticated ? <Authors /> : toLogin
                         )} />
-                        <Route path='/:username' render={() => (
-                            <Switch >
-                                <Route path='/:username/communities' component={Communities} /> {/* //back */}
-                                <Route render={() => (
-                                    <div>
-                                        <Author />
-                                        <Posts />
-                                    </div>
-                                )} />
-                            </Switch>
-                        )} />
+                        <Route path='/activity' render={() =>
+                            isAuthenticated ? <Notifications /> : toLogin
+                        } /> */}
+
                     </Switch>
                 </Slide>
             </Frame>

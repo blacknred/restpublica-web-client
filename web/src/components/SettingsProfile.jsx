@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+
 import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
@@ -10,6 +11,7 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
+import WarningIcon from '@material-ui/icons/Warning';
 import { withStyles } from '@material-ui/core/styles';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -20,7 +22,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ActionExitToAppIcon from '@material-ui/icons/ExitToApp';
-import DeleteIcon from '@material-ui/icons/ErrorOutline';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -237,7 +238,7 @@ const SettingsProfile = ({
                 onClick={() => toggleDialog('isDeleteProfileDialogOpen')}
             >
                 <ListItemIcon>
-                    <DeleteIcon />
+                    <WarningIcon />
                 </ListItemIcon>
                 <ListItemText primary="Delete account" />
             </ListItem>
@@ -315,7 +316,6 @@ const SettingsProfile = ({
                 <Divider />
                 {account}
             </List>
-            <br/>
         </Paper>
     );
 }

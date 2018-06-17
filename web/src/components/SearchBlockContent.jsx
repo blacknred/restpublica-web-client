@@ -13,9 +13,9 @@ const styles = {
     trendingMenu: {
         zIndex: 1,
         position: 'absolute',
-        top: '60px',
-        right: '1em',
-        left: '1em',
+        top: '50px',
+        right: 0,
+        left: 0,
         '& a': {
             textDecoration: 'none',
             color: 'inherit'

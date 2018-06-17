@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import InfiniteScroll from 'react-infinite-scroller2'
 
 import Post from '../containers/Post'
+import PostPreview from '../components/PostPreview'
 
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
@@ -16,9 +17,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
     loader: {
-        flexBasis: '100%',
-        width: '100%',
-        textAlign: 'center'
+        textAlign: 'center',
+        padding: '2em',
+        flexBasis: '100%'
     },
     grid: {
         display: 'flex',
@@ -39,49 +40,63 @@ const styles = theme => ({
     }
 })
 
-const PostList = ({
-    mode, isFeedMultiColumn, classes, hasMore, isPreview,
-    posts, userAvatar, getPosts,
+const PostsList = ({
+    mode, isFeedMultiColumn, classes, hasMore, isPreview, posts, userAvatar, getPosts,
 }) => {
+
+    const loader = (
+        <div
+            className={classes.loader}
+            key={'postsLoader'}
+        >
+            {posts.length > 0 && <CircularProgress />}
+        </div>
+    )
+
+    const newPostLink = (
+        posts.length > 0 && mode === 'feed' &&
+        <ListItem
+            className={classes.newPostLink}
+            component={Link}
+            to={{
+                pathname: '/post',
+                state: {
+                    modal: true,
+                    from: 'up'
+                }
+            }}
+        >
+            <Avatar srcSet={`data:image/png;base64,${userAvatar}`} />
+            <ListItemText secondary="What's up?" />
+            <ListItemIcon>
+                <PhotoCameraIcon />
+            </ListItemIcon>
+        </ListItem>
+    )
+
+    const morePostsLink = (
+        posts.length > 0 && mode === 'feed' && !hasMore &&
+        <Button
+            className={classes.morePostsLink}
+            color='primary'
+            component={Link}
+            to="/trending">
+            More posts
+                    </Button>
+    )
+
     return (
         <div>
-            {
-                posts.length > 0 && mode === 'feed' &&
-                <ListItem
-                    className={classes.newPostLink}
-                    component={Link}
-                    to={{
-                        pathname: '/post',
-                        state: {
-                            modal: true,
-                            from: 'up'
-                        }
-                    }}
-                >
-                    <Avatar srcSet={`data:image/png;base64,${userAvatar}`} />
-                    <ListItemText secondary="What's up?" />
-                    <ListItemIcon>
-                        <PhotoCameraIcon />
-                    </ListItemIcon>
-                </ListItem>
-            }
-
+            {newPostLink}
             <InfiniteScroll
                 pageStart={0}
                 loadMore={getPosts}
                 hasMore={hasMore}
-                loader={
-                    <div
-                        className={classes.loader}
-                        key={'postsLoader'}>
-                        {posts.length > 0 && <CircularProgress />}
-                        <br />
-                    </div>
-                }
+                loader={loader}
                 className={classes.grid}
                 style={{
                     alignItems: isFeedMultiColumn ? 'flex-start' : 'center',
-                    flexDirection: isFeedMultiColumn ? 'row' : 'column'
+                    flexDirection: isPreview ? 'row' : isFeedMultiColumn ? 'row' : 'column'
                 }}
             // ref={(scroll) => { this.scroll = scroll; }}
             // threshold={200}
@@ -92,7 +107,10 @@ const PostList = ({
                 {
                     posts.map((post, index) =>
                         isPreview ?
-                            <div>{index}</div> :
+                            <PostPreview
+                                key={index}
+                                post={post}
+                            /> :
                             <Post
                                 key={index}
                                 post={post}
@@ -100,22 +118,12 @@ const PostList = ({
                     )
                 }
             </InfiniteScroll>
-
-            {
-                posts.length > 0 && mode === 'feed' && !hasMore &&
-                <Button
-                    className={classes.morePostsLink}
-                    color='primary'
-                    component={Link}
-                    to="/trending">
-                    More posts
-                    </Button>
-            }
+            {morePostsLink}
         </div >
     )
 }
 
-PostList.propTypes = {
+PostsList.propTypes = {
     mode: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,
     hasMore: PropTypes.bool.isRequired,
@@ -126,4 +134,4 @@ PostList.propTypes = {
     getPosts: PropTypes.func.isRequired,
 }
 
-export default withStyles(styles)(PostList)
+export default withStyles(styles)(PostsList)

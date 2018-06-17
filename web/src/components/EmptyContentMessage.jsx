@@ -19,7 +19,7 @@ const styles = {
     }
 }
 
-const EmptyPostsMessage = ({ mode, isProfileMode, classes }) => {
+const EmptyContentMessage = ({ mode, isProfileMode, classes }) => {
     return (
         <Typography
             variant="subheading"
@@ -66,8 +66,12 @@ const EmptyPostsMessage = ({ mode, isProfileMode, classes }) => {
                         component={Link}
                         to={{
                             pathname: '/post',
-                            state: { modal: true }
-                        }}>
+                            state: {
+                                modal: true,
+                                isSlide: true
+                            }
+                        }}
+                    >
                         Create a post
                     </Button>
                 </span>
@@ -84,10 +88,10 @@ const EmptyPostsMessage = ({ mode, isProfileMode, classes }) => {
     )
 }
 
-EmptyPostsMessage.propTypes = {
-    mode: PropTypes.string.isRequired,
-    isProfileMode: PropTypes.bool.isRequired,
+EmptyContentMessage.propTypes = {
+    // mode: PropTypes.string.isRequired,
+    // isProfileMode: PropTypes.bool.isRequired,
     classes: PropTypes.object.isRequired,
 }
 
-export default withStyles(styles)(EmptyPostsMessage)
+export default withStyles(styles)(EmptyContentMessage)

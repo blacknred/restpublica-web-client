@@ -11,7 +11,6 @@ import {
     logoutUser,
     createFlashMessage
 } from '../actions'
-import { getTrendingTags } from '../api'
 import HeaderContent from '../components/HeaderContent'
 
 class Header extends Component {
@@ -47,10 +46,21 @@ class Header extends Component {
         goBack: PropTypes.func.isRequired,
     }
 
-    redirect = path => this.props.updateHistory(path)
-
     toggleMenuOpenHandler = (target) => {
-        setTimeout(() => this.setState({ [target]: !this.state[target] }), 150)
+        this.setState({ [target]: !this.state[target] })
+        //setTimeout(() => this.setState({ [target]: !this.state[target] }), 150)
+    }
+
+    searchRedirectHandler = (e) => {
+        //e.preventDefault();
+        if (e.key === 'Enter') {
+            const { query } = this.state
+            const formatedQuery = query.replace(/[^\d\w]+/gu, '')//[^\p{L}\d]+
+            if (formatedQuery) {
+                this.props.updateHistory(`/search/${formatedQuery}/posts`)
+            }
+            this.setState({ isTrendingMenuOpen: false })
+        }
     }
 
     changeSearchQueryHandler = (e) => {
@@ -76,7 +86,7 @@ class Header extends Component {
             <HeaderContent
                 {...this.props}
                 {...this.state}
-                redirect={this.redirect}
+                searchRedirect={this.searchRedirectHandler}
                 toggleMenuOpen={this.toggleMenuOpenHandler}
                 changeSearchQuery={this.changeSearchQueryHandler}
             />

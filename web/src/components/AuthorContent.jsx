@@ -6,6 +6,7 @@ import List from '@material-ui/core/List';
 import Card from '@material-ui/core/Card';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Hidden from '@material-ui/core/Hidden';
 import ListItem from '@material-ui/core/ListItem';
 import GridList from '@material-ui/core/GridList';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -13,29 +14,38 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import ListItemText from '@material-ui/core/ListItemText';
 import GridListTile from '@material-ui/core/GridListTile';
 import ListSubheader from '@material-ui/core/ListSubheader';
 
 const styles = {
     root: {
         maxWidth: '1000px',
-        margin: '0 auto',
         '& a': {
             textDecoration: 'none'
-        }
+        },
     },
-    content: {
-        alignItems: 'flex-start'
+    card2: {
+        maxWidth: '750px',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+    },
+    card: {
+        maxWidth: '900px',
+        margin: '0 auto',
+        display: 'flex',
+        alignItems: 'flex-start',
+        padding: '1em',
+        '& a': {
+            minWidth: '120px'
+        },
     },
     avatar: {
-        height: '5em',
-        width: '5em'
+        height: '3.5em',
+        width: '3.5em'
     },
-    text: {
-        maxWidth: '76%'
-    },
-
     subheader: {
         display: 'flex',
         justifyContent: 'space-between'
@@ -54,12 +64,75 @@ const AuthorContent = ({
     followers_cnt, followin_cnt, communities_cnt, my_subscription,
     preview_communities, createSubscription, removeSubscription
 }) => {
+
+    const authorAvatar = (
+        <CardContent>
+            <Avatar
+                srcSet={`data:image/png;base64,${avatar}`}
+                className={classes.avatar}
+            />
+        </CardContent>
+    )
+
+    const authorDescription = (
+        <CardContent>
+            <Typography
+                variant='title'
+                paragraph
+            >
+                {fullname}
+                <small>{` @${username}`}</small>
+            </Typography>
+            <Typography
+                variant='body2'
+                color='primary'
+                paragraph
+            >
+                {followers_cnt + ' Followers'}&nbsp;
+                        {followin_cnt + ' Followin'}
+            </Typography>
+            <Typography variant='body1'>
+                {description}
+            </Typography>
+        </CardContent>
+    )
+
+    const authorAction = (
+        <CardActions>
+            {
+                isMine ?
+                    <Button
+                        color='primary'
+                        component={Link}
+                        to='/settings/profile'
+                    >
+                        Edit profile
+                         </Button>
+                    :
+                    my_subscription ?
+                        <Button
+                            color='primary'
+                            onClick={removeSubscription}
+                        >
+                            Unfollow
+                                </Button>
+                        :
+                        <Button
+                            color='primary'
+                            onClick={createSubscription}
+                        >
+                            Follow
+                                 </Button>
+            }
+        </CardActions>
+    )
+
     const previewCommunities = (
         <div>
             <ListSubheader className={classes.subheader}>
                 {`Communities ${communities_cnt}`}
                 {
-                    communities_cnt > 0 &&
+                    communities_cnt > 4 &&
                     <Button
                         color='primary'
                         component={Link}
@@ -71,109 +144,142 @@ const AuthorContent = ({
             </ListSubheader>
             <ListItem>
 
-            <GridList
-                cellHeight='auto'
-                spacing={15}
-                cols={communities_cnt > 1 ? 2 : 1}
-            >
-                {
-                    preview_communities.map((com, i) =>
-                        <GridListTile key={com.title}>
-                            <Link to={`/community/${com.name}`}>
-                            <Card>
-                                <CardMedia
-                                    image={`data:image/png;base64,${com.avatar}`}
-                                    className={classes.communitiesAvatar}
-                                />
-                                <CardContent className={classes.communitiesText}>
-                                    <Typography variant='subheading'>
-                                        {com.title}
-                                    </Typography>
-                                    <Typography variant='caption'>
-                                        {`${followers_cnt} members`}
-                                    </Typography>
-                                </CardContent>
-                                <CardActions >
-                                    {
-                                        com.my_subscription ?
-                                            <Button disabled>Member</Button> :
-                                            <Button
-                                                color='primary'
-                                                onClick={createSubscription}
-                                            >
-                                                Subscribe
-                                 </Button>
-                                    }
-                                </CardActions>
-                            </Card>
-                            </Link>
-                        </GridListTile>
-                    )
-                }
-            </GridList>
+                <GridList
+                    cellHeight='auto'
+                    spacing={10}
+                    cols={communities_cnt > 1 ? 2 : 1}
+                >
+                    {
+                        preview_communities &&
+                        preview_communities.map((com, i) =>
+                            <GridListTile key={com.title}>
+                                <Link to={`/community/${com.name}`}>
+                                    <Card>
+                                        <CardMedia
+                                            image={`data:image/png;base64,${com.avatar}`}
+                                            className={classes.communitiesAvatar}
+                                        />
+                                        <CardContent className={classes.communitiesText}>
+                                            <Typography variant='subheading'>
+                                                {com.title}
+                                            </Typography>
+                                            <Typography variant='caption'>
+                                                {`${followers_cnt} members`}
+                                            </Typography>
+                                        </CardContent>
+                                        <CardActions >
+                                            {
+                                                com.my_subscription ?
+                                                    <Button disabled>Member</Button> :
+                                                    <Button
+                                                        color='primary'
+                                                        onClick={createSubscription}
+                                                    >
+                                                        Subscribe
+                                                    </Button>
+                                            }
+                                        </CardActions>
+                                    </Card>
+                                </Link>
+                            </GridListTile>
+                        )
+                    }
+                </GridList>
             </ListItem>
         </div>
     )
 
     return (
         <List className={classes.root}>
-            <ListItem className={classes.content}>
-                <Avatar
-                    srcSet={`data:image/png;base64,${avatar}`}
-                    className={classes.avatar}
-                />
-                <ListItemText className={classes.text} >
-                    <Typography
-                        variant='title'
-                        paragraph
+            <ListItem>
+                <Hidden smDown>
+                    <Card
+                        elevation={0}
+                        className={classes.card}
                     >
-                        {fullname}
-                        <small>{` @${username}`}</small>
-                    </Typography>
-                    <Typography
-                        variant='body2'
-                        color='primary'
+                        {authorAvatar}
+                        {authorDescription}
+                        {authorAction}
+                    </Card>
+                </Hidden>
+                <Hidden mdUp>
+                    <Card
+                        elevation={0}
+                        className={classes.card2}
                     >
-                        {followers_cnt + ' Followers'}&nbsp;
-                        {followin_cnt + ' Followin'}
-                    </Typography>
-                    <Typography variant='body1'>
-                        {description}
-                    </Typography>
-                </ListItemText>
-                {
-                    isMine ?
-                        <Button
-                            color='primary'
-                            component={Link}
-                            to='/settings/profile'
-                        >
-                            Edit profile
-                         </Button>
-                        :
-                        my_subscription ?
-                            <Button
-                                color='primary'
-                                onClick={removeSubscription}
-                            >
-                                Unfollow
-                                </Button>
-                            :
-                            <Button
-                                color='primary'
-                                onClick={createSubscription}
-                            >
-                                Follow
-                                 </Button>
-                }
+                        {authorAvatar}
+                        {authorDescription}
+                        {authorAction}
+                    </Card>
+                </Hidden>
             </ListItem>
-
+            
             {parseInt(communities_cnt, 10) > 0 && previewCommunities}
 
             <ListSubheader>
                 {`Posts ${posts_cnt}`}
             </ListSubheader>
         </List>
+
+
+        // <List className={classes.root}>
+        //     <ListItem className={classes.content}>
+        //         <Avatar
+        //             srcSet={`data:image/png;base64,${avatar}`}
+        //             className={classes.avatar}
+        //         />
+        //         <ListItemText className={classes.text} >
+        //             <Typography
+        //                 variant='title'
+        //                 paragraph
+        //             >
+        //                 {fullname}
+        //                 <small>{` @${username}`}</small>
+        //             </Typography>
+        //             <Typography
+        //                 variant='body2'
+        //                 color='primary'
+        //             >
+        //                 {followers_cnt + ' Followers'}&nbsp;
+        //                 {followin_cnt + ' Followin'}
+        //             </Typography>
+        //             <Typography variant='body1'>
+        //                 {description}
+        //             </Typography>
+        //         </ListItemText>
+        //         {
+        //             isMine ?
+        //                 <Button
+        //                     color='primary'
+        //                     component={Link}
+        //                     to='/settings/profile'
+        //                 >
+        //                     Edit profile
+        //                  </Button>
+        //                 :
+        //                 my_subscription ?
+        //                     <Button
+        //                         color='primary'
+        //                         onClick={removeSubscription}
+        //                     >
+        //                         Unfollow
+        //                         </Button>
+        //                     :
+        //                     <Button
+        //                         color='primary'
+        //                         onClick={createSubscription}
+        //                     >
+        //                         Follow
+        //                          </Button>
+        //         }
+        //     </ListItem>
+
+        //     {parseInt(communities_cnt, 10) > 0 && previewCommunities}
+
+        //     <ListSubheader>
+        //         {`Posts ${posts_cnt}`}
+        //     </ListSubheader>
+        // </List>
     )
 }
 

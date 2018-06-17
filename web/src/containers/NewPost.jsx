@@ -37,7 +37,7 @@ class NewPost extends PureComponent {
                 hasMore: true,
                 empty: false,
                 list: [],
-                selectedId: null,
+                selectedId: this.props.communityId,
                 selectedName: null
             },
 
@@ -615,6 +615,7 @@ const mapStateToProps = (state, ownProps) => ({
     close: ownProps.history.goBack,
     repost: ownProps.location.state.repost || null,
     isSlide: ownProps.location.state.isSlide || false,
+    communityId: ownProps.location.state.communityId || null,
     userId: state.authentication.id,
     username: state.authentication.username,
     userAvatar: state.authentication.avatar,

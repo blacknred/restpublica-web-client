@@ -10,18 +10,21 @@ import {
     getProfilePosts,
     getCommunityPosts,
     getTagPosts,
+    getProfile,
+    getCommunity
 } from '../api'
 import {
     createFlashMessage,
     switchLoader
 } from '../actions'
-import PostList from '../components/PostList'
-import EmptyPostsMessage from '../components/EmptyPostsMessage'
+import PostsList from '../components/PostsList'
+import EmptyContentMessage from '../components/EmptyContentMessage'
 
 class Posts extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
+            targetId: null,
             hasMore: true,
             empty: false,
             posts: [],
@@ -30,39 +33,41 @@ class Posts extends PureComponent {
 
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
-        mode: PropTypes.string.isRequired, //PropTypes.oneOf(['feed', 'trending', 'search']),
-        specificator: PropTypes.string.isRequired,
+        path: PropTypes.array.isRequired,
         userId: PropTypes.any.isRequired,
         username: PropTypes.string.isRequired,
         userAvatar: PropTypes.string.isRequired,
-        query: PropTypes.string,
         switchLoader: PropTypes.func.isRequired,
         createMessage: PropTypes.func.isRequired
     }
 
     getPostsHandler = async (page) => {
         let res
-        const { mode, specificator, query, username, userId } = this.props
-        this.props.switchLoader(true)
-        switch (mode) {
-            case 'feed': res = await getFeedPosts(page)
+        const { targetId, posts } = this.state
+        const { path, userId, username, switchLoader, createMessage } = this.props
+        switch (path[1]) {
+            case '': res = await getFeedPosts(page)
                 break
             case 'trending': res = await getTrendingPosts(page)
                 break
-            case 'search': res = await getSearchedPosts(query, page)
+            case username: res = await getProfilePosts({ userId, page })
                 break
-            case 'community': res = await getCommunityPosts(specificator, page)
+            case 'search': res = await getSearchedPosts({ query: path[2], page })
                 break
-            case 'tag': res = await getTagPosts(specificator, page)
+            case 'tag': res = await getTagPosts({ tag: path[2], page })
                 break
-            case `${username}`: res = await getProfilePosts({ userId, page })
+            case 'community':
+                if (!targetId) await this.getCommunityIdHandler(path[2])
+                res = await getCommunityPosts({ communityId: this.state.targetId, page })
                 break
-            default: res = await getProfilePosts({ userId, page });
+            default:
+                if (!targetId) await this.getProfileIdHandler(path[1])
+                res = await getProfilePosts({ userId: this.state.targetId, page })
         }
-        this.props.switchLoader(false)
+        switchLoader(false)
         if (!res) {
             this.setState({ hasMore: false });
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
         // if there are no requested posts at all view empty page 
@@ -74,34 +79,53 @@ class Posts extends PureComponent {
         }
         // enlarge posts arr if there are, block loading if there are not
         if (res.data.posts.length) {
-            const posts = await this.state.posts.concat(...res.data.posts)
-            this.setState({ posts });
+            this.setState({ posts: posts.concat(...res.data.posts) });
         } else {
             this.setState({ hasMore: false });
         }
         console.log(`page:${page}, ${this.state.posts.length} from ${res.data.count}`)
     }
 
+    getCommunityIdHandler = async (communityName) => {
+        const res = await getCommunity(communityName)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
+            return
+        }
+        this.setState({ targetId: res.data.id })
+    }
+
+    getProfileIdHandler = async (profileName) => {
+        const res = await getProfile(profileName)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
+            return
+        }
+        this.setState({ targetId: res.data.id })
+    }
+
     componentDidMount() {
-        const { mode, username } = this.props
-        console.log('posts are mounted:', mode)
+        const { path, switchLoader } = this.props
+        switchLoader(true)
+        console.log('posts are mounted:', path[1] || 'feed')
     }
 
     render() {
-        const { isAuthenticated, mode, username, isFeedMultiColumn } = this.props;
+        const { 
+            isAuthenticated, username, userAvatar, isFeedMultiColumn, path 
+        } = this.props;
         return (
             !this.state.empty ?
-                <PostList
+                <PostsList
                     {...this.state}
-                    mode={mode}
-                    userAvatar={this.props.userAvatar}
-                    isPreview={mode === 'trending'}
+                    mode={path[1] || 'feed'}
+                    userAvatar={userAvatar}
+                    isPreview={path[1] === 'trending'}
                     isFeedMultiColumn={isFeedMultiColumn}
                     getPosts={this.getPostsHandler}
                 /> :
-                <EmptyPostsMessage
-                    mode={mode}
-                    isProfileMode={isAuthenticated && mode === username}
+                <EmptyContentMessage
+                    isProfileMode={isAuthenticated && path[1] === username}
                 />
         )
     }
@@ -109,13 +133,11 @@ class Posts extends PureComponent {
 
 const mapStateToProps = (state, ownProps) => ({
     isAuthenticated: state.authentication.isAuthenticated,
-    userAvatar: state.authentication.avatar,
-    mode: ownProps.location.pathname.split('/')[1] || 'feed',
-    specificator: ownProps.location.pathname.split('/')[2] || '',
-    query: ownProps.match.params.query || '',
-    username: state.authentication.username,
     userId: state.authentication.id,
-    isFeedMultiColumn: state.uiSwitchers.isFeedMultiColumn
+    username: state.authentication.username,
+    userAvatar: state.authentication.avatar,
+    isFeedMultiColumn: state.uiSwitchers.isFeedMultiColumn,
+    path: ownProps.location.pathname.split('/')
 })
 
 const mapDispatchToProps = dispatch => ({
