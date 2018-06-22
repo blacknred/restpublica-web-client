@@ -8,8 +8,12 @@ const initialState = () => {
             notificationsList: [
                 {
                    date: Date.now(),
-                   text: 'notify' 
-                }
+                   text: 'notification' 
+                },
+                {
+                    date: Date.now(),
+                    text: 'secondary notification' 
+                 }
                 
             ]
         }

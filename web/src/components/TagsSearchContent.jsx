@@ -23,7 +23,7 @@ const styles = {
     }
 }
 
-const SearchBlockContent = ({ classes, trendingTags }) => (
+const TagsSearchContent = ({ classes, trendingTags }) => (
     <Fade in={trendingTags.length > 0}>
         <Paper className={classes.trendingMenu}>
             <List>
@@ -39,7 +39,7 @@ const SearchBlockContent = ({ classes, trendingTags }) => (
                             key={tag.title}
                             component={Link}
                             button
-                            to={`/search/${tag.title}/tags`}
+                            to={`/tags/${tag.title}`}
                         >
                             <Typography variant='subheading'>
                                 {`#${tag.title}`}
@@ -55,15 +55,14 @@ const SearchBlockContent = ({ classes, trendingTags }) => (
     </Fade>
 )
 
-SearchBlockContent.propTypes = {
+TagsSearchContent.propTypes = {
     trendingTags: PropTypes.arrayOf(
         PropTypes.shape({
             posts_cnt: PropTypes.any.isRequired,
             title: PropTypes.string.isRequired
         })
     ).isRequired,
-    query: PropTypes.string,
     classes: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(SearchBlockContent);
+export default withStyles(styles)(TagsSearchContent);

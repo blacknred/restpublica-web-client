@@ -70,14 +70,16 @@ class Header extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.path !== this.props.path) {
             const { path } = nextProps
-            const query = path[1] === 'search' ? path[2] : ''
+            const query = path[1].match(/(search|tags)/) ?
+                path[1] === 'search' ? path[2] : `#${path[2]}` : ''
             this.setState({ query })
         }
     }
 
     componentDidMount() {
         const { path } = this.props
-        const query = path[1] === 'search' ? path[2] : ''
+        const query = path[1].match(/(search|tags)/) ?
+            path[1] === 'search' ? path[2] : `#${path[2]}` : ''
         this.setState({ query })
     }
 

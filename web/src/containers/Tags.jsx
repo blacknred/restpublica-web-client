@@ -6,8 +6,8 @@ import {
     getTrendingTags,
     getSearchedTags
 } from '../api'
-import SearchBlockContent from '../components/SearchBlockContent';
 import TagsContent from '../components/TagsContent';
+import TagsSearchContent from '../components/TagsSearchContent';
 
 class Tags extends Component {
     constructor(props) {
@@ -27,7 +27,7 @@ class Tags extends Component {
         const mode = path[1]
         const query = path[2]
         let res
-        if ( mode === 'search') res = await getSearchedTags({ query })
+        if (mode === 'search') res = await getSearchedTags({ query })
         else res = await getTrendingTags()
         if (!res) return
         this.setState({ trendingTags: res.data })
@@ -41,7 +41,7 @@ class Tags extends Component {
         const { isHeader } = this.props
         return (
             isHeader ?
-                <SearchBlockContent {...this.state} /> :
+                <TagsSearchContent {...this.state} /> :
                 <TagsContent {...this.state} />
         )
     }

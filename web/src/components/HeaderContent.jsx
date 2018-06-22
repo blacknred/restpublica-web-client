@@ -131,7 +131,7 @@ const HeaderContent = ({
                     onFocus={() => toggleMenuOpen('isTrendingMenuOpen')}
                     onBlur={() => {
                         isTrendingMenuOpen &&
-                            toggleMenuOpen('isTrendingMenuOpen')
+                            setTimeout(() => toggleMenuOpen('isTrendingMenuOpen'), 100)
                     }}
                 />
                 {isTrendingMenuOpen && <Tags isHeader={true} />}
@@ -316,8 +316,9 @@ const HeaderContent = ({
                 </Toolbar>
             </Toolbar>
             {
-                path[1].match(/(trending|search|people)/) &&
-                <ContentTabs path={path.join('/')} />
+                path[2] &&
+                path[1].match(/(trending|search|people|community)/) &&
+                <ContentTabs path={path} />
             }
         </AppBar>
     )

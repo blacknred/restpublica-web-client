@@ -55,37 +55,42 @@ const CommunityPreviewItem = ({
                 <CardActions>
                     {
                         community.my_subscription ?
-                            <Button
-                                color='primary'
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    removeSubscription({
-                                        id: community.id,
-                                        name: community.title
-                                    })
-                                }}
-                            >
-                                Leave
+                            (
+                                removeSubscription &&
+                                <Button
+                                    color='primary'
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        removeSubscription({
+                                            id: community.id,
+                                            name: community.title
+                                        })
+                                    }}
+                                >
+                                    Leave
                                 </Button>
-                            :
-                            <Button
-                                color='primary'
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    createSubscription({
-                                        id: community.id,
-                                        name: community.title
-                                    })
-                                }}
-                            >
-                                Join
-                                 </Button>
+                            ) :
+                            (
+                                createSubscription &&
+                                < Button
+                                    color='primary'
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        createSubscription({
+                                            id: community.id,
+                                            name: community.title
+                                        })
+                                    }}
+                                >
+                                    {community.restricted ? 'Request to join' : 'Join'}
+                                </Button>
+                            )
                     }
                 </CardActions>
 
             }
 
-        </Card>
+        </Card >
     )
 }
 
@@ -96,11 +101,12 @@ CommunityPreviewItem.propTypes = {
         title: PropTypes.string.isRequired,
         avatar: PropTypes.string.isRequired,
         my_subscription: PropTypes.number,
+        restricted: PropTypes.bool.isRequired,
         followers_cnt: PropTypes.any.isRequired
     }).isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
-    removeSubscription: PropTypes.func.isRequired,
-    createSubscription: PropTypes.func.isRequired
+    removeSubscription: PropTypes.func,
+    createSubscription: PropTypes.func
 }
 
 export default withStyles(styles)(CommunityPreviewItem)

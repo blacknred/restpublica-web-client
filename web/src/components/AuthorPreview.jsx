@@ -36,7 +36,7 @@ const AuthorPreviewItem = ({
             elevation={1}
             className={classes.tile}
             component={Link}
-            to={`/community/${author.username}`}
+            to={`/${author.username}`}
         >
             <CardContent>
                 <Avatar

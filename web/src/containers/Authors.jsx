@@ -119,7 +119,7 @@ class Authors extends Component {
 
     render() {
         const { empty } = this.state
-        const { isAuthenticated } = this.props
+        const { isAuthenticated, path } = this.props
         return (
             !empty ?
             <AuthorsList
@@ -129,7 +129,7 @@ class Authors extends Component {
                 createSubscription={this.createSubscriptionHandler}
                 removeSubscription={this.removeSubscriptionHandler}
             /> :
-            <EmptyContentMessage/>
+            <EmptyContentMessage mode={path[1]} />
         )
     }
 }

@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 const styles = {
     container: {
         textAlign: 'center',
-        textDecoration: 'none'
     },
     icon: {
         width: '3em',
@@ -19,78 +18,83 @@ const styles = {
     }
 }
 
-const EmptyContentMessage = ({ mode, isProfileMode, classes }) => {
+const EmptyContentMessage = ({ mode, isProfilePage, classes }) => {
+    console.log(mode, isProfilePage)
     return (
-        <Typography
-            variant="subheading"
-            className={classes.container}
-        >
-            <ReportIcon
-                className={classes.icon}
-                color='primary'
-            />
-            <br />
+        <div className={classes.container}>
             {
-                mode === 'feed' &&
-                <span>
-                    Seems like you have not any subscription yet.<br />
-                    Start now with
-                    <Button
-                        color='primary'
-                        component={Link}
-                        to="/trending">
-                        Trending
-                    </Button>
-                </span>
+                (mode === '' ||
+                mode === 'trending' ||
+                mode === 'search' ||
+                isProfilePage) &&
+                <ReportIcon
+                    className={classes.icon}
+                    color='primary'
+                />
             }
-            {
-                mode === 'trending' &&
-                <span>
-                    Seems like there is no any post at all.<br />
-                    If you are a developer start with posts db populating :)
-                </span>
-            }
-            {
-                mode === 'search' &&
-                <span>
-                    There is nothing found by your request.
-                </span>
-            }
-            {
-                isProfileMode &&
-                <span>
-                    Seems like you have no posts yet.<br />
-                    Start now with
-                    <Button
-                        color='primary'
-                        component={Link}
-                        to={{
-                            pathname: '/post',
-                            state: {
-                                modal: true,
-                                isSlide: true
-                            }
-                        }}
-                    >
-                        Create a post
-                    </Button>
-                </span>
-            }
-            {
-                mode !== 'feed' &&
-                mode !== 'trending' &&
-                mode !== 'search' &&
-                mode !== 'search' &&
-                !isProfileMode &&
-                <span>There is no any posts yet.</span>
-            }
-        </Typography>
+            <Typography
+                variant="button"
+                paragraph
+            >
+                {
+                    mode === '' &&
+                    <span>
+                        Seems like you have not any subscription yet.<br /><br/>
+                        <Button
+                            color='primary'
+                            component={Link}
+                            to="/trending">
+                            Start now with Trending
+                        </Button>
+                    </span>
+                }
+                {
+                    mode === 'trending' &&
+                    <span>
+                        Seems like there is no any content at all.<br />
+                        If you are a developer start with db populating :)
+                    </span>
+                }
+                {
+                    mode === 'search' &&
+                    <span>
+                        There is nothing found by your request.
+                    </span>
+                }
+                {
+                    isProfilePage &&
+                    <span>
+                        Seems like you have no posts yet.<br /><br/>
+                        <Button
+                            color='primary'
+                            component={Link}
+                            to={{
+                                pathname: '/post',
+                                state: {
+                                    modal: true,
+                                    isSlide: true
+                                }
+                            }}
+                        >
+                            Create a first post
+                        </Button>
+                    </span>
+                }
+                {
+                    mode !== '' &&
+                    mode !== 'trending' &&
+                    mode !== 'search' &&
+                    !isProfilePage &&
+                    <span>There is no any posts yet.</span>
+                }
+            </Typography>
+        </div>
     )
 }
 
 EmptyContentMessage.propTypes = {
-    // mode: PropTypes.string.isRequired,
-    // isProfileMode: PropTypes.bool.isRequired,
+    mode: PropTypes.string.isRequired,
+    isProfilePage: PropTypes.bool.isRequired,
     classes: PropTypes.object.isRequired,
 }
 

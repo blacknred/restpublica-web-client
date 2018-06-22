@@ -17,14 +17,21 @@ import CommunityContent from '../components/CommunityContent';
 class Community extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            isRemoveSubscriptionOpen: false
+        };
     }
+
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
         userId: PropTypes.string.isRequired,
         username: PropTypes.string.isRequired,
         community: PropTypes.string.isRequired,
         switchNotFound: PropTypes.func.isRequired
+    }
+
+    toggleContextDialogHandler = (target) => {
+        this.setState({ [target]: !this.state[target] })
     }
 
     getCommunityDataHandler = async () => {
@@ -39,36 +46,41 @@ class Community extends Component {
     }
 
     createSubscriptionHandler = async () => {
-        const { userId } = this.props
+        const { id, name } = this.state
+        const { userId, createMessage } = this.props
         const data = {
-            communityId: this.state.id,
+            communityId: id,
             data: { userId }
         }
         const res = await createCommunitySubscription(data)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
-        // this.setState({
-        //     followers_cnt: parseInt(this.state.followers_cnt, 10) + 1,
-        //     my_subscription: parseInt(res.data, 10)
-        // })
+        this.setState({
+            followers_cnt: parseInt(this.state.followers_cnt, 10) + 1,
+            my_subscription: parseInt(res.data, 10)
+        })
+        createMessage(`You are subscribed ${name} from now`)
     }
 
     removeSubscriptionHandler = async () => {
+        const { id, name, my_subscription } = this.state
+        const { createMessage } = this.props
         const data = {
-            communityId: this.state.id,
-            subscriptionId: this.state.my_subscription
+            communityId: id,
+            subscriptionId: my_subscription
         }
         const res = await removeCommunitySubscription(data)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
-        // this.setState({
-        //     followers_cnt: this.state.followers_cnt - 1,
-        //     my_subscription: null
-        // })
+        this.setState({
+            followers_cnt: this.state.followers_cnt - 1,
+            my_subscription: null
+        })
+        createMessage(`You are not subscribed ${name} from now`)
     }
 
     componentDidMount() {
@@ -87,6 +99,7 @@ class Community extends Component {
                     isAdmin={isAuthenticated && admin_id === userId }
                     removeSubscription={this.removeSubscriptionHandler}
                     createSubscription={this.createSubscriptionHandler}
+                    toggleContextDialog={this.toggleContextDialogHandler}
                 /> :
                 <div />
         )

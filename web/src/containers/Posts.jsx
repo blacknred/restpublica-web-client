@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import {
@@ -18,9 +18,10 @@ import {
     switchLoader
 } from '../actions'
 import PostsList from '../components/PostsList'
+import NewPostButton from '../components/NewPostButton'
 import EmptyContentMessage from '../components/EmptyContentMessage'
 
-class Posts extends PureComponent {
+class Posts extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -44,7 +45,7 @@ class Posts extends PureComponent {
     getPostsHandler = async (page) => {
         let res
         const { targetId, posts } = this.state
-        const { path, userId, username, switchLoader, createMessage } = this.props
+        const { path, tag, userId, username, switchLoader, createMessage } = this.props
         switch (path[1]) {
             case '': res = await getFeedPosts(page)
                 break
@@ -52,9 +53,10 @@ class Posts extends PureComponent {
                 break
             case username: res = await getProfilePosts({ userId, page })
                 break
-            case 'search': res = await getSearchedPosts({ query: path[2], page })
+            case 'search':
+                res = await getSearchedPosts({ query: path[2], page })
                 break
-            case 'tag': res = await getTagPosts({ tag: path[2], page })
+            case 'tags': res = await getTagPosts({ tag: path[2], page })
                 break
             case 'community':
                 if (!targetId) await this.getCommunityIdHandler(path[2])
@@ -70,20 +72,22 @@ class Posts extends PureComponent {
             createMessage('Server error. Try later.')
             return
         }
-        // if there are no requested posts at all view empty page 
-        if (res.data.count === '0') {
-            this.setState({
-                hasMore: false,
-                empty: true
-            })
+        if (this.mounted) {
+            // if there are no requested posts at all view empty page 
+            if (res.data.count === '0') {
+                this.setState({
+                    hasMore: false,
+                    empty: true
+                })
+            }
+            // enlarge posts arr if there are, block loading if there are not
+            if (res.data.posts.length) {
+                this.setState({ posts: posts.concat(...res.data.posts) });
+            } else {
+                this.setState({ hasMore: false });
+            }
+            console.log(`page:${page}, ${this.state.posts.length} from ${res.data.count}`)
         }
-        // enlarge posts arr if there are, block loading if there are not
-        if (res.data.posts.length) {
-            this.setState({ posts: posts.concat(...res.data.posts) });
-        } else {
-            this.setState({ hasMore: false });
-        }
-        console.log(`page:${page}, ${this.state.posts.length} from ${res.data.count}`)
     }
 
     getCommunityIdHandler = async (communityName) => {
@@ -92,7 +96,11 @@ class Posts extends PureComponent {
             this.props.createMessage('Server error. Try later.')
             return
         }
-        this.setState({ targetId: res.data.id })
+        this.setState({
+            targetId: res.data.id,
+            communityName: res.data.name,
+            communitySubscription: res.data.my_subscription
+        })
     }
 
     getProfileIdHandler = async (profileName) => {
@@ -105,28 +113,55 @@ class Posts extends PureComponent {
     }
 
     componentDidMount() {
+        this.mounted = true;
         const { path, switchLoader } = this.props
         switchLoader(true)
         console.log('posts are mounted:', path[1] || 'feed')
     }
 
+    componentWillUnmount() {
+        this.mounted = false;
+    }
+
     render() {
-        const { 
-            isAuthenticated, username, userAvatar, isFeedMultiColumn, path 
+        const { empty, targetId, communityName, communitySubscription } = this.state
+        const {
+            isAuthenticated, username, userAvatar, isFeedMultiColumn, path
         } = this.props;
         return (
-            !this.state.empty ?
-                <PostsList
-                    {...this.state}
-                    mode={path[1] || 'feed'}
-                    userAvatar={userAvatar}
-                    isPreview={path[1] === 'trending'}
-                    isFeedMultiColumn={isFeedMultiColumn}
-                    getPosts={this.getPostsHandler}
-                /> :
-                <EmptyContentMessage
-                    isProfileMode={isAuthenticated && path[1] === username}
-                />
+            <div>
+                {
+                    (
+                        path[1] === '' ||
+                        path[1] === username ||
+                        path[1] === 'community' && communitySubscription
+                    ) &&
+                    <NewPostButton
+                        community={
+                            !communityName ? null :
+                                {
+                                    id: targetId,
+                                    name: communityName
+                                }
+                        }
+                    />
+                }
+                {
+                    !empty ?
+                        <PostsList
+                            {...this.state}
+                            mode={path[1] || 'feed'}
+                            userAvatar={userAvatar}
+                            isPreview={path[1] === 'trending'}
+                            isFeedMultiColumn={isFeedMultiColumn}
+                            getPosts={this.getPostsHandler}
+                        /> :
+                        <EmptyContentMessage
+                            mode={path[1]}
+                            isProfilePage={isAuthenticated && path[1] === username}
+                        />
+                }
+            </div>
         )
     }
 }
@@ -137,7 +172,7 @@ const mapStateToProps = (state, ownProps) => ({
     username: state.authentication.username,
     userAvatar: state.authentication.avatar,
     isFeedMultiColumn: state.uiSwitchers.isFeedMultiColumn,
-    path: ownProps.location.pathname.split('/')
+    path: ownProps.location.pathname.split('/'),
 })
 
 const mapDispatchToProps = dispatch => ({

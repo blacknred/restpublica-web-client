@@ -26,11 +26,12 @@ import Communities from './Communities';
 import Frame from '../components/Frame';
 import Loader from '../components/Loader';
 import NewCommunity from './NewCommunity';
+import CommunityModeration from './CommunityModeration'
 
 import FlashMessages from './FlashMessages';
 import ThemeRoot from '../components/AppRoot';
 import NotFound from '../components/NotFound';
-import FabPanel from '../components/FabPanel';
+import ToTopButton from '../components/ToTopButton';
 
 
 class App extends Component {
@@ -95,8 +96,11 @@ class App extends Component {
                     key={isModal ? this.previousLocation.key : location.key}
                     direction="up"
                     in={!isLoading}
-                    mountOnEnter
-                    unmountOnExit
+                    onEntered={(e) =>
+                        setTimeout(() => e.style.transform = 'none', 400)
+                    }
+                // mountOnEnter
+                // unmountOnExit
                 >
                     <Switch
                         key={isModal ? this.previousLocation.key : location.key}
@@ -127,6 +131,9 @@ class App extends Component {
                             <Redirect to='/trending/posts' />
                         } />
 
+                        <Route path='/tags/:tag' component={Posts} />
+                        <Route path='/tags' render={() => <Redirect to='/' />} />
+
                         <Route path='/search/:query/posts' render={() =>
                             <div>
                                 <Tags />
@@ -136,29 +143,35 @@ class App extends Component {
                         <Route path='/search/:query/communities' component={Communities} />
                         <Route path='/search/:query/authors' component={Authors} />
                         <Route path='/search/:query' render={({ match }) =>
-                            match.params.query ?
-                                <Redirect to={`${match.url}/posts`} /> :
-                                <Redirect to='/' />
+                            <Redirect to={`${match.url}/posts`} />
                         } />
                         <Route path='/search' render={() => <Redirect to='/' />} />
 
-
                         <Route path='/post/:slug' render={() => <Post />} />
-                        <Route path='/community/:name/members' component={Authors} />
+                        <Route path='/post' render={() => <Redirect to='/' />} />
+
+                        <Route path='/community/:name/(moderators|participants)' component={Authors} />
+                        <Route path='/community/:name/moderation' render={() =>
+                            isAuthenticated ? <CommunityModeration /> : toLogin
+                        } />
                         <Route path='/community/:name' render={() =>
                             <div>
                                 <Community />
                                 <Posts />
                             </div>
                         } />
-
-                        <Route path='/post' render={() => <Redirect to='/' />} />
-                        <Route path='/album' render={() => <Redirect to='/' />} />
                         <Route path='/community' render={() => <Redirect to='/' />} />
+
+                        <Route path='/album' render={() => <Redirect to='/' />} />
 
                         <Route path='/activity' render={() =>
                             isAuthenticated ? <Notifications /> : toLogin
                         } />
+
+                        <Route path='/communities' render={() => (
+                            isAuthenticated ? <div /> : toLogin
+                        )} />
+
 
                         <Route path='/:username/communities' render={() =>
                             isAuthenticated ? <Communities /> : toLogin
@@ -199,9 +212,9 @@ class App extends Component {
                     <Header />
                 </Slide>
                 <FlashMessages />
+                <ToTopButton />
                 {isLoading && <Loader />}
                 {isNotFound && <NotFound />}
-                <FabPanel path={location.pathname} />
                 {isAuthenticated && !isNotFound && <Drawer />}
                 {modals}
                 {frame}

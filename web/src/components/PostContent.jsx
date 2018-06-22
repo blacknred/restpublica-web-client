@@ -342,11 +342,12 @@ const PostContent = ({
 
                             if (word.charAt(0) !== '#') {
                                 if (searchQuery !== word) return `${word} `
-                                return <span key={word + index}>{`${word} `}</span>
+                                return 
+                                <span key={word + index}>{`${word} `}</span>
                             }
                             return (
                                 <Link
-                                    to={`/search/${word.substr(1)}`}
+                                    to={`/tags/${word.substr(1)}`}
                                     key={word}
                                 >
                                     {word}&nbsp;

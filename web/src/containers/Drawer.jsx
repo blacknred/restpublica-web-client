@@ -3,28 +3,16 @@ import { connect } from 'react-redux'
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom'
 
-import {
-    switchNotFound,
-    switchDrawer
-} from '../actions'
+import { switchDrawer } from '../actions'
 import DrawerContent from '../components/DrawerContent'
 
 class Drawer extends Component {
     static propTypes = {
         isDrawer: PropTypes.bool.isRequired,
-        // isNotFound: PropTypes.bool.isRequired,
-        // switchNotFound: PropTypes.func.isRequired,
         switchDrawer: PropTypes.func.isRequired,
-        path: PropTypes.string.isRequired,
-        // updateHistory: PropTypes.func.isRequired,
+        path: PropTypes.array.isRequired,
         username: PropTypes.string.isRequired
     }
-
-    // navigateHandler = (path) => {
-    //     const { isNotFound, switchNotFound, updateHistory } = this.props
-    //     if (isNotFound) switchNotFound(true);
-    //     updateHistory(path)
-    // }
 
     render() {
         return <DrawerContent {...this.props} />
@@ -33,15 +21,12 @@ class Drawer extends Component {
 
 const mapStateToProps = (state, ownProps) => ({
     isDrawer: state.uiSwitchers.isDrawer,
-    // isNotFound: state.uiSwitchers.isNotFound,
     isNightMode: state.uiSwitchers.isNightMode,
-    path: ownProps.location.pathname,
-    // updateHistory: ownProps.history.push,
+    path: ownProps.location.pathname.split('/'),
     username: state.authentication.username
 })
 
 const mapDispatchToProps = dispatch => ({
-    // switchNotFound: (mode) => dispatch(switchNotFound(mode)),
     switchDrawer: (mode) => dispatch(switchDrawer(mode)),
 })
 

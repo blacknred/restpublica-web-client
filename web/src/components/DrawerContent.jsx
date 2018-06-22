@@ -136,7 +136,7 @@ const DrawerContent = ({
                 to='/'
                 button
                 onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path === '/' ? classes.active : ''}
+                className={path[1] === '/' ? classes.active : ''}
             >
                 <ListItemIcon>
                     <HomeIcon />
@@ -148,7 +148,7 @@ const DrawerContent = ({
                 to='/trending/posts'
                 button
                 onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path.match(/^\/trending/) ? classes.active : ''}
+                className={path[1] === 'trending' ? classes.active : ''}
             >
                 <ListItemIcon>
                     <ExploreIcon />
@@ -160,7 +160,7 @@ const DrawerContent = ({
                 to='/communities'
                 button
                 onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path.match(/^\/communities/) ? classes.active : ''}
+                className={path[1] === 'communities' ? classes.active : ''}
             >
                 <ListItemIcon>
                     <ViewColumnIcon />
@@ -172,7 +172,7 @@ const DrawerContent = ({
                 to={`/${username}`}
                 button
                 onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path.match(new RegExp(`^/${username}`)) ? classes.active : ''}
+                className={path[1] === username ? classes.active : ''}
             >
                 <ListItemIcon>
                     <AccountIcon />
@@ -181,10 +181,10 @@ const DrawerContent = ({
             </ListItem>
             <ListItem
                 component={Link}
-                to='/people'
+                to='/people/followers'
                 button
                 onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path.match(/^\/people/) ? classes.active : ''}
+                className={path[1].match(/^\/people/) ? classes.active : ''}
             >
                 <ListItemIcon>
                     <PeopleIcon />
@@ -196,7 +196,7 @@ const DrawerContent = ({
                 to='/activity'
                 button
                 onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path.match(/^\/activity/) ? classes.active : ''}
+                className={path[1].match(/^activity/) ? classes.active : ''}
             >
                 <ListItemIcon>
                     <NotificationsIcon />
@@ -208,7 +208,7 @@ const DrawerContent = ({
                 to='/settings'
                 button
                 onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path.match(/^\/settings/) ? classes.active : ''}
+                className={path[1] === 'settings' ? classes.active : ''}
             >
                 <ListItemIcon>
                     <SettingsIcon />
@@ -316,7 +316,8 @@ const DrawerContent = ({
                         in={isDrawer}
                         timeout={400}
                         className={
-                            path.split('/')[1].match(/(trending|search|people)/) ?
+                            path[2] &&
+                            path[1].match(/(trending|search|people|community)/) ?
                                 classes.drawerRoot2 :
                                 classes.drawerRoot
                         }
@@ -331,7 +332,7 @@ const DrawerContent = ({
 
 DrawerContent.propTypes = {
     isDrawer: PropTypes.bool.isRequired,
-    path: PropTypes.string.isRequired,
+    path: PropTypes.array.isRequired,
     username: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,
     width: PropTypes.string.isRequired,

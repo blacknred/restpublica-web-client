@@ -20,74 +20,97 @@ const styles = theme => ({
 
 const ContentTabs = ({ path, classes }) => {
 
-    const basePath = path.substring(0, path.lastIndexOf('/') + 1)
+    const basePath = path.join('/').substring(0, path.lastIndexOf('/') + 1)
+    console.log(basePath)
 
     return (
         <Tabs
-            value={path}
+            value={path.join('/').toString()}
             className={classes.tabs}
             indicatorColor="primary"
             textColor="primary"
             centered
         >
-            <Tab
-                component={Link}
-                to={basePath + `posts`}
-                label="posts"
-                value={basePath + `posts`}
-                classes={{ label: classes.tab }}
-            />
-            <Tab
-                component={Link}
-                to={basePath + `communities`}
-                label="communities"
-                value={basePath + `communities`}
-                classes={{ label: classes.tab }}
-            />
-            <Tab
-                component={Link}
-                to={basePath + `authors`}
-                label="authors"
-                value={basePath + `authors`}
-                classes={{ label: classes.tab }}
-            />
-            {/* <Tab
-                component={Link}
-                to={basePath + `tags`}
-                label="tags"
-                value={basePath + `tags`}
-                classes={{ label: classes.tab }}
-            /> */}
+            {
+                (path[1] === 'trending' ||
+                    path[1] === 'search') &&
+                <div>
+                    <Tab
+                        component={Link}
+                        to={basePath + `posts`}
+                        label="posts"
+                        value={basePath + `posts`}
+                        classes={{ label: classes.tab }}
+                    />
+                    <Tab
+                        component={Link}
+                        to={basePath + `communities`}
+                        label="communities"
+                        value={basePath + `communities`}
+                        classes={{ label: classes.tab }}
+                    />
+                    <Tab
+                        component={Link}
+                        to={basePath + `authors`}
+                        label="authors"
+                        value={basePath + `authors`}
+                        classes={{ label: classes.tab }}
+                    />
+                </div>
+            }
 
+            {
+                path[1] === 'people' &&
+                <div>
+                    <Tab
+                        component={Link}
+                        to={basePath + `followers`}
+                        label="followers"
+                        value={basePath + `followers`}
+                        classes={{ label: classes.tab }}
+                    />
+                    <Tab
+                        component={Link}
+                        to={basePath + `followin`}
+                        label="followin"
+                        value={basePath + `followin`}
+                        classes={{ label: classes.tab }}
+                    />
+                    <Tab
+                        component={Link}
+                        to={basePath + `recommendations`}
+                        label="recommendations"
+                        value={basePath + `recommendations`}
+                        classes={{ label: classes.tab }}
+                    />
+                </div>
+            }
 
-
-            {/* <Tab
-                component={Link}
-                to={basePath + `followers`}
-                label="followers"
-                value={basePath + `followers`}
-                classes={{ label: classes.tab }}
-            />
-            <Tab
-                component={Link}
-                to={basePath + `followin`}
-                label="followin"
-                value={basePath + `followin`}
-                classes={{ label: classes.tab }}
-            />
-            <Tab
-                component={Link}
-                to={basePath + `recommendations`}
-                label="recommendations"
-                value={basePath + `recommendations`}
-                classes={{ label: classes.tab }}
-            /> */}
+            {
+                path[1] === 'community' &&
+                <div>
+                    <Tab
+                        component={Link}
+                        to={basePath + `moderators`}
+                        label="moderators"
+                        value={basePath + `moderators`}
+                        classes={{ label: classes.tab }}
+                    />
+                    <Tab
+                        component={Link}
+                        to={basePath + `participants`}
+                        label="participants"
+                        value={basePath + `participants`}
+                        classes={{ label: classes.tab }}
+                    />
+                </div>
+            }
         </Tabs>
     )
 }
 
 ContentTabs.propTypes = {
-    path: PropTypes.string.isRequired
+    path: PropTypes.array.isRequired
 }
 
 export default withStyles(styles)(ContentTabs)

@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import {
-    getTrendingCommunities, 
+    getTrendingCommunities,
     getSearchedCommunities,
     getAdminCommunities,
     getProfileCommunities,
     getSubscriptionsCommunities,
-    createCommunitySubscription, 
+    createCommunitySubscription,
     removeCommunitySubscription
 } from '../api'
 import {
@@ -82,7 +82,7 @@ class Communities extends Component {
         communities.forEach((community) => {
             if (community.id === id) {
                 community.followers_cnt = parseInt(community.followers_cnt, 10) + 1,
-                community.my_subscription = parseInt(res.data, 10)
+                    community.my_subscription = parseInt(res.data, 10)
             }
         })
         this.setState({ communities })
@@ -104,7 +104,7 @@ class Communities extends Component {
         communities.forEach((community) => {
             if (community.id === id) {
                 community.followers_cnt = parseInt(community.followers_cnt, 10) - 1,
-                community.my_subscription = null
+                    community.my_subscription = null
             }
         })
         this.setState({ communities })
@@ -118,17 +118,17 @@ class Communities extends Component {
 
     render() {
         const { empty } = this.state
-        const { isAuthenticated } = this.props
+        const { isAuthenticated, path } = this.props
         return (
             !empty ?
-            <CommunitiesList
-                {...this.state}
-                isAuthenticated={isAuthenticated}
-                getCommunities={this.getCommunitiesHandler}
-                createSubscription={this.createSubscriptionHandler}
-                removeSubscription={this.removeSubscriptionHandler}
-            /> :
-            <EmptyContentMessage/>
+                <CommunitiesList
+                    {...this.state}
+                    isAuthenticated={isAuthenticated}
+                    getCommunities={this.getCommunitiesHandler}
+                    createSubscription={this.createSubscriptionHandler}
+                    removeSubscription={this.removeSubscriptionHandler}
+                /> :
+                <EmptyContentMessage mode={path[1]} />
         )
     }
 }

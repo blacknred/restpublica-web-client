@@ -37,7 +37,7 @@ const styles = theme => ({
     morePostsLink: {
         width: '100%',
         margin: '2em 0'
-    }
+    },
 })
 
 const PostsList = ({
@@ -89,6 +89,15 @@ const PostsList = ({
         <div>
             {newPostLink}
             <InfiniteScroll
+                // root="viewport"
+                // isLoading={false}
+                // isEndReached={!hasMore}
+                // onReachThreshold={getPosts}
+                // // containerClassName="custom-container-class-name"
+                // // sentinelClassName="custom-sentinel-class-name"
+                // // containerTagName="div"
+                // // sentinelTagName="div"
+                // threshold={100}
                 pageStart={0}
                 loadMore={getPosts}
                 hasMore={hasMore}
@@ -108,7 +117,7 @@ const PostsList = ({
                     posts.map((post, index) =>
                         isPreview ?
                             <PostPreview
-                                key={index}
+                                key={index * 2}
                                 post={post}
                             /> :
                             <Post

@@ -37,8 +37,7 @@ class NewPost extends PureComponent {
                 hasMore: true,
                 empty: false,
                 list: [],
-                selectedId: this.props.communityId,
-                selectedName: null
+                selected: this.props.community,
             },
 
             description: '',
@@ -84,6 +83,7 @@ class NewPost extends PureComponent {
     static propTypes = {
         close: PropTypes.func.isRequired,
         repost: PropTypes.object,
+        community: PropTypes.object,
         isSlide: PropTypes.bool.isRequired,
         userId: PropTypes.string.isRequired,
         username: PropTypes.string.isRequired,
@@ -155,12 +155,11 @@ class NewPost extends PureComponent {
         }
     }
 
-    setCommunityHandler = ({ id, name }) => {
+    setCommunityHandler = ({ selected }) => {
         this.setState({
             availableCommunities: {
                 ...this.state.availableCommunities,
-                selectedId: id,
-                selectedName: name
+                selected
             }
         })
     }
@@ -519,8 +518,8 @@ class NewPost extends PureComponent {
             type: this.state.content.type
         }
         const formData = new FormData()
-        if (this.state.availableCommunities.selectedId) {
-            post.communityId = this.state.availableCommunities.selectedId
+        if (this.state.availableCommunities.selected.id) {
+            post.communityId = this.state.availableCommunities.selected.id
         }
         switch (this.state.content.type) {
             case 'file':
@@ -614,8 +613,8 @@ class NewPost extends PureComponent {
 const mapStateToProps = (state, ownProps) => ({
     close: ownProps.history.goBack,
     repost: ownProps.location.state.repost || null,
+    community: ownProps.location.state.community || null,
     isSlide: ownProps.location.state.isSlide || false,
-    communityId: ownProps.location.state.communityId || null,
     userId: state.authentication.id,
     username: state.authentication.username,
     userAvatar: state.authentication.avatar,

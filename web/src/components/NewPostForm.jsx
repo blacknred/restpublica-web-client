@@ -567,7 +567,9 @@ const NewPostForm = ({
                     key='isCommunitiesDialogOpenLink'
                     onClick={() => toggleContextDialog('isCommunitiesDialogOpen')}
                 >
-                    {availableCommunities.selectedName || 'available for all'}
+                    {availableCommunities.selected ?
+                        availableCommunities.selected.name :
+                        'available for all'}
                 </a>,
                 availableCommunitiesDialog
             ]}
@@ -893,8 +895,10 @@ NewPostForm.propTypes = {
         hasMore: PropTypes.bool.isRequired,
         empty: PropTypes.bool.isRequired,
         list: PropTypes.array.isRequired,
-        selectedId: PropTypes.number,
-        selectedName: PropTypes.string,
+        selected: PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            name: PropTypes.string.isRequired,
+        })
     }).isRequired,
     description: PropTypes.string.isRequired,
     commentable: PropTypes.bool.isRequired,

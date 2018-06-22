@@ -34,6 +34,11 @@ const styles = theme => ({
         width: '30px',
         height: '30px'
     },
+    description: {
+        '& span': {
+            color: theme.palette.primary.main
+        }
+    },
 })
 
 const PostPreview = ({ post, classes }) => {
@@ -58,9 +63,9 @@ const PostPreview = ({ post, classes }) => {
         <CardContent className={classes.description}>
             <Typography variant='body1'>
                 {
-                    post.description.trim().split(' ').map((word) => {
+                    post.description.trim().split(' ').map((word, index) => {
                         if (word.charAt(0) !== '#') return `${word} `;
-                        return <span>{ word } &nbsp;</span>
+                        return <span key={word + index}>{`${word} `}</span>
                     })
                 }
             </Typography>

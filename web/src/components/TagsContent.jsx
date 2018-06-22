@@ -8,8 +8,9 @@ import ListItem from '@material-ui/core/ListItem';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Chip from '@material-ui/core/Chip';
+import Fade from '@material-ui/core/Fade';
 
-const styles = theme =>({
+const styles = theme => ({
     root: {
         margin: '1em auto',
         textAlign: 'center'
@@ -23,48 +24,21 @@ const styles = theme =>({
 })
 
 const TagsContent = ({ classes, trendingTags }) => (
-    <div className={classes.root}>
-        {
-            trendingTags.map(tag =>
-                <Chip
-                    key={tag.title}
-                    label={tag.title}
-                    className={classes.chip}
-                    component={Link}
-                    to={`/search/#${tag.title}`}
-                />
-            )
-        }
-    </div>
-    // <Fade in={trendingTags.length > 0}>
-    //     <Paper className={classes.trendingMenu}>
-    //         <List>
-    //             <ListItem disabled>
-    //                 <Typography variant='body2'>
-    //                     TRENDING TAGS
-    //                         </Typography>
-    //             </ListItem>
-    //             {
-    //                 trendingTags.map(tag =>
-    //                     // tag.title.includes(query) &&
-    //                     <ListItem
-    //                         key={tag.title}
-    //                         component={Link}
-    //                         button
-    //                         to={`/search/${tag.title}/tags`}
-    //                     >
-    //                         <Typography variant='subheading'>
-    //                             {`#${tag.title}`}
-    //                         </Typography>
-    //                         <Typography variant='caption'>
-    //                             &nbsp;{` ${tag.posts_cnt} posts`}
-    //                         </Typography>
-    //                     </ListItem>
-    //                 )
-    //             }
-    //         </List>
-    //     </Paper>
-    // </Fade>
+    <Fade in={trendingTags.length > 0}>
+        <div className={classes.root}>
+            {
+                trendingTags.map(tag =>
+                    <Chip
+                        key={tag.title}
+                        label={tag.title}
+                        className={classes.chip}
+                        component={Link}
+                        to={`/tags/${tag.title}`}
+                    />
+                )
+            }
+        </div>
+    </Fade>
 )
 
 TagsContent.propTypes = {
