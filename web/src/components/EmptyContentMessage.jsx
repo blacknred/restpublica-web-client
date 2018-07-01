@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 import Button from '@material-ui/core/Button';
@@ -19,7 +19,6 @@ const styles = {
 }
 
 const EmptyContentMessage = ({ mode, isProfilePage, classes }) => {
-    console.log(mode, isProfilePage)
     return (
         <div className={classes.container}>
             {
@@ -29,16 +28,17 @@ const EmptyContentMessage = ({ mode, isProfilePage, classes }) => {
                 isProfilePage) &&
                 <ReportIcon
                     className={classes.icon}
-                    color='primary'
+                    color='disabled'
                 />
             }
             <Typography
                 variant="button"
                 paragraph
+                color='textSecondary'
             >
                 {
                     mode === '' &&
-                    <span>
+                    <Fragment>
                         Seems like you have not any subscription yet.<br /><br/>
                         <Button
                             color='primary'
@@ -46,24 +46,24 @@ const EmptyContentMessage = ({ mode, isProfilePage, classes }) => {
                             to="/trending">
                             Start now with Trending
                         </Button>
-                    </span>
+                    </Fragment>
                 }
                 {
                     mode === 'trending' &&
-                    <span>
+                    <Fragment>
                         Seems like there is no any content at all.<br />
                         If you are a developer start with db populating :)
-                    </span>
+                    </Fragment>
                 }
                 {
                     mode === 'search' &&
-                    <span>
+                    <Fragment>
                         There is nothing found by your request.
-                    </span>
+                    </Fragment>
                 }
                 {
                     isProfilePage &&
-                    <span>
+                    <Fragment>
                         Seems like you have no posts yet.<br /><br/>
                         <Button
                             color='primary'
@@ -78,14 +78,14 @@ const EmptyContentMessage = ({ mode, isProfilePage, classes }) => {
                         >
                             Create a first post
                         </Button>
-                    </span>
+                    </Fragment>
                 }
                 {
                     mode !== '' &&
                     mode !== 'trending' &&
                     mode !== 'search' &&
                     !isProfilePage &&
-                    <span>There is no any posts yet.</span>
+                    <Fragment>There is no any posts yet.</Fragment>
                 }
             </Typography>
         </div>
@@ -94,7 +94,7 @@ const EmptyContentMessage = ({ mode, isProfilePage, classes }) => {
 
 EmptyContentMessage.propTypes = {
     mode: PropTypes.string.isRequired,
-    isProfilePage: PropTypes.bool.isRequired,
+    isProfilePage: PropTypes.bool,
     classes: PropTypes.object.isRequired,
 }
 

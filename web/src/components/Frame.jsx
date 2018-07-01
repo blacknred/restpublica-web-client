@@ -1,41 +1,59 @@
 import React from 'react';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import { TransitionGroup } from "react-transition-group";
+import classNames from 'classnames';
 
+import Slide from '@material-ui/core/Slide';
 import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 
-const styles = {
+const styles = theme => ({
     frame: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        transition: 'padding-left 300ms',
-        backgroundColor: 'transparent',
-        margin: '1em 0',
+        justifyContent: 'center',
+        height: '100%',
+        transition: 'margin-left 300ms',
+        padding: `${theme.spacing.unit * 4}px 0`,
     },
     left: {
         '@media (min-width: 960px)': {
-            paddingLeft: '220px',
+            marginLeft: '250px',
         }
     },
-}
+})
 
-const Frame = ({ isDrawer, classes, children }) => {
+const Frame = ({ isDrawer, slideKey, isLoading, classes, children }) => {
+
     return (
-        <Paper
-            elevation={0}
-            className={classes.frame}
-            classes={{
-                root: isDrawer ? classes.left : null,
-            }}
-        >
-            {children}
-        </Paper>
+        <TransitionGroup className={classNames(classes.frame, isDrawer ? classes.left : null)}>
+            <Slide
+                component={null}
+                in={!isLoading}
+                key={slideKey}
+                direction='up'
+                timeout={{ enter: 500, exit: 150 }}
+            // mountOnEnter
+            // unmountOnExit
+            // transitionEnter={false}
+            // transitionLeave={true}
+            // transitionAppear={true}
+            //onEnter={(e) => e.style.opacity = 0}
+            // onExit={(e) => setTimeout(() => e.style.opacity = '0.01', 200)}
+            // onEnter={(e) => setTimeout(() => e.style.opacity = 1, 250)}
+            //style={{ transitionDelay: isLoading ? 2000 : 0 }}
+            //onEntered={(e) => setTimeout(() => e.style.transform = 'none', 800)}
+            >
+                {children}
+            </Slide>
+        </TransitionGroup>
     )
 }
 
 Frame.propTypes = {
     isDrawer: PropTypes.bool.isRequired,
+    slideKey: PropTypes.string,
+    isLoading: PropTypes.bool.isRequired,
     classes: PropTypes.object.isRequired,
 };
 

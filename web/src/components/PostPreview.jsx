@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
+import Fade from '@material-ui/core/Fade'
 import Card from '@material-ui/core/Card';
+import Hidden from '@material-ui/core/Hidden';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -13,9 +15,14 @@ import CardMedia from '@material-ui/core/CardMedia';
 const styles = theme => ({
     tile: {
         width: '290px',
-        margin: '0.6em',
+        margin: '10px',
         textDecoration: 'none',
-        borderRadius: '1.5%'
+        borderRadius: '1%'
+    },
+    tile2: {
+        width: '47%',
+        margin: '1%',
+        textDecoration: 'none',
     },
 
     headerContent: {
@@ -25,7 +32,7 @@ const styles = theme => ({
         paddingTop: 0,
         '&> :nth-child(2):before': {
             content: '"\\1f892"',
-            margin: '0 0.5em',
+            margin: `0 ${theme.spacing.unit}px`,
             fontSize: '1.3em'
         },
     },
@@ -73,6 +80,7 @@ const PostPreview = ({ post, classes }) => {
     )
 
     const postFilesContent = (
+        post.content &&
         <CardMedia
             component={
                 post.content[0].mime === 'video/mp4' ? 'video' : 'img'
@@ -90,18 +98,46 @@ const PostPreview = ({ post, classes }) => {
     )
 
     return (
-        <Card
-            elevation={1}
-            className={classes.tile}
-            component={Link}
-            to={`/post/${post.slug}`}
-        >
-            {post.type === 'file' && postFilesContent}
-            {post.type === 'link' && postLinkContent}
+        <Fragment>
+            <Hidden smDown>
+                <Fade
+                    in={true}
+                    component={Link}
+                    to={`/post/${post.slug}`}
+                    timeout={800}
+                >
+                    <Card
+                        elevation={1}
+                        className={classes.tile}
+                    >
+                        {post.type === 'file' && postFilesContent}
+                        {post.type === 'link' && postLinkContent}
+                        {postDescription}
+                        {postHeader}
+                    </Card>
+                </Fade>
+            </Hidden>
 
-            {postDescription}
-            {postHeader}
-        </Card>
+            <Hidden mdUp>
+                <Fade
+                    in={true}
+                    component={Link}
+                    to={`/post/${post.slug}`}
+                    timeout={800}
+                >
+                    <Card
+                        elevation={1}
+                        className={classes.tile2}
+                    >
+                        {post.type === 'file' && postFilesContent}
+                        {post.type === 'link' && postLinkContent}
+                        {postDescription}
+                        {postHeader}
+                    </Card>
+                </Fade>
+            </Hidden>
+        </Fragment>
+
     )
 }
 

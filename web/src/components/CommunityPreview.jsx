@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -13,9 +12,10 @@ import CardActions from '@material-ui/core/CardActions';
 
 const styles = {
     tile: {
-        width: '15.8em',
-        margin: '1%',
+        minWidth: '15.8em',
+        margin: '10px',
         textDecoration: 'none',
+        //overflow: 'inherit'
     },
     avatar: {
         width: '100%',
@@ -23,7 +23,7 @@ const styles = {
     },
 }
 
-const CommunityPreviewItem = ({
+const CommunityPreview = ({
     community, classes, isAuthenticated, removeSubscription, createSubscription
 }) => {
 
@@ -87,14 +87,12 @@ const CommunityPreviewItem = ({
                             )
                     }
                 </CardActions>
-
             }
-
         </Card >
     )
 }
 
-CommunityPreviewItem.propTypes = {
+CommunityPreview.propTypes = {
     community: PropTypes.shape({
         id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
@@ -109,4 +107,4 @@ CommunityPreviewItem.propTypes = {
     createSubscription: PropTypes.func
 }
 
-export default withStyles(styles)(CommunityPreviewItem)
+export default withStyles(styles)(CommunityPreview)

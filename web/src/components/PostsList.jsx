@@ -1,11 +1,12 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom'
-import InfiniteScroll from 'react-infinite-scroller2'
+import React, { Fragment } from 'react';
+import { Link } from 'react-router-dom';
+import InfiniteScroll from 'react-infinite-scroller2';
 
 import Post from '../containers/Post'
 import PostPreview from '../components/PostPreview'
 
+import Slide from '@material-ui/core/Slide';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import ListItem from '@material-ui/core/ListItem';
@@ -47,7 +48,7 @@ const PostsList = ({
     const loader = (
         <div
             className={classes.loader}
-            key={'postsLoader'}
+            key='postsLoader'
         >
             {posts.length > 0 && <CircularProgress />}
         </div>
@@ -80,55 +81,56 @@ const PostsList = ({
             className={classes.morePostsLink}
             color='primary'
             component={Link}
-            to="/trending">
+            to="/trending"
+        >
             More posts
                     </Button>
     )
 
+    const postsArr = (
+        posts.map((post, index) =>
+            isPreview ?
+                <PostPreview
+                    key={index * 2}
+                    post={post}
+                /> :
+                <Post
+                    key={index}
+                    post={post}
+                />
+        )
+    )
+
     return (
-        <div>
+        <Fragment>
             {newPostLink}
-            <InfiniteScroll
-                // root="viewport"
-                // isLoading={false}
-                // isEndReached={!hasMore}
-                // onReachThreshold={getPosts}
-                // // containerClassName="custom-container-class-name"
-                // // sentinelClassName="custom-sentinel-class-name"
-                // // containerTagName="div"
-                // // sentinelTagName="div"
-                // threshold={100}
-                pageStart={0}
-                loadMore={getPosts}
-                hasMore={hasMore}
-                loader={loader}
-                className={classes.grid}
-                style={{
-                    alignItems: isFeedMultiColumn ? 'flex-start' : 'center',
-                    flexDirection: isPreview ? 'row' : isFeedMultiColumn ? 'row' : 'column'
-                }}
-            // ref={(scroll) => { this.scroll = scroll; }}
-            // threshold={200}
-            // key={reload}
-            // initialLoad={false}
-            // useWindow={false}
+            <Slide
+                direction='up'
+                in={posts.length > 0}
+                timeout={400}
             >
-                {
-                    posts.map((post, index) =>
-                        isPreview ?
-                            <PostPreview
-                                key={index * 2}
-                                post={post}
-                            /> :
-                            <Post
-                                key={index}
-                                post={post}
-                            />
-                    )
-                }
-            </InfiniteScroll>
+                <InfiniteScroll
+                    pageStart={0}
+                    loadMore={getPosts}
+                    hasMore={hasMore}
+                    loader={loader}
+                    className={classes.grid}
+                    style={{
+                        alignItems: isFeedMultiColumn ? 'flex-start' : 'center',
+                        flexDirection: isPreview ? 'row' : isFeedMultiColumn ? 'row' : 'column'
+                    }}
+                // ref={(scroll) => { this.scroll = scroll; }}
+                // threshold={200}
+                // key={reload}
+                // initialLoad={false}
+                // useWindow={false}
+                >
+
+                    {postsArr}
+                </InfiniteScroll>
+            </Slide>
             {morePostsLink}
-        </div >
+        </Fragment>
     )
 }
 
@@ -136,7 +138,7 @@ PostsList.propTypes = {
     mode: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,
     hasMore: PropTypes.bool.isRequired,
-    userAvatar: PropTypes.string.isRequired,
+    userAvatar: PropTypes.string,
     posts: PropTypes.arrayOf(PropTypes.object).isRequired,
     isPreview: PropTypes.bool.isRequired,
     isFeedMultiColumn: PropTypes.bool.isRequired,

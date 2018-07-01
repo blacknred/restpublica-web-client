@@ -21,7 +21,7 @@ const styles = {
 }
 
 const CommunitiesList = ({
-    isAuthenticated, empty, hasMore, communities, getCommunities,
+    isAuthenticated, hasMore, communities, getCommunities,
     createSubscription, removeSubscription, classes
 }) => {
 
@@ -41,9 +41,8 @@ const CommunitiesList = ({
             hasMore={hasMore}
             loader={loader}
         >
-            <GridList
-                className={classes.grid}
-                style={{ flexWrap: communities.length < 5 ? 'nowrap' : 'wrap' }}
+            <GridList className={classes.grid}
+                //style={{ flexWrap: communities.length < 5 ? 'nowrap' : 'wrap' }}
             >
                 {
                     communities.map((community, index) => (
@@ -63,7 +62,6 @@ const CommunitiesList = ({
 
 CommunitiesList.propTypes = {
     isAuthenticated: PropTypes.bool.isRequired,
-    empty: PropTypes.bool.isRequired,
     hasMore: PropTypes.bool.isRequired,
     communities: PropTypes.arrayOf(PropTypes.object).isRequired,
     getCommunities: PropTypes.func.isRequired,

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 import Button from '@material-ui/core/Button';
 import Grow from '@material-ui/core/Grow';
-import Card from '@material-ui/core/Card';
 import Avatar from '@material-ui/core/Avatar';
 import Dialog from '@material-ui/core/Dialog';
 import Toolbar from '@material-ui/core/Toolbar';

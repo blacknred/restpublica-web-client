@@ -1,14 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
+import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
 import TextField from '@material-ui/core/TextField';
 
 const RegisterForm = ({ values, errors, inputChange, submitHandler }) => {
     return (
-        <form onSubmit={submitHandler}>
+        <List>
             <ListItem>
                 <TextField
                     label="Username"
@@ -59,12 +60,17 @@ const RegisterForm = ({ values, errors, inputChange, submitHandler }) => {
                 />
             </ListItem>
             <ListItem>
-                <Button type='submit'>Sign up</Button>
-                <Button component={Link} to="/login">
+                <Button onClick={submitHandler}>
+                Sign up
+                </Button>
+                <Button 
+                component={Link} 
+                to="/login"
+                >
                     Already have account?
                 </Button>
             </ListItem>
-        </form>
+        </List>
     )
 }
 

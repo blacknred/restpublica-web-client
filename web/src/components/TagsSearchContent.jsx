@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -41,7 +43,10 @@ const TagsSearchContent = ({ classes, trendingTags }) => (
                             button
                             to={`/tags/${tag.title}`}
                         >
-                            <Typography variant='subheading'>
+                            <Typography
+                                variant='body2'
+                                color='primary'
+                            >
                                 {`#${tag.title}`}
                             </Typography>
                             <Typography variant='caption'>

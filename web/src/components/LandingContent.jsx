@@ -1,54 +1,72 @@
 import React from 'react';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import List from '@material-ui/core/List';
-import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import Dialog from '@material-ui/core/Dialog';
+import grey from '@material-ui/core/colors/grey';
+import Backdrop from '@material-ui/core/Backdrop';
 import ExploreIcon from '@material-ui/icons/Explore';
+import { withStyles } from '@material-ui/core/styles';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 
-const styles = {
+const styles = theme => ({
     container: {
-        height: '100vh',
-        width: '100vw',
-        display: 'flex',
         justifyContent: 'center',
-        alignItems: 'flex-start',
+        alignItems: 'center',
+        marginTop: -(theme.spacing.unit * 20)
     },
     title: {
-        fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif'
+        fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif',
+        color: theme.palette.primary.main
     },
-    form: {
-        marginTop: '5%',
-        padding: '1.5em 0.5em',
-        textAlign: 'center'
-    }
-}
+})
+
+const DynamicBackdrop = ({ gifUrl, ...other }) =>
+    <Backdrop
+        {...other}
+        style={{
+            background: `url("${gifUrl}") no-repeat center / cover fixed ${grey[200]}`
+        }}
+    />
 
 const LandingContent = ({ gifUrl, classes, children }) => {
     return (
-        <div
-            className={classes.container}
-            style={{ background: `url("${gifUrl}") no-repeat center / cover fixed` }}
+        <Dialog
+            open
+            keepMounted
+            classes={{ paper: classes.container }}
+            BackdropComponent={DynamicBackdrop}
+            BackdropProps={{ gifUrl }}
+            transitionDuration={0}
         >
-            <Paper style={styles.form} >
-                <List>
-                    <Typography
-                        variant="display1"
-                        color='inherit'
-                        className={classes.title}>
-                        Publica
-                    </Typography>
-                    <br />
-                    {children}
-                    <Button component={Link} to="/trending">
-                        <ExploreIcon /> &nbsp;Explore
-                    </Button>
-                </List>
-            </Paper>
-        </div>
+            <DialogTitle>
+                <DialogContentText
+                    variant='display1'
+                    className={classes.title}
+                >
+                    {process.env.REACT_APP_TITLE || 'Publica'}
+                </DialogContentText>
+            </DialogTitle>
+
+            <DialogContent>
+                {children}
+            </DialogContent>
+
+            <DialogContent>
+                <Button
+                    variant='raised'
+                    size='small'
+                    color='primary'
+                    component={Link}
+                    to="/explore"
+                >
+                    <ExploreIcon /> &nbsp;Explore
+                </Button>
+            </DialogContent>
+        </Dialog >
     )
 }
 

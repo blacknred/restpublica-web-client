@@ -14,10 +14,9 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 const styles = theme => ({
-    list: {
+    root: {
         maxWidth: '550px',
-        width: '100%',
-        borderRadius: '0'
+        width: '100vw',
     },
     selectField: {
         width: '6em',
@@ -128,7 +127,7 @@ const SettingsApp = ({
     return (
         <Paper
             elevation={1}
-            className={classes.list}
+            className={classes.root}
         >
             {uiList}
             <Divider />

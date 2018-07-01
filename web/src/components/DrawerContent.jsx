@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 import compose from 'recompose/compose';
@@ -31,70 +31,66 @@ const styles = theme => ({
     drawerPaper: {
         borderWidth: 0,
         backgroundColor: 'transparent',
+        '& ul:nth-of-type(2)': {
+            opacity: '0.6'
+        }
     },
     drawerPaperMobile: {
         width: '300px',
         '& a': {
             textDecoration: 'none',
-            color: 'inherit'
         },
-        height: '100vh'
+        height: '100vh',
+        '& ul:nth-of-type(2)': {
+            opacity: '0.6'
+        }
     },
     drawerRoot: {
         height: '100vh',
-        marginTop: '4.5em',
+        marginTop: theme.spacing.unit * 9,
     },
     drawerRoot2: {
         height: '100vh',
-        marginTop: '7.5em',
+        marginTop: theme.spacing.unit * 15,
     },
     drawerHeader: {
         justifyContent: 'space-between',
         color: theme.palette.text.primary,
-        paddingLeft: '24px',
+        paddingLeft: theme.spacing.unit * 4,
         '& svg': {
             fontSize: '1.5em'
         }
     },
     drawerHeaderTitle: {
-        fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif'
+        fontFamily: 'Product Sans, Roboto, Helvetica, Arial, sans-serif'
     },
     active: {
-        color: theme.palette.primary.main
+        color: `${theme.palette.primary.main}!important`,
     },
-    primaryNav: {
+    nav: {
         color: theme.palette.type === 'light' ?
             theme.palette.grey[800] :
             theme.palette.grey[300],
         '& svg': {
-            color: 'inherit',
             marginRight: '2px',
             marginLeft: '4px',
-            opacity: '0.8'
-        },
-        '& h3': {
-            fontWeight: '500',
             color: 'inherit',
-            fontSize: '0.97rem'
-        }
-    },
-    secondaryNav: {
-        '& svg': {
-            opacity: '0.6',
-            marginRight: '2px',
-            marginLeft: '4px'
+            opacity: '0.7'
         },
-        '& h3': {
-            opacity: '0.6',
-            fontSize: '0.96rem'
+        '& div': {
+            fontSize: '0.95rem',
+            fontWeight: 500,
+            lineHeight: '1.6em',
+            fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
         }
     },
     footerNav: {
-        padding: '1.5em',
         position: 'absolute',
-        bottom: 0,
+        bottom: '2em',
+        right: 0,
+        left: '2em',
+        width: '70%',
         color: theme.palette.text.hint,
-        maxWidth: '82%',
         '& *': {
             marginRight: '0.5em'
         },
@@ -106,20 +102,21 @@ const styles = theme => ({
 })
 
 const DrawerContent = ({
-    isDrawer, path, width, username, classes, switchDrawer
+    isDrawer, isAuthenticated, path, width, username, classes, switchDrawer
 }) => {
 
     const drawerHeader = (
         <Toolbar className={classes.drawerHeader}>
             <Typography
                 variant="headline"
+                color="textSecondary"
                 component={Link}
                 to="/"
                 onClick={() => switchDrawer(!isDrawer)}
                 className={classes.drawerHeaderTitle}
             >
-                Publica
-                </Typography>
+                {process.env.REACT_APP_TITLE || 'Publica'}
+            </Typography>
             <IconButton
                 aria-label="Menu"
                 onClick={() => switchDrawer(!isDrawer)}
@@ -130,96 +127,151 @@ const DrawerContent = ({
     )
 
     const primaryNavList = (
-        <List component="nav" className={classes.primaryNav}>
+        <List className={classes.nav}>
+            {
+                isAuthenticated &&
+                <ListItem
+                    component={Link}
+                    to='/'
+                    button
+                    onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
+                    className={path[1] === '' ? classes.active : ''}
+                >
+                    <ListItemIcon>
+                        <HomeIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary='Feed'
+                        disableTypography
+                    />
+                </ListItem>
+            }
             <ListItem
                 component={Link}
-                to='/'
+                to='/explore'
                 button
                 onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path[1] === '/' ? classes.active : ''}
-            >
-                <ListItemIcon>
-                    <HomeIcon />
-                </ListItemIcon>
-                <ListItemText primary='Feed' />
-            </ListItem>
-            <ListItem
-                component={Link}
-                to='/trending/posts'
-                button
-                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path[1] === 'trending' ? classes.active : ''}
+                className={path[1] === 'explore' ? classes.active : ''}
             >
                 <ListItemIcon>
                     <ExploreIcon />
                 </ListItemIcon>
-                <ListItemText primary='Trending' />
+                <ListItemText
+                    primary='Explore'
+                    disableTypography
+                />
             </ListItem>
-            <ListItem
-                component={Link}
-                to='/communities'
-                button
-                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path[1] === 'communities' ? classes.active : ''}
-            >
-                <ListItemIcon>
-                    <ViewColumnIcon />
-                </ListItemIcon>
-                <ListItemText primary='Communities' />
-            </ListItem>
-            <ListItem
-                component={Link}
-                to={`/${username}`}
-                button
-                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path[1] === username ? classes.active : ''}
-            >
-                <ListItemIcon>
-                    <AccountIcon />
-                </ListItemIcon>
-                <ListItemText primary='Profile' />
-            </ListItem>
-            <ListItem
-                component={Link}
-                to='/people/followers'
-                button
-                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path[1].match(/^\/people/) ? classes.active : ''}
-            >
-                <ListItemIcon>
-                    <PeopleIcon />
-                </ListItemIcon>
-                <ListItemText primary='People' />
-            </ListItem>
-            <ListItem
-                component={Link}
-                to='/activity'
-                button
-                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path[1].match(/^activity/) ? classes.active : ''}
-            >
-                <ListItemIcon>
-                    <NotificationsIcon />
-                </ListItemIcon>
-                <ListItemText primary='Activity' />
-            </ListItem>
-            <ListItem
-                component={Link}
-                to='/settings'
-                button
-                onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
-                className={path[1] === 'settings' ? classes.active : ''}
-            >
-                <ListItemIcon>
-                    <SettingsIcon />
-                </ListItemIcon>
-                <ListItemText primary='Settings' />
-            </ListItem>
+            {
+                !isAuthenticated &&
+                <ListItem
+                    component={Link}
+                    to='/register'
+                    button
+                >
+                    <ListItemIcon>
+                        <PeopleIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary='Join Publica'
+                        disableTypography
+                    />
+                </ListItem>
+            }
+            {
+                isAuthenticated &&
+                <ListItem
+                    component={Link}
+                    to='/communities'
+                    button
+                    onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
+                    className={path[1] === 'communities' ? classes.active : ''}
+                >
+                    <ListItemIcon>
+                        <ViewColumnIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary='Communities'
+                        disableTypography
+                    />
+                </ListItem>
+            }
+            {
+                isAuthenticated &&
+                <ListItem
+                    component={Link}
+                    to={`/${username}`}
+                    button
+                    onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
+                    className={path[1] === username ? classes.active : ''}
+                >
+                    <ListItemIcon>
+                        <AccountIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary='Profile'
+                        disableTypography
+                    />
+                </ListItem>
+            }
+            {
+                isAuthenticated &&
+                <ListItem
+                    component={Link}
+                    to='/people/followers'
+                    button
+                    onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
+                    className={path[1] === 'people' ? classes.active : ''}
+                >
+                    <ListItemIcon>
+                        <PeopleIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary='People'
+                        disableTypography
+                    />
+                </ListItem>
+            }
+            {
+                isAuthenticated &&
+                <ListItem
+                    component={Link}
+                    to='/activity'
+                    button
+                    onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
+                    className={path[1] === 'activity' ? classes.active : ''}
+                >
+                    <ListItemIcon>
+                        <NotificationsIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary='Activity'
+                        disableTypography
+                    />
+                </ListItem>
+            }
+            {
+                isAuthenticated &&
+                <ListItem
+                    component={Link}
+                    to='/settings'
+                    button
+                    onClick={() => isWidthDown('sm', width) && switchDrawer(!isDrawer)}
+                    className={path[1] === 'settings' ? classes.active : ''}
+                >
+                    <ListItemIcon>
+                        <SettingsIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary='Settings'
+                        disableTypography
+                    />
+                </ListItem>
+            }
         </List>
     )
 
     const secondaryNavList = (
-        <List component="nav" className={classes.secondaryNav}>
+        <List className={classes.nav}>
             <ListItem
                 button
                 component='a'
@@ -230,7 +282,10 @@ const DrawerContent = ({
                 <ListItemIcon>
                     <FeedbackIcon />
                 </ListItemIcon>
-                <ListItemText primary="Send feedback" />
+                <ListItemText
+                    primary="Send feedback"
+                    disableTypography
+                />
             </ListItem>
             <ListItem
                 button
@@ -242,7 +297,10 @@ const DrawerContent = ({
                 <ListItemIcon>
                     <HelpIcon />
                 </ListItemIcon>
-                <ListItemText primary="Help" />
+                <ListItemText
+                    primary="Help"
+                    disableTypography
+                />
             </ListItem>
         </List>
     )
@@ -288,7 +346,7 @@ const DrawerContent = ({
     )
 
     return (
-        <div>
+        <Fragment>
             <Hidden mdUp>
                 <Drawer
                     variant="temporary"
@@ -316,8 +374,8 @@ const DrawerContent = ({
                         in={isDrawer}
                         timeout={400}
                         className={
-                            path[2] &&
-                            path[1].match(/(trending|search|people|community)/) ?
+                            path.join('/').match(/(Explore\/+|search|people)/) ?
+                                //||(path[1] === 'community' && path[3]))
                                 classes.drawerRoot2 :
                                 classes.drawerRoot
                         }
@@ -326,14 +384,15 @@ const DrawerContent = ({
                     </Slide>
                 </Drawer>
             </Hidden>
-        </div>
+        </Fragment>
     )
 }
 
 DrawerContent.propTypes = {
     isDrawer: PropTypes.bool.isRequired,
+    isAuthenticated: PropTypes.bool.isRequired,
     path: PropTypes.array.isRequired,
-    username: PropTypes.string.isRequired,
+    username: PropTypes.string,
     classes: PropTypes.object.isRequired,
     width: PropTypes.string.isRequired,
     switchDrawer: PropTypes.func.isRequired,

@@ -31,8 +31,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 const styles = {
     root: {
         maxWidth: '550px',
-        width: '100%',
-        borderRadius: '0'
+        width: '100vw',
     },
     avatar: {
         width: '58px',
@@ -308,7 +307,10 @@ const SettingsProfile = ({
     )
 
     return (
-        <Paper className={classes.root} >
+        <Paper
+            elevation={1}
+            className={classes.root}
+        >
             <List>
                 {profileList}
                 <Divider />

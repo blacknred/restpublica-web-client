@@ -22,6 +22,7 @@ import ListItem from '@material-ui/core/ListItem';
 import GridList from '@material-ui/core/GridList';
 import MenuItem from '@material-ui/core/MenuItem';
 import Collapse from '@material-ui/core/Collapse';
+import PersonIcon from '@material-ui/icons/Person';
 import CardMedia from '@material-ui/core/CardMedia';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import CommentIcon from '@material-ui/icons/Comment';
@@ -199,8 +200,8 @@ const styles = theme => ({
         flex: 1
     },
     commentAvatar: {
-        width: '32px',
-        height: '32px',
+        width: 30,
+        height: 30,
         marginRight: '0.5em'
     },
 })
@@ -803,7 +804,11 @@ const PostContent = ({
                                 <InputAdornment position="start" >
                                     <Avatar
                                         className={classes.commentAvatar}
-                                        srcSet={`data:image/png;base64,${userAvatar}`}
+                                        srcSet={
+                                            userAvatar &&
+                                            `data:image/png;base64,${userAvatar}`
+                                        }
+                                        children={!userAvatar && <PersonIcon />}
                                     />
                                 </InputAdornment>
                             }
@@ -840,7 +845,7 @@ const PostContent = ({
                             onClick={postNewComment}
                             color="primary"
                         >
-                            Send
+                            Publish
                         </Button>
                     </span>
                 </CardActions>
@@ -903,7 +908,7 @@ PostContent.propTypes = {
     }),
 
     classes: PropTypes.object.isRequired,
-    userAvatar: PropTypes.string.isRequired,
+    userAvatar: PropTypes.string,
     isFullAccess: PropTypes.bool.isRequired,
     searchQuery: PropTypes.string.isRequired,
 

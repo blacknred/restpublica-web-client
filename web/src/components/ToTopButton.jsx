@@ -11,10 +11,11 @@ const styles = {
     toTop: {
         top: '150px',
         right: '35px',
-        bottom: 'none'
+        bottom: 'none',
+        zIndex: 1
     },
     toTopButton: {
-        backgroundColor: 'rgba(0,0,0,0.2)'
+        backgroundColor: 'rgba(225,225,225,0.8)'
     }
 }
 

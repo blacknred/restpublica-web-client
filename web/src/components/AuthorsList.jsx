@@ -21,7 +21,7 @@ const styles = {
 }
 
 const AuthorsList = ({
-    isAuthenticated, empty, hasMore, authors, getAuthors,
+    isAuthenticated, hasMore, authors, getAuthors,
     createSubscription, removeSubscription, classes
 }) => {
 
@@ -41,9 +41,8 @@ const AuthorsList = ({
             hasMore={hasMore}
             loader={loader}
         >
-            <GridList
-                className={classes.grid}
-                style={{ flexWrap: authors.length < 5 ? 'nowrap' : 'wrap' }}
+            <GridList className={classes.grid}
+                //style={{ flexWrap: authors.length < 5 ? 'nowrap' : 'wrap' }}
             >
                 {
                     authors.map((author, index) => (
@@ -63,7 +62,6 @@ const AuthorsList = ({
 
 AuthorsList.propTypes = {
     isAuthenticated: PropTypes.bool.isRequired,
-    empty: PropTypes.bool.isRequired,
     hasMore: PropTypes.bool.isRequired,
     authors: PropTypes.arrayOf(PropTypes.object).isRequired,
     getAuthors: PropTypes.func.isRequired,

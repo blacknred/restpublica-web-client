@@ -8,31 +8,23 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Hidden from '@material-ui/core/Hidden';
 import ListItem from '@material-ui/core/ListItem';
-import GridList from '@material-ui/core/GridList';
 import CardMedia from '@material-ui/core/CardMedia';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import GridListTile from '@material-ui/core/GridListTile';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
-
-import CommunityPreview from './CommunityPreview';
 
 const styles = theme => ({
     root: {
-        width: '100%',
-        margin: '0 auto',
-        marginBottom: '2em',
+        width: '90%',
+        marginBottom: theme.spacing.unit * 5,
         position: 'relative',
         '& a': {
             textDecoration: 'none'
         }
     },
     rootBackgroung: {
-        width: '70vw',
-        maxWidth: '1100px',
         height: '400px',
     },
     rootBackgroung2: {
@@ -46,6 +38,7 @@ const styles = theme => ({
         right: 0,
         left: 0,
         alignItems: 'flex-start',
+        justifyContent: 'space-around',
         background: `linear-gradient(rgba(0,0,0,0),${theme.palette.background.default})`,
         '& a:last-child': {
             width: '9em'
@@ -93,7 +86,6 @@ const AuthorContent = ({
     followers_cnt, followin_cnt, communities_cnt, my_subscription, banner,
     preview_communities, createSubscription, removeSubscription
 }) => {
-
 
     const authorContent = (
         <List
@@ -152,88 +144,40 @@ const AuthorContent = ({
         </CardActions>
     )
 
-    const previewCommunities = (
-        <GridList
-            style={{
-                width: '100%',
-                flexWrap: preview_communities.length < 5 ? 'nowrap' : 'wrap'
-            }}
-        >
-            {
-                preview_communities &&
-                preview_communities.map((com, i) =>
-                    i < 4 &&
-                    <CommunityPreview
-                        key={i}
-                        community={com}
-                        isAuthenticated={true}
-                    />
-                )
-            }
-        </GridList>
-    )
-
     return (
-        <List>
-            <ListItem>
-                <Card
-                    className={classes.root}
-                    elevation={0}
-                >
-                    <Hidden smDown>
-                        <CardMedia
-                            image={`data:image/png;base64,${banner || avatar}`}
-                            className={classes.rootBackgroung}
-                        />
-                        <CardActions className={classes.content}>
-                            <Avatar
-                                srcSet={`data:image/png;base64,${avatar}`}
-                                className={classes.avatar}
-                            />
-                            {authorContent}
-                            {authorAction}
-                        </CardActions>
-                    </Hidden>
-                    <Hidden mdUp>
-                        <CardMedia
-                            image={`data:image/png;base64,${banner || avatar}`}
-                            className={classes.rootBackgroung2}
-                        />
-                        <CardContent className={classes.content2}>
-                            <Avatar
-                                srcSet={`data:image/png;base64,${avatar}`}
-                                className={classes.avatar2}
-                            />
-                            {authorContent}
-                            {authorAction}
-                        </CardContent>
-                    </Hidden>
-                </Card>
-            </ListItem>
-
-            <ListSubheader className={classes.subheader}>
-                {`Communities ${communities_cnt}`}
-                {
-                    communities_cnt > 4 &&
-                    <Button
-                        color='primary'
-                        component={Link}
-                        to={`/${username}/communities`}
-                    >
-                        View all
-                    </Button>
-                }
-            </ListSubheader>
-
-            <ListItem>
-                {previewCommunities}
-            </ListItem>
-
-            <ListSubheader>
-                {`Posts ${posts_cnt}`}
-            </ListSubheader>
-        </List>
-
+        <Card
+            className={classes.root}
+            elevation={0}
+        >
+            <Hidden smDown>
+                <CardMedia
+                    image={`data:image/png;base64,${banner || avatar}`}
+                    className={classes.rootBackgroung}
+                />
+                <CardActions className={classes.content}>
+                    <Avatar
+                        srcSet={`data:image/png;base64,${avatar}`}
+                        className={classes.avatar}
+                    />
+                    {authorContent}
+                    {authorAction}
+                </CardActions>
+            </Hidden>
+            <Hidden mdUp>
+                <CardMedia
+                    image={`data:image/png;base64,${banner || avatar}`}
+                    className={classes.rootBackgroung2}
+                />
+                <CardContent className={classes.content2}>
+                    <Avatar
+                        srcSet={`data:image/png;base64,${avatar}`}
+                        className={classes.avatar2}
+                    />
+                    {authorContent}
+                    {authorAction}
+                </CardContent>
+            </Hidden>
+        </Card>
     )
 }
 

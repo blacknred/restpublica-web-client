@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
@@ -9,6 +9,7 @@ import List from '@material-ui/core/List';
 import Menu from '@material-ui/core/Menu';
 import Input from '@material-ui/core/Input';
 import Badge from '@material-ui/core/Badge';
+import Slide from '@material-ui/core/Slide';
 import Switch from '@material-ui/core/Switch';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -35,7 +36,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 const styles = theme => ({
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
-        padding: '0 16px'
+        padding: `0 ${(theme.spacing.unit * 2)}px`,
     },
     toolbar: {
         justifyContent: 'space-between',
@@ -44,25 +45,26 @@ const styles = theme => ({
         flex: 1,
     },
     title: {
-        marginLeft: '0.5em',
+        marginLeft: theme.spacing.unit * 2,
+        marginRight: theme.spacing.unit * 4,
         fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif',
         textDecoration: 'none',
-        '&:after': {
-            content: "''",
-            margin: '0 0.6em 0 1.1em',
-            borderWidth: '0.03rem',
-            borderStyle: 'solid',
-            borderColor: theme.palette.text.hint
-        }
-
     },
     statusTitle: {
-        margin: '0 1.5em 0 0.6em',
+        marginRight: theme.spacing.unit * 4,
         textTransform: 'capitalize',
+        '&:before': {
+            content: "''",
+            fontSize: '1.2em',
+            marginRight: theme.spacing.unit * 4,
+            borderWidth: '0.03rem',
+            borderStyle: 'solid',
+            borderColor: theme.palette.divider
+        }
     },
     avatar: {
-        width: '36px',
-        height: '36px'
+        width: '33px',
+        height: '33px'
     },
     searchBlock: {
         position: 'relative',
@@ -70,10 +72,10 @@ const styles = theme => ({
         maxWidth: '700px',
         height: '3em',
         lineHeight: '3em',
-        marginRight: '1em',
+        marginRight: theme.spacing.unit * 4,
         paddingLeft: '1em',
         borderRadius: '4px',
-        backgroundColor: 'rgba(0, 0, 0, 0.1)', //theme.palette.text.hint
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
         display: 'flex',
         alignItems: 'center'
     },
@@ -83,33 +85,58 @@ const styles = theme => ({
 })
 
 const HeaderContent = ({
-    searchRedirect, avatar, path, notifications, username, history, classes, isDrawer,
-    query, isNotFound, isNotify, isNightMode, isUserMenuOpen, isTrendingMenuOpen,
+    searchRedirect, avatar, path, notificationsCount, classes, isDrawer,
+    query, isNotify, isNightMode, isUserMenuOpen, isTrendingMenuOpen,
     goBack, isAuthenticated, toggleMenuOpen, logoutUser, switchNightMode,
-    switchNotFound, switchDrawer, switchNotify, createFlashMessage, changeSearchQuery
+    switchDrawer, switchNotify, createFlashMessage, changeSearchQuery, tabsRedirect
 }) => {
 
-    const title = (
-        <Hidden smDown>
-            <Typography
-                variant="headline"
-                component={Link}
-                to="/"
-                className={classes.title}
-            >
-                Publica
-            </Typography>
-        </Hidden>
+    const drawerButton = (
+        <Fragment>
+            <Hidden mdUp>
+                <IconButton onClick={() => switchDrawer(!isDrawer)}>
+                    <MenuIcon />
+                </IconButton>
+            </Hidden>
+            <Hidden smDown>
+                {
+                    isAuthenticated &&
+                        (
+                            path[1].match(/(post|search|people)/) ||
+                            (path[1] === 'explore' && path[2]) ||
+                            (path[1] === 'community' && path[3])
+                        ) ?
+                        <IconButton onClick={goBack}>
+                            <ArrowBackIcon />
+                        </IconButton> :
+                        <IconButton onClick={() => switchDrawer(!isDrawer)}>
+                            <MenuIcon />
+                        </IconButton>
+                }
+            </Hidden>
+        </Fragment>
     )
 
-    const statusTitle = (
+    const title = (
+        <Typography
+            variant="headline"
+            color="textSecondary"
+            component={Link}
+            to={isAuthenticated ? '/' : '/trending'}
+            className={classes.title}
+        >
+            {process.env.REACT_APP_TITLE || 'Publica'}
+        </Typography>
+    )
+
+    const statusTitle = (<Hidden smDown>
         <Typography
             variant="title"
             color="textSecondary"
             className={classes.statusTitle}
         >
             {path[1] || 'feed'}
-        </Typography>
+        </Typography></Hidden>
     )
 
     const searchBlock = (
@@ -131,7 +158,7 @@ const HeaderContent = ({
                     onFocus={() => toggleMenuOpen('isTrendingMenuOpen')}
                     onBlur={() => {
                         isTrendingMenuOpen &&
-                            setTimeout(() => toggleMenuOpen('isTrendingMenuOpen'), 100)
+                            setTimeout(() => toggleMenuOpen('isTrendingMenuOpen'), 200)
                     }}
                 />
                 {isTrendingMenuOpen && <Tags isHeader={true} />}
@@ -160,9 +187,9 @@ const HeaderContent = ({
         >
             {
                 isNotify ?
-                    notifications.length ?
+                    notificationsCount ?
                         <Badge
-                            badgeContent={notifications.length}
+                            badgeContent={notificationsCount}
                             color='primary'
                             children={''}
                         /> :
@@ -210,11 +237,12 @@ const HeaderContent = ({
                     <ListItemText inset primary="Edit profile" />
                 </MenuItem>
                 <MenuItem
+                    component={Link}
+                    to='/login'
                     onClick={() => {
                         toggleMenuOpen('isUserMenuOpen')
                         switchNightMode(false)
                         logoutUser()
-                        switchDrawer(false)
                         createFlashMessage('You are now logged out.')
                     }}>
                     <ListItemIcon>
@@ -258,69 +286,74 @@ const HeaderContent = ({
         </Hidden>
     )
 
-    const loggedUserLink = (
-        <Hidden mdUp>
-            <IconButton
+    const userLink = (
+        isAuthenticated ?
+            <Hidden mdUp>
+                <IconButton
+                    component={Link}
+                    to='/settings/profile'
+                >
+                    <Avatar
+                        className={classes.avatar}
+                        srcSet={`data:image/png;base64,${avatar}`}
+                    />
+                </IconButton>
+            </Hidden> :
+            <Button
+                variant='contained'
+                disableRipple
+                size='small'
+                color='primary'
                 component={Link}
-                to='/settings/profile'
+                to="/login"
             >
-                <Avatar
-                    className={classes.avatar}
-                    srcSet={`data:image/png;base64,${avatar}`}
-                />
-            </IconButton>
-        </Hidden>
-    )
-
-    const notLoggedUserBlock = (
-        <span>
-            <Button component={Link} to="/login" >Login</Button>
-            <Button component={Link} to="/register">Register</Button>
-        </span>
+                Login
+            </Button>
     )
 
     return (
-        <AppBar
-            position="sticky"
-            elevation={3}
-            color='inherit'
-            classes={{ root: classes.appBar }}
+        <Slide
+            direction="down"
+            in={true}
+            timeout={400}
+            mountOnEnter
         >
-            <Toolbar
-                className={classes.toolbar}
-                disableGutters
+            <AppBar
+                position="sticky"
+                elevation={2}
+                color='inherit'
+                classes={{ root: classes.appBar }}
             >
                 <Toolbar
-                    className={classes.leftBlock}
+                    className={classes.toolbar}
                     disableGutters
                 >
-                    {
-                        path[1].match(new RegExp(`(post|search|trending|${username})`)) ?
-                            <IconButton onClick={goBack}>
-                                <ArrowBackIcon />
-                            </IconButton> :
-                            <IconButton onClick={() => switchDrawer(!isDrawer)}>
-                                <MenuIcon />
-                            </IconButton>
-                    }
-                    {title}
-                    {statusTitle}
-                    {searchBlock}
+                    <Toolbar
+                        className={classes.leftBlock}
+                        disableGutters
+                    >
+                        {drawerButton}
+                        {title}
+                        {isAuthenticated && statusTitle}
+                        {searchBlock}
+                    </Toolbar>
+                    <Toolbar disableGutters>
+                        {searchLink}
+                        {isAuthenticated && userActivityLink}
+                        {userLink}
+                        {isAuthenticated && loggedUserMenu}
+                    </Toolbar>
                 </Toolbar>
-                <Toolbar disableGutters>
-                    {searchLink}
-                    {isAuthenticated && userActivityLink}
-                    {isAuthenticated && loggedUserMenu}
-                    {isAuthenticated && loggedUserLink}
-                    {!isAuthenticated && notLoggedUserBlock}
-                </Toolbar>
-            </Toolbar>
-            {
-                path[2] &&
-                path[1].match(/(trending|search|people|community)/) &&
-                <ContentTabs path={path} />
-            }
-        </AppBar>
+                {
+                    path.join('/').match(/(trending\/+|search|people)/) &&
+                    // ||(path[1] === 'community' && path[3])) &&
+                    <ContentTabs
+                        path={path}
+                        redirect={tabsRedirect}
+                    />
+                }
+            </AppBar>
+        </Slide>
     )
 }
 
@@ -331,12 +364,7 @@ HeaderContent.propTypes = {
     isNightMode: PropTypes.bool.isRequired,
     isUserMenuOpen: PropTypes.bool.isRequired,
     isTrendingMenuOpen: PropTypes.bool.isRequired,
-    notifications: PropTypes.arrayOf(
-        PropTypes.shape({
-            date: PropTypes.number.isRequired,
-            text: PropTypes.string.isRequired
-        })
-    ).isRequired,
+    notificationsCount: PropTypes.number.isRequired,
     avatar: PropTypes.string,
     path: PropTypes.array.isRequired,
     query: PropTypes.string,
@@ -346,6 +374,7 @@ HeaderContent.propTypes = {
     createFlashMessage: PropTypes.func.isRequired,
     logoutUser: PropTypes.func.isRequired,
     searchRedirect: PropTypes.func.isRequired,
+    tabsRedirect: PropTypes.func.isRequired,
     toggleMenuOpen: PropTypes.func.isRequired,
     changeSearchQuery: PropTypes.func.isRequired,
     classes: PropTypes.object.isRequired,

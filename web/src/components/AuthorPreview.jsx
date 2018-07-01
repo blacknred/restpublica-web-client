@@ -12,10 +12,11 @@ import CardContent from '@material-ui/core/CardContent';
 
 const styles = {
     tile: {
-        width: '15.8em',
-        margin: '1%',
+        minWidth: '15.8em',
+        margin: '10px',
         textDecoration: 'none',
         textAlign: 'center',
+        //overflow: 'inherit'
     },
     avatar: {
         width: '4em',
@@ -27,7 +28,7 @@ const styles = {
     }
 }
 
-const AuthorPreviewItem = ({
+const AuthorPreview = ({
     author, classes, isAuthenticated, removeSubscription, createSubscription
 }) => {
 
@@ -96,14 +97,12 @@ const AuthorPreviewItem = ({
                                  </Button>
                     }
                 </CardActions>
-
             }
-
         </Card>
     )
 }
 
-AuthorPreviewItem.propTypes = {
+AuthorPreview.propTypes = {
     author: PropTypes.shape({
         id: PropTypes.number.isRequired,
         username: PropTypes.string.isRequired,
@@ -117,4 +116,4 @@ AuthorPreviewItem.propTypes = {
     createSubscription: PropTypes.func.isRequired
 }
 
-export default withStyles(styles)(AuthorPreviewItem)
+export default withStyles(styles)(AuthorPreview)
