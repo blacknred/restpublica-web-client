@@ -9,9 +9,10 @@ import DrawerContent from '../components/DrawerContent'
 class Drawer extends Component {
     static propTypes = {
         isDrawer: PropTypes.bool.isRequired,
+        isAuthenticated: PropTypes.bool.isRequired,
         switchDrawer: PropTypes.func.isRequired,
         path: PropTypes.array.isRequired,
-        username: PropTypes.string.isRequired
+        username: PropTypes.string
     }
 
     render() {
@@ -23,7 +24,8 @@ const mapStateToProps = (state, ownProps) => ({
     isDrawer: state.uiSwitchers.isDrawer,
     isNightMode: state.uiSwitchers.isNightMode,
     path: ownProps.location.pathname.split('/'),
-    username: state.authentication.username
+    username: state.authentication.username,
+    isAuthenticated: state.authentication.isAuthenticated,
 })
 
 const mapDispatchToProps = dispatch => ({

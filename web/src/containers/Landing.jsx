@@ -1,20 +1,16 @@
-import { 
-    withRouter, 
-    Switch, 
-    Route 
-} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import React, { PureComponent } from 'react';
+import { withRouter } from 'react-router-dom';
 
-import { 
-    getBackgroundPic, 
-    login, 
-    register 
+import {
+    login,
+    register,
+    getBackgroundPic,
 } from '../api'
-import { 
-    authUser, 
-    createFlashMessage 
+import {
+    authUser,
+    createFlashMessage
 } from '../actions'
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
@@ -142,31 +138,30 @@ class Landing extends PureComponent {
     }
 
     render() {
+        const { mode } = this.props
         return (
             <LandingContent gifUrl={this.state.gifUrl} >
-                <Switch>
-                    <Route path='/login' render={() => (
+                {
+                    mode === 'login' ?
                         <LoginForm
                             {...this.state}
                             inputChange={this.inputChangeHandler}
                             submitHandler={this.submitLoginHandler}
-                        />
-                    )} />
-                    <Route path='/register' render={() => (
+                        /> :
                         <RegisterForm
                             {...this.state}
                             inputChange={this.inputChangeHandler}
                             submitHandler={this.submitRegisterHandler}
                         />
-                    )} />
-                </Switch>
+                }
             </LandingContent>
         )
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    from: ownProps.location.state ? ownProps.location.state.from : '/'
+    from: ownProps.location.state ? ownProps.location.state.from : '/',
+    mode: ownProps.match.params[0]
 })
 
 const mapDispatchToProps = dispatch => ({

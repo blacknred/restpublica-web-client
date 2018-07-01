@@ -3,17 +3,22 @@ import axios from 'axios';
 
 const GIPHY_URL = encodeURI('https://api.giphy.com/v1/gifs/random' +
     '?api_key=dc6zaTOxFJmzC&tag=space&rating=pg-13');
-const STORAGE_HOST = process.env.STORAGE_HOST || 'http://127.0.0.1:3007'
+const STORAGE_HOST = process.env.REACT_APP_STORAGE_HOST || 'http://127.0.0.1:3007'
 const FEED_RAND = window.localStorage.feedrand || 1;
 
-axios.defaults.baseURL = process.env.API_HOST || 'http://127.0.0.1:3003'
+axios.defaults.baseURL = process.env.REACT_APP_API_HOST || 'http://127.0.0.1:3003'
 axios.interceptors.response.use(res => res.data, err => null)
 
 const instance = axios.create();
 instance.defaults.timeout = 20000
-instance.defaults.validateStatus = status => status >= 200 && status < 429
-instance.defaults.headers.common['Authorization'] = 'Bearer ' + window.localStorage.token
-
+instance.defaults.validateStatus = status => status >= 200 && (status === 422 || status < 300)
+instance.interceptors.request.use(
+    (conf) => {
+        const { token } = window.localStorage
+        if (token) conf.headers['Authorization'] = 'Bearer+ ' + token
+        return conf
+    }
+)
 instance.interceptors.response.use(
     (res) => {
         const { data, status } = res;
@@ -39,11 +44,9 @@ export const deleteFileFromStorage = url => axios.delete(url)
 
 /* PROFILES */
 
-export const register = data =>
-    instance.post(`/users`, data, { headers: { 'Authorization': '' } })
+export const register = data => instance.post(`/users`, data)
 
-export const login = data =>
-    instance.post(`/users/login`, data, { headers: { 'Authorization': '' } })
+export const login = data => instance.post(`/users/login`, data)
 
 export const updateUser = data => instance.put(`/users`, data)
 
@@ -89,7 +92,7 @@ export const getAdminCommunities = ({ adminId, page }) =>
 export const getProfileCommunities = ({ userId, page }) =>
     instance.get(`/communities?profile=${userId}&offset=${page}`)
 
-export const getSubscriptionsCommunities = ({ communityId, page }) =>
+export const getCommunitySubscriptions = ({ communityId, page }) =>
     instance.get(`/communities/${communityId}/followers?offset=${page}`)
 
 
@@ -118,9 +121,7 @@ export const deletePost = postId => instance.delete(`/posts/${postId}`)
 export const getPost = slug => instance.get(`/posts/${slug}`)
 
 export const getFeedPosts = page =>
-    instance.get(`/posts?feed=true&offset=${page}&feed_rand=${FEED_RAND}`, {
-        headers: { 'Authorization': 'Bearer ' + window.localStorage.token }
-    })
+    instance.get(`/posts?feed=true&offset=${page}&feed_rand=${FEED_RAND}`)
 
 export const getTrendingPosts = page => instance.get(`/posts?offset=${page}`)
 

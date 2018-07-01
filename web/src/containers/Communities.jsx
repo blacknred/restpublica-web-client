@@ -6,24 +6,27 @@ import { withRouter } from 'react-router-dom';
 import {
     getTrendingCommunities,
     getSearchedCommunities,
-    getAdminCommunities,
+    // getAdminCommunities,
     getProfileCommunities,
-    getSubscriptionsCommunities,
+    // getCommunitySubscriptions,
     createCommunitySubscription,
-    removeCommunitySubscription
+    removeCommunitySubscription,
+    getProfile,
 } from '../api'
 import {
     createFlashMessage,
     switchLoader
 } from '../actions'
+import PreviewList from '../components/PreviewList';
 import CommunitiesList from '../components/CommunitiesList';
-import EmptyContentMessage from '../components/EmptyContentMessage'
+import EmptyContentMessage from '../components/EmptyContentMessage';
 
 class Communities extends Component {
     constructor(props) {
         super(props);
         this.state = {
             mode: this.props.path[1],
+            targetId: null,
             empty: false,
             hasMore: true,
             communities: []
@@ -33,17 +36,22 @@ class Communities extends Component {
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
         path: PropTypes.array.isRequired,
-        userId: PropTypes.any.isRequired,
+        userId: PropTypes.any,
+        isPreview: PropTypes.bool
     }
 
     getCommunitiesHandler = async (page) => {
         let res
-        const { mode, communities } = this.state
-        const { path, userId, switchLoader, createMessage } = this.props
+        const { mode, targetId, communities } = this.state
+        const { path, isPreview, switchLoader, createMessage } = this.props
         switch (mode) {
             case 'search': res = await getSearchedCommunities({ query: path[2], page })
                 break
-            default: res = await getTrendingCommunities(page)
+            case 'explore': res = await getTrendingCommunities(page)
+                break
+            default: 
+            if (!targetId) await this.getProfileIdHandler(path[1])
+                res = await getProfileCommunities({ userId: this.state.targetId, page })
         }
         switchLoader(false)
         if (!res) {
@@ -61,10 +69,20 @@ class Communities extends Component {
         // enlarge communitys arr if there are, block loading if there are not
         if (res.data.communities.length) {
             this.setState({ communities: communities.concat(...res.data.communities) });
+            if (isPreview) this.setState({ hasMore: false });
         } else {
             this.setState({ hasMore: false });
         }
         console.log(`page:${page}, ${this.state.communities.length} from ${res.data.count}`)
+    }
+
+    getProfileIdHandler = async (profileName) => {
+        const res = await getProfile(profileName)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
+            return
+        }
+        this.setState({ targetId: res.data.id })
     }
 
     createSubscriptionHandler = async ({ id, name }) => {
@@ -81,8 +99,8 @@ class Communities extends Component {
         }
         communities.forEach((community) => {
             if (community.id === id) {
-                community.followers_cnt = parseInt(community.followers_cnt, 10) + 1,
-                    community.my_subscription = parseInt(res.data, 10)
+                community.followers_cnt = parseInt(community.followers_cnt, 10) + 1
+                community.my_subscription = parseInt(res.data, 10)
             }
         })
         this.setState({ communities })
@@ -91,7 +109,7 @@ class Communities extends Component {
 
     removeSubscriptionHandler = async ({ id, name }) => {
         const { communities } = this.state
-        const { userId, createMessage } = this.props
+        const { createMessage } = this.props
         const data = {
             communityId: id,
             subscriptionId: communities.find(c => c.id === id).my_subscription
@@ -103,8 +121,8 @@ class Communities extends Component {
         }
         communities.forEach((community) => {
             if (community.id === id) {
-                community.followers_cnt = parseInt(community.followers_cnt, 10) - 1,
-                    community.my_subscription = null
+                community.followers_cnt = parseInt(community.followers_cnt, 10) - 1
+                community.my_subscription = null
             }
         })
         this.setState({ communities })
@@ -112,23 +130,39 @@ class Communities extends Component {
     }
 
     componentDidMount() {
-        this.props.switchLoader(true)
+        const { isPreview, switchLoader } = this.props
+        switchLoader(true)
+        if (isPreview) this.getCommunitiesHandler(1)
         console.log('communities are mounted:', this.state.mode)
     }
 
+    componentWillUnmount() {
+        this.setState({ hasMore: false })
+    }
+
     render() {
-        const { empty } = this.state
-        const { isAuthenticated, path } = this.props
+        const { empty, communities, hasMore } = this.state
+        const { isAuthenticated, path, isPreview } = this.props
         return (
-            !empty ?
-                <CommunitiesList
-                    {...this.state}
+            isPreview ?
+                <PreviewList
+                    mode='communities'
                     isAuthenticated={isAuthenticated}
-                    getCommunities={this.getCommunitiesHandler}
+                    datas={communities}
+                    hasMore={hasMore}
+                    path={path}
                     createSubscription={this.createSubscriptionHandler}
                     removeSubscription={this.removeSubscriptionHandler}
                 /> :
-                <EmptyContentMessage mode={path[1]} />
+                empty ?
+                    <EmptyContentMessage mode={path[1]} /> :
+                    <CommunitiesList
+                        {...this.state}
+                        isAuthenticated={isAuthenticated}
+                        getCommunities={this.getCommunitiesHandler}
+                        createSubscription={this.createSubscriptionHandler}
+                        removeSubscription={this.removeSubscriptionHandler}
+                    />
         )
     }
 }
@@ -137,6 +171,7 @@ const mapStateToProps = (state, ownProps) => ({
     isAuthenticated: state.authentication.isAuthenticated,
     path: ownProps.location.pathname.split('/'),
     userId: state.authentication.id,
+    isPreview: ownProps.isPreview
 })
 
 const mapDispatchToProps = dispatch => ({

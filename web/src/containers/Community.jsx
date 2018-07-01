@@ -92,7 +92,7 @@ class Community extends Component {
         const { name, admin_id } = this.state
         const { isAuthenticated, userId } = this.props
         return (
-            this.state.name ?
+            name ?
                 <CommunityContent
                     {...this.state}
                     {...this.props}

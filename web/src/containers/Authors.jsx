@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import {
-    getTrendingProfiles, 
+    getTrendingProfiles,
     getSearchedProfiles,
     getSubscriptionsProfiles,
-    createUserSubscription, 
+    createUserSubscription,
     removeUserSubscription
 } from '../api'
 import {
@@ -15,6 +15,7 @@ import {
     switchLoader
 } from '../actions'
 import AuthorsList from '../components/AuthorsList';
+import PreviewList from '../components/PreviewList';
 import EmptyContentMessage from '../components/EmptyContentMessage'
 
 class Authors extends Component {
@@ -31,13 +32,13 @@ class Authors extends Component {
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
         path: PropTypes.array.isRequired,
-        userId: PropTypes.any.isRequired,
+        userId: PropTypes.any,
     }
 
     getAuthorsHandler = async (page) => {
         let res
         const { mode, authors } = this.state
-        const { path, userId, switchLoader, createMessage } = this.props
+        const { path, userId, isPreview, switchLoader, createMessage } = this.props
         switch (mode) {
             case 'search': res = await getSearchedProfiles({ query: path[2], page })
                 break
@@ -62,6 +63,7 @@ class Authors extends Component {
         // enlarge authors arr if there are, block loading if there are not
         if (res.data.profiles.length) {
             this.setState({ authors: authors.concat(...res.data.profiles) });
+            if (isPreview) this.setState({ hasMore: false });
         } else {
             this.setState({ hasMore: false });
         }
@@ -82,7 +84,7 @@ class Authors extends Component {
         }
         authors.forEach((author) => {
             if (author.id === id) {
-                author.followers_cnt = parseInt(author.followers_cnt, 10) + 1,
+                author.followers_cnt = parseInt(author.followers_cnt, 10) + 1
                 author.my_subscription = parseInt(res.data, 10)
             }
         })
@@ -92,7 +94,7 @@ class Authors extends Component {
 
     removeSubscriptionHandler = async ({ id, username }) => {
         const { authors } = this.state
-        const { userId, createMessage } = this.props
+        const { createMessage } = this.props
         const data = {
             userId: id,
             subscriptionId: authors.find(a => a.id === id).my_subscription
@@ -104,7 +106,7 @@ class Authors extends Component {
         }
         authors.forEach((author) => {
             if (author.id === id) {
-                author.followers_cnt = parseInt(author.followers_cnt, 10) - 1,
+                author.followers_cnt = parseInt(author.followers_cnt, 10) - 1
                 author.my_subscription = null
             }
         })
@@ -113,23 +115,39 @@ class Authors extends Component {
     }
 
     componentDidMount() {
-        this.props.switchLoader(true)
+        const { isPreview, switchLoader } = this.props
+        switchLoader(true)
+        if (isPreview) this.getAuthorsHandler(1)
         console.log('authors are mounted:', this.state.mode)
     }
 
+    componentWillUnmount() {
+        this.setState({ hasMore: false })
+    }
+
     render() {
-        const { empty } = this.state
-        const { isAuthenticated, path } = this.props
+        const { empty, authors, hasMore } = this.state
+        const { isAuthenticated, path, isPreview } = this.props
         return (
-            !empty ?
-            <AuthorsList
-                {...this.state}
-                isAuthenticated={isAuthenticated}
-                getAuthors={this.getAuthorsHandler}
-                createSubscription={this.createSubscriptionHandler}
-                removeSubscription={this.removeSubscriptionHandler}
-            /> :
-            <EmptyContentMessage mode={path[1]} />
+            isPreview ?
+                <PreviewList
+                    mode='authors'
+                    isAuthenticated={isAuthenticated}
+                    datas={authors}
+                    hasMore={hasMore}
+                    path={path}
+                    createSubscription={this.createSubscriptionHandler}
+                    removeSubscription={this.removeSubscriptionHandler}
+                /> :
+                empty ?
+                    <EmptyContentMessage mode={path[1]} /> :
+                    <AuthorsList
+                        {...this.state}
+                        isAuthenticated={isAuthenticated}
+                        getAuthors={this.getAuthorsHandler}
+                        createSubscription={this.createSubscriptionHandler}
+                        removeSubscription={this.removeSubscriptionHandler}
+                    />
         )
     }
 }

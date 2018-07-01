@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import {
-    switchNotFound,
     switchNightMode,
     switchDrawer,
     switchNotify,
@@ -29,12 +28,7 @@ class Header extends Component {
         isAuthenticated: PropTypes.bool.isRequired,
         isNotify: PropTypes.bool.isRequired,
         isNightMode: PropTypes.bool.isRequired,
-        notifications: PropTypes.arrayOf(
-            PropTypes.shape({
-                date: PropTypes.number.isRequired,
-                text: PropTypes.string.isRequired
-            })
-        ).isRequired,
+        notificationsCount: PropTypes.number.isRequired,
         avatar: PropTypes.string,
         path: PropTypes.array.isRequired,
         updateHistory: PropTypes.func.isRequired,
@@ -44,30 +38,36 @@ class Header extends Component {
         createFlashMessage: PropTypes.func.isRequired,
         logoutUser: PropTypes.func.isRequired,
         goBack: PropTypes.func.isRequired,
+        isPreview: PropTypes.bool
     }
 
     toggleMenuOpenHandler = (target) => {
         this.setState({ [target]: !this.state[target] })
-        //setTimeout(() => this.setState({ [target]: !this.state[target] }), 150)
     }
 
     searchRedirectHandler = (e) => {
-        //e.preventDefault();
         if (e.key === 'Enter') {
             const { query } = this.state
             const formatedQuery = query.replace(/[^\d\w]+/gu, '')//[^\p{L}\d]+
             if (formatedQuery) {
-                this.props.updateHistory(`/search/${formatedQuery}/posts`)
+                this.props.updateHistory(`/search/${formatedQuery}/`)
             }
             this.setState({ isTrendingMenuOpen: false })
         }
     }
 
     changeSearchQueryHandler = (e) => {
+        e.preventDefault();
         this.setState({ query: e.target.value })
     }
 
+    tabsRedirectHandler = (e, newPath) => {
+        e.preventDefault();
+        this.props.updateHistory(newPath)
+    }
+
     componentWillReceiveProps(nextProps) {
+        //console.log(nextProps);
         if (nextProps.path !== this.props.path) {
             const { path } = nextProps
             const query = path[1].match(/(search|tags)/) ?
@@ -88,6 +88,7 @@ class Header extends Component {
             <HeaderContent
                 {...this.props}
                 {...this.state}
+                tabsRedirect={this.tabsRedirectHandler}
                 searchRedirect={this.searchRedirectHandler}
                 toggleMenuOpen={this.toggleMenuOpenHandler}
                 changeSearchQuery={this.changeSearchQueryHandler}
@@ -101,12 +102,13 @@ const mapStateToProps = (state, ownProps) => ({
     isAuthenticated: state.authentication.isAuthenticated,
     isNotify: state.notifications.isNotify,
     isNightMode: state.uiSwitchers.isNightMode,
-    notifications: state.notifications.notificationsList,
+    notificationsCount: state.notifications.notificationsList.length,
     username: state.authentication.username,
     avatar: state.authentication.avatar,
     path: ownProps.location.pathname.split('/'),
     updateHistory: ownProps.history.push,
-    goBack: ownProps.history.goBack
+    goBack: ownProps.history.goBack,
+    isPreview: ownProps.isPreview
 })
 
 const mapDispatchToProps = dispatch => {

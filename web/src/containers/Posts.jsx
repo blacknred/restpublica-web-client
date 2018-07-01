@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import {
@@ -35,9 +35,9 @@ class Posts extends Component {
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
         path: PropTypes.array.isRequired,
-        userId: PropTypes.any.isRequired,
-        username: PropTypes.string.isRequired,
-        userAvatar: PropTypes.string.isRequired,
+        userId: PropTypes.any,
+        username: PropTypes.string,
+        userAvatar: PropTypes.string,
         switchLoader: PropTypes.func.isRequired,
         createMessage: PropTypes.func.isRequired
     }
@@ -45,11 +45,11 @@ class Posts extends Component {
     getPostsHandler = async (page) => {
         let res
         const { targetId, posts } = this.state
-        const { path, tag, userId, username, switchLoader, createMessage } = this.props
+        const { path, userId, username, switchLoader, createMessage } = this.props
         switch (path[1]) {
             case '': res = await getFeedPosts(page)
                 break
-            case 'trending': res = await getTrendingPosts(page)
+            case 'explore': res = await getTrendingPosts(page)
                 break
             case username: res = await getProfilePosts({ userId, page })
                 break
@@ -120,6 +120,7 @@ class Posts extends Component {
     }
 
     componentWillUnmount() {
+        this.setState({ hasMore: false })
         this.mounted = false;
     }
 
@@ -129,12 +130,12 @@ class Posts extends Component {
             isAuthenticated, username, userAvatar, isFeedMultiColumn, path
         } = this.props;
         return (
-            <div>
+            <Fragment>
                 {
                     (
-                        path[1] === '' ||
-                        path[1] === username ||
-                        path[1] === 'community' && communitySubscription
+                        (path[1] === '') ||
+                        (path[1] === username) ||
+                        (path[1] === 'community' && communitySubscription)
                     ) &&
                     <NewPostButton
                         community={
@@ -147,21 +148,21 @@ class Posts extends Component {
                     />
                 }
                 {
-                    !empty ?
+                    empty ?
+                        <EmptyContentMessage
+                            mode={path[1]}
+                            isProfilePage={isAuthenticated && path[1] === username}
+                        /> :
                         <PostsList
                             {...this.state}
                             mode={path[1] || 'feed'}
                             userAvatar={userAvatar}
-                            isPreview={path[1] === 'trending'}
+                            isPreview={path[1] === 'explore'}
                             isFeedMultiColumn={isFeedMultiColumn}
                             getPosts={this.getPostsHandler}
-                        /> :
-                        <EmptyContentMessage
-                            mode={path[1]}
-                            isProfilePage={isAuthenticated && path[1] === username}
                         />
                 }
-            </div>
+            </Fragment>
         )
     }
 }

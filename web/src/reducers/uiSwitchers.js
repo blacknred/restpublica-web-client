@@ -13,11 +13,11 @@ const initialState = () => {
         }
     }
     return {
-        isDrawer: false,
+        isDrawer: true,
         isNotFound: false,
         isNightMode: false,
         isAutoGifs: true,
-        isFeedMultiColumn: true,
+        isFeedMultiColumn: false,
         isLoading: false
     }
 }
