@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
+import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import CardActions from '@material-ui/core/CardActions';
@@ -17,6 +18,12 @@ const styles = {
         textDecoration: 'none',
         textAlign: 'center',
         //overflow: 'inherit'
+    },
+    tile2: {
+        width: '47%',
+        margin: '1%',
+        textDecoration: 'none',
+        textAlign: 'center',
     },
     avatar: {
         width: '4em',
@@ -32,73 +39,94 @@ const AuthorPreview = ({
     author, classes, isAuthenticated, removeSubscription, createSubscription
 }) => {
 
-    return (
-        <Card
-            elevation={1}
-            className={classes.tile}
-            component={Link}
-            to={`/${author.username}`}
-        >
-            <CardContent>
-                <Avatar
-                    src={`data:image/png;base64, ${author.avatar}`}
-                    alt={author.username}
-                    className={classes.avatar}
-                />
-                <br />
-                <Typography variant='subheading'>
-                    {author.fullname}
-                </Typography>
-                <Typography
-                    paragraph
-                    noWrap
-                    color='textSecondary'
-                >
-                    {author.description}
-                </Typography>
-                <Typography
-                    variant='caption'
-                    paragraph
-                    noWrap
-                    color='primary'
-                >
-                    {author.followers_cnt} followers
+    const content = (
+        <CardContent>
+            <Avatar
+                src={`data:image/png;base64, ${author.avatar}`}
+                alt={author.username}
+                className={classes.avatar}
+            />
+            <br />
+            <Typography variant='subheading'>
+                {author.fullname}
+            </Typography>
+            <Typography
+                paragraph
+                noWrap
+                color='textSecondary'
+            >
+                {author.description}
+            </Typography>
+            <Typography
+                variant='caption'
+                paragraph
+                noWrap
+                color='primary'
+            >
+                {author.followers_cnt} followers
                     </Typography>
-            </CardContent>
+        </CardContent>
+    )
+
+    const action = (
+        isAuthenticated &&
+        <CardActions className={classes.action}>
             {
-                isAuthenticated &&
-                <CardActions className={classes.action}>
-                    {
-                        author.my_subscription ?
-                            <Button
-                                color='primary'
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    removeSubscription({
-                                        id: author.id,
-                                        username: author.fullname
-                                    })
-                                }}
-                            >
-                                Unfollow
+                author.my_subscription ?
+                    <Button
+                        color='primary'
+                        onClick={(e) => {
+                            e.preventDefault()
+                            removeSubscription({
+                                id: author.id,
+                                username: author.fullname
+                            })
+                        }}
+                    >
+                        Unfollow
                                 </Button>
-                            :
-                            <Button
-                                color='primary'
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    createSubscription({
-                                        id: author.id,
-                                        username: author.fullname
-                                    })
-                                }}
-                            >
-                                Follow
+                    :
+                    <Button
+                        color='primary'
+                        onClick={(e) => {
+                            e.preventDefault()
+                            createSubscription({
+                                id: author.id,
+                                username: author.fullname
+                            })
+                        }}
+                    >
+                        Follow
                                  </Button>
-                    }
-                </CardActions>
             }
-        </Card>
+        </CardActions>
+    )
+
+    return (
+        <Fragment>
+            <Hidden smDown>
+                <Card
+                    elevation={1}
+                    className={classes.tile}
+                    component={Link}
+                    to={`/${author.username}`}
+                >
+                    {content}
+                    {action}
+                </Card>
+            </Hidden>
+            <Hidden mdUp>
+                <Card
+                    elevation={1}
+                    className={classes.tile2}
+                    component={Link}
+                    to={`/${author.username}`}
+                >
+                    {content}
+                    {action}
+                </Card>
+            </Hidden>
+        </Fragment>
     )
 }
 
@@ -109,7 +137,7 @@ AuthorPreview.propTypes = {
         fullname: PropTypes.string.isRequired,
         avatar: PropTypes.string.isRequired,
         my_subscription: PropTypes.number,
-        followers_cnt: PropTypes.any.isRequired
+        followers_cnt: PropTypes.any
     }).isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
     removeSubscription: PropTypes.func.isRequired,

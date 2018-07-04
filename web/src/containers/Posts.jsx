@@ -58,7 +58,7 @@ class Posts extends Component {
                 break
             case 'tags': res = await getTagPosts({ tag: path[2], page })
                 break
-            case 'community':
+            case 'communities':
                 if (!targetId) await this.getCommunityIdHandler(path[2])
                 res = await getCommunityPosts({ communityId: this.state.targetId, page })
                 break
@@ -135,7 +135,7 @@ class Posts extends Component {
                     (
                         (path[1] === '') ||
                         (path[1] === username) ||
-                        (path[1] === 'community' && communitySubscription)
+                        (path[1] === 'communities' && communitySubscription)
                     ) &&
                     <NewPostButton
                         community={

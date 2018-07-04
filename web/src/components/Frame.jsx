@@ -13,12 +13,13 @@ const styles = theme => ({
         alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
-        transition: 'margin-left 300ms',
-        padding: `${theme.spacing.unit * 4}px 0`,
+        width: '100%',
+        transition: 'padding-left 300ms',
+        padding: `2% 0`,
     },
     left: {
         '@media (min-width: 960px)': {
-            marginLeft: '250px',
+            paddingLeft: '280px',
         }
     },
 })
@@ -28,7 +29,7 @@ const Frame = ({ isDrawer, slideKey, isLoading, classes, children }) => {
     return (
         <TransitionGroup className={classNames(classes.frame, isDrawer ? classes.left : null)}>
             <Slide
-                component={null}
+                component={'div'}
                 in={!isLoading}
                 key={slideKey}
                 direction='up'

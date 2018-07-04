@@ -14,7 +14,7 @@ const CommunityModerationContent = ({ classes }) =>
         paragraph
         className={classes.root}
     >
-        Moderation
+        Moderation in dev
     </Typography>
 
 CommunityModerationContent.propTypes = {

@@ -8,29 +8,25 @@ import CommunityPreview from './CommunityPreview';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Fade from '@material-ui/core/Fade';
+import Button from '@material-ui/core/Button';
+import ListItem from '@material-ui/core/ListItem';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import ListItemText from '@material-ui/core/ListItemText';
 
 const styles = theme => ({
     header: {
+        maxWidth: '1300px',
         textTransform: 'capitalize',
         marginLeft: theme.spacing.unit * 6
     },
     grid: {
-        maxWidth: '100%',
-        minWidth: '100%',
+        maxWidth: '1400px',
+        width: '100%',
         //flex: 1,
         //margin: '0 auto',
         marginBottom: theme.spacing.unit * 3,
     },
     scrollButton: {
-        // '&:before, &:after': {
-        //     content: "''",
-        //     height: '20em',
-        //     boxShadow: `-9px 0px 20px 9px ${theme.palette.background.default}, 
-        //     0px 8px 10px 1px ${theme.palette.background.default}, 
-        //     0px 3px 14px 2px ${theme.palette.background.default}`
-        // },
         boxShadow: `-1px 1px 20px 3px ${theme.palette.background.default}, 
             0px 8px 10px 1px ${theme.palette.background.default}, 
             0px 3px 14px 2px ${theme.palette.background.default}`,
@@ -53,61 +49,76 @@ const AuthorsList = ({
     createSubscription, removeSubscription,
 }) => {
 
-    // <Typography
-    //     variant='body2'
-    //     color='textSecondary'
-    //     className={classes.header}
-    // >
-    //     {mode}
-    // </Typography>
+    const subheader = (
+        <ListItem className={classes.header} disableGutters>
+            <ListItemText
+                secondary={mode}
+                secondaryTypographyProps={{ variant: 'body2' }}
+            />
+            {
+                datas.length > 4 &&
+                <Button
+                    color='primary'
+                    component={Link}
+                    to={`${path.join('/')}/${mode}`}
+                >
+                    See all
+            </Button>
+            }
+        </ListItem>
+    )
+
     return (
         datas.length > 0 &&
-        <Fade in={true}>
-            <Tabs
-                value={false}
-                scrollable
-                scrollButtons="auto"
-                textColor='primary'
-                indicatorColor='primary'
-                className={classes.grid}
-                classes={{ 
-                    scrollButtons: classes.scrollButton,
-                    scroller: classes.scrollTabs
-                }}
-            >
-                {
-                    datas.map((content, i) =>
-                        mode === 'authors' ?
-                            <Tab
-                                key={i}
-                                component={AuthorPreview}
-                                author={content}
-                                isAuthenticated={isAuthenticated}
-                                removeSubscription={removeSubscription}
-                                createSubscription={createSubscription}
-                            /> :
-                            <Tab
-                                key={i}
-                                component={CommunityPreview}
-                                community={content}
-                                isAuthenticated={isAuthenticated}
-                                removeSubscription={removeSubscription}
-                                createSubscription={createSubscription}
-                            />
-                    )
-                }
-                {
-                    hasMore &&
-                    <Tab
-                        key={13}
-                        component={Link}
-                        to={`${path.slice(0, -1).join('/')}/${mode}`}
-                        value={true}
-                        label='See more'
-                    />
-                }
-            </Tabs>
-        </Fade>
+        <Fragment>
+            {subheader}
+            <Fade in={true}>
+                <Tabs
+                    value={false}
+                    scrollable
+                    scrollButtons="auto"
+                    textColor='primary'
+                    indicatorColor='primary'
+                    className={classes.grid}
+                    classes={{
+                        scrollButtons: classes.scrollButton,
+                        scroller: classes.scrollTabs
+                    }}
+                >
+                    {
+                        datas.map((content, i) =>
+                            mode === 'authors' ?
+                                <Tab
+                                    key={i}
+                                    component={AuthorPreview}
+                                    author={content}
+                                    isAuthenticated={isAuthenticated}
+                                    removeSubscription={removeSubscription}
+                                    createSubscription={createSubscription}
+                                /> :
+                                <Tab
+                                    key={i}
+                                    component={CommunityPreview}
+                                    community={content}
+                                    isAuthenticated={isAuthenticated}
+                                    removeSubscription={removeSubscription}
+                                    createSubscription={createSubscription}
+                                />
+                        )
+                    }
+                    {
+                        hasMore &&
+                        <Tab
+                            key={13}
+                            component={Link}
+                            to={`${path.join('/')}/${mode}`}
+                            value={true}
+                            label='See more'
+                        />
+                    }
+                </Tabs>
+            </Fade>
+        </Fragment>
     )
 }
 

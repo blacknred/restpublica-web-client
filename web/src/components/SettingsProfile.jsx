@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
 import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
 import Dialog from '@material-ui/core/Dialog';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
@@ -23,23 +21,14 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ActionExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 
-const styles = {
+const styles = theme => ({
     root: {
         maxWidth: '550px',
         width: '100vw',
-    },
-    avatar: {
-        width: '58px',
-        height: '58px',
-        marginRight: '1em'
-    },
-    fileInput: {
-        display: 'none'
     },
     expansionPanel: {
         boxShadow: 'none',
@@ -48,37 +37,18 @@ const styles = {
     expansionPanelDetails: {
         padding: 0,
     }
-}
+})
 
 const SettingsProfile = ({
-    values, errors, classes, isChangePasswordDialogOpen, isAvatarLoading,
-    isDeleteProfileDialogOpen, updateAvatar, updateValue, updatePassword,
-    checkPassword, checkNewPassword, sendNewPasswordEmailConfirmation, logoutUser,
-    toggleDialog, updateEmailConfirmationCode, isDeleteProfileResponsibilityCheck
+    values, errors, classes, isChangePasswordDialogOpen, toggleDialog,
+    isDeleteProfileDialogOpen, updateValue, updatePassword, logoutUser, 
+    checkPassword, checkNewPassword, sendNewPasswordEmailConfirmation,
+    updateEmailConfirmationCode, isDeleteProfileResponsibilityCheck
 }) => {
 
     const profileList = (
         <div>
             <ListSubheader>Profile</ListSubheader>
-            <ListItem>
-                <Avatar
-                    alt={values.fullname}
-                    className={classes.avatar}
-                    src={`data:image/png;base64, ${values.avatar}`}
-                    component={isAvatarLoading ? CircularProgress : 'div'}
-                />
-                <Button component="label">
-                    Change user avatar
-                    <input
-                        className={classes.fileInput}
-                        key='avatar'
-                        type='file'
-                        name='avatar'
-                        accept='.jpg, .jpeg, .png'
-                        onChange={updateAvatar}
-                    />
-                </Button>
-            </ListItem>
             <ListItem>
                 <TextField
                     label="Username"
@@ -329,6 +299,7 @@ SettingsProfile.propTypes = {
         description: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
         avatar: PropTypes.string.isRequired,
+        avatar: PropTypes.string.isRequired,
         oldpassword: PropTypes.string,
         newpassword: PropTypes.string,
         emailConfirmationCode: PropTypes.string
@@ -345,13 +316,11 @@ SettingsProfile.propTypes = {
     isChangePasswordDialogOpen: PropTypes.bool.isRequired,
     isDeleteProfileDialogOpen: PropTypes.bool.isRequired,
     isDeleteProfileResponsibilityCheck: PropTypes.bool.isRequired,
-    isAvatarLoading: PropTypes.bool.isRequired,
     toggleDialog: PropTypes.func.isRequired,
     logoutUser: PropTypes.func.isRequired,
     checkPassword: PropTypes.func.isRequired,
     checkNewPassword: PropTypes.func.isRequired,
     sendNewPasswordEmailConfirmation: PropTypes.func.isRequired,
-    updateAvatar: PropTypes.func.isRequired,
     updateValue: PropTypes.func.isRequired,
     updatePassword: PropTypes.func.isRequired,
     updateEmailConfirmationCode: PropTypes.func.isRequired,

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
+import Hidden from '@material-ui/core/Hidden';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -17,6 +18,11 @@ const styles = {
         textDecoration: 'none',
         //overflow: 'inherit'
     },
+    tile2: {
+        width: '47%',
+        margin: '1%',
+        textDecoration: 'none',
+    },
     avatar: {
         width: '100%',
         height: '8em',
@@ -24,22 +30,20 @@ const styles = {
 }
 
 const CommunityPreview = ({
-    community, classes, isAuthenticated, removeSubscription, createSubscription
+    community, classes, isAuthenticated, userId, removeSubscription, createSubscription
 }) => {
 
-    return (
-        <Card
-            elevation={1}
-            className={classes.tile}
-            component={Link}
-            to={`/community/${community.name}`}
-        >
+    const content = (
+        <Fragment>
             <CardMedia
                 className={classes.avatar}
                 image={`data:image/png;base64, ${community.avatar}`}
             />
             <CardContent>
-                <Typography variant='subheading'>
+                <Typography
+                    variant='subheading'
+                    noWrap
+                >
                     {community.title}
                 </Typography>
                 <Typography
@@ -50,45 +54,77 @@ const CommunityPreview = ({
                     {community.followers_cnt} members
                 </Typography>
             </CardContent>
+        </Fragment>
+    )
+
+    const action = (
+        isAuthenticated &&
+        <CardActions>
             {
-                isAuthenticated &&
-                <CardActions>
-                    {
-                        community.my_subscription ?
-                            (
-                                removeSubscription &&
-                                <Button
-                                    color='primary'
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        removeSubscription({
-                                            id: community.id,
-                                            name: community.title
-                                        })
-                                    }}
-                                >
-                                    Leave
+                community.admin_id == userId ?
+                    <Typography variant='subheading'>
+                        Owner
+                            </Typography> :
+                    community.my_subscription ?
+                        (
+                            removeSubscription &&
+                            <Button
+                                color='primary'
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    removeSubscription({
+                                        id: community.id,
+                                        name: community.title
+                                    })
+                                }}
+                            >
+                                Leave
                                 </Button>
-                            ) :
-                            (
-                                createSubscription &&
-                                < Button
-                                    color='primary'
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        createSubscription({
-                                            id: community.id,
-                                            name: community.title
-                                        })
-                                    }}
-                                >
-                                    {community.restricted ? 'Request to join' : 'Join'}
-                                </Button>
-                            )
-                    }
-                </CardActions>
+                        ) :
+                        (
+                            createSubscription &&
+                            < Button
+                                color='primary'
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    createSubscription({
+                                        id: community.id,
+                                        name: community.title
+                                    })
+                                }}
+                            >
+                                {community.restricted ? 'Request to join' : 'Join'}
+                            </Button>
+                        )
             }
-        </Card >
+        </CardActions>
+    )
+
+    return (
+        <Fragment>
+            <Hidden smDown>
+                <Card
+                    elevation={1}
+                    className={classes.tile}
+                    component={Link}
+                    to={`/communities/${community.name}`}
+                >
+                    {content}
+                    {action}
+                </Card >
+            </Hidden>
+            <Hidden mdUp>
+                <Card
+                    elevation={1}
+                    className={classes.tile2}
+                    component={Link}
+                    to={`/communities/${community.name}`}
+                >
+                    {content}
+                    {action}
+                </Card >
+            </Hidden>
+        </Fragment>
     )
 }
 
@@ -100,9 +136,11 @@ CommunityPreview.propTypes = {
         avatar: PropTypes.string.isRequired,
         my_subscription: PropTypes.number,
         restricted: PropTypes.bool.isRequired,
-        followers_cnt: PropTypes.any.isRequired
+        followers_cnt: PropTypes.any.isRequired,
+        admin_id: PropTypes.any.isRequired
     }).isRequired,
-    isAuthenticated: PropTypes.bool.isRequired,
+    userId: PropTypes.any,
+    isAuthenticated: PropTypes.bool,
     removeSubscription: PropTypes.func,
     createSubscription: PropTypes.func
 }

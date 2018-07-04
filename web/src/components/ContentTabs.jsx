@@ -17,23 +17,9 @@ const styles = theme => ({
     }
 })
 
-const getBasePath = (pathArr) => {
-
-    let base
-    // if (path[1] === 'search') 
-    // const y = path.join('/')
-    
-     //if (path.slice(-1)[0] !== '') path.push('')
-
-
-    base = pathArr.slice(0, -1).join('/')
-    //console.log(pathArr.join('/'), base, pathArr)
-    return base
-}
-
 const ContentTabs = ({ path, classes, redirect }) => {
 
-    const basePath = getBasePath(path)
+    const basePath = path.slice(0, -1).join('/')
 
     return (
         <Tabs
@@ -73,54 +59,46 @@ const ContentTabs = ({ path, classes, redirect }) => {
                     />
                 ]
             }
-            
-
-            {/* {
-                path[1] === 'people' &&
-                <div>
-                    <Tab
-                        component={Link}
-                        to={basePath + `followers`}
-                        label="followers"
-                        value={basePath + `followers`}
-                        classes={{ label: classes.tab }}
-                    />
-                    <Tab
-                        component={Link}
-                        to={basePath + `followin`}
-                        label="followin"
-                        value={basePath + `followin`}
-                        classes={{ label: classes.tab }}
-                    />
-                    <Tab
-                        component={Link}
-                        to={basePath + `recommendations`}
-                        label="recommendations"
-                        value={basePath + `recommendations`}
-                        classes={{ label: classes.tab }}
-                    />
-                </div>
-            }
-
             {
-                path[1] === 'community' &&
-                <div>
+                (path[1] === 'people') &&
+                [
                     <Tab
-                        component={Link}
-                        to={basePath + `moderators`}
+                        label="followers"
+                        key={basePath + `/followers`}
+                        value={basePath + `/followers`}
+                        classes={{ label: classes.tab }}
+                    />,
+                    <Tab
+                        label="followin"
+                        key={basePath + `/followin`}
+                        value={basePath + `/followin`}
+                        classes={{ label: classes.tab }}
+                    />,
+                    <Tab
+                        label="recommended"
+                        key={basePath + `/recommended`}
+                        value={basePath + `/recommended`}
+                        classes={{ label: classes.tab }}
+                    />
+                ]
+            }
+            {
+                (path[1] === 'communities' && path[3]) &&
+                [
+                    <Tab
                         label="moderators"
-                        value={basePath + `moderators`}
+                        key={basePath + `/moderators`}
+                        value={basePath + `/moderators`}
                         classes={{ label: classes.tab }}
-                    />
+                    />,
                     <Tab
-                        component={Link}
-                        to={basePath + `participants`}
                         label="participants"
-                        value={basePath + `participants`}
+                        key={basePath + `/participants`}
+                        value={basePath + `/participants`}
                         classes={{ label: classes.tab }}
                     />
-                </div>
-            } */}
+                ]
+            }
         </Tabs>
     )
 }

@@ -49,6 +49,7 @@ class Settings extends PureComponent {
                     emailConfirmationCode: null
                 },
                 isAvatarLoading: false,
+                isBannerLoading: false,
                 isChangePasswordDialogOpen: false,
                 isDeleteProfileDialogOpen: false,
                 isDeleteProfileResponsibilityCheck: false
@@ -156,53 +157,6 @@ class Settings extends PureComponent {
                 const formatedOption = option[0].toUpperCase() + option.substr(1);
                 this.props.createMessage(formatedOption + ' is updated')
             }
-        }
-    }
-
-    updateProfileAvatarHandler = async (event) => {
-        event.preventDefault();
-        let avatar = event.target.files[0];
-        if (!avatar) return
-        if (avatar.size > 2000000) {
-            this.props.createMessage('Maximum size is 2 mB')
-            return
-        }
-        this.setState({
-            profile: {
-                ...this.state.profile,
-                isAvatarLoading: true
-            }
-        })
-        const reader = new FileReader();
-        reader.readAsDataURL(avatar);
-        reader.onloadend = async () => {
-            avatar = reader.result.split(',')[1].trim();
-            const updatedData = {
-                option: 'avatar',
-                value: avatar
-            }
-            const res = await updateUser(updatedData)
-            this.setState({
-                profile: {
-                    ...this.state.profile,
-                    isAvatarLoading: false
-                }
-            })
-            if (!res) {
-                this.props.createMessage('Server error. Try later.')
-                return
-            }
-            this.setState({
-                profile: {
-                    ...this.state.profile,
-                    values: {
-                        ...this.state.profile.values,
-                        ...res.data
-                    }
-                }
-            })
-            this.props.update(res.data);
-            this.props.createMessage('Avatar is updated')
         }
     }
 
@@ -359,7 +313,6 @@ class Settings extends PureComponent {
             <ProfileSettings
                 {...this.state.profile}
                 updateValue={this.updateProfileValueHandler}
-                updateAvatar={this.updateProfileAvatarHandler}
                 updatePassword={this.updateProfilePasswordHandler}
                 checkPassword={this.checkProfilePasswordHandler}
                 checkNewPassword={this.checkProfileNewPasswordHandler}

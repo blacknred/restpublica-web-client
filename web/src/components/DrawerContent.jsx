@@ -374,8 +374,8 @@ const DrawerContent = ({
                         in={isDrawer}
                         timeout={400}
                         className={
-                            path.join('/').match(/(Explore\/+|search|people)/) ?
-                                //||(path[1] === 'community' && path[3]))
+                            path.join('/')
+                                .match(/(trending\/+|search|people|\/communities\/.+\/.+)/) ?
                                 classes.drawerRoot2 :
                                 classes.drawerRoot
                         }

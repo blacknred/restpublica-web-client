@@ -6,9 +6,11 @@ import { withRouter } from 'react-router-dom';
 import {
     getTrendingProfiles,
     getSearchedProfiles,
-    getSubscriptionsProfiles,
+    getProfileSubscriptions,
+    getCommunitySubscriptions,
     createUserSubscription,
-    removeUserSubscription
+    removeUserSubscription,
+    getCommunity
 } from '../api'
 import {
     createFlashMessage,
@@ -23,6 +25,7 @@ class Authors extends Component {
         super(props);
         this.state = {
             mode: this.props.path[1],
+            targetId: null,
             empty: false,
             hasMore: true,
             authors: []
@@ -37,13 +40,23 @@ class Authors extends Component {
 
     getAuthorsHandler = async (page) => {
         let res
-        const { mode, authors } = this.state
+        const { mode, targetId, authors } = this.state
         const { path, userId, isPreview, switchLoader, createMessage } = this.props
         switch (mode) {
             case 'search': res = await getSearchedProfiles({ query: path[2], page })
                 break
-            case 'followers':
-            case 'followin': res = await getSubscriptionsProfiles({ userId, mode, page })
+            case 'people':
+                if (path[2].match(/(followers|followin)/)) {
+                    res = await getProfileSubscriptions({ userId, mode: path[2], page })
+                } else res = await getTrendingProfiles(page)
+                break
+            case 'communities':
+                if (!targetId) await this.getCommunityIdHandler(path[2])
+                if (path[3].match(/(participants|moderators)/)) {
+                    res = await getCommunitySubscriptions({
+                        communityId: this.state.targetId, mode: path[3], page
+                    })
+                }
                 break
             default: res = await getTrendingProfiles(page)
         }
@@ -68,6 +81,15 @@ class Authors extends Component {
             this.setState({ hasMore: false });
         }
         console.log(`page:${page}, ${this.state.authors.length} from ${res.data.count}`)
+    }
+
+    getCommunityIdHandler = async (communityName) => {
+        const res = await getCommunity(communityName)
+        if (!res) {
+            this.props.createMessage('Server error. Try later.')
+            return
+        }
+        this.setState({ targetId: res.data.id })
     }
 
     createSubscriptionHandler = async ({ id, username }) => {

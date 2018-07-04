@@ -6,9 +6,8 @@ import { withRouter } from 'react-router-dom';
 import {
     getTrendingCommunities,
     getSearchedCommunities,
-    // getAdminCommunities,
+    getAdminCommunities,
     getProfileCommunities,
-    // getCommunitySubscriptions,
     createCommunitySubscription,
     removeCommunitySubscription,
     getProfile,
@@ -26,7 +25,7 @@ class Communities extends Component {
         super(props);
         this.state = {
             mode: this.props.path[1],
-            targetId: null,
+            targetId: this.props.isHome ? this.props.userId : null,
             empty: false,
             hasMore: true,
             communities: []
@@ -37,21 +36,39 @@ class Communities extends Component {
         isAuthenticated: PropTypes.bool.isRequired,
         path: PropTypes.array.isRequired,
         userId: PropTypes.any,
-        isPreview: PropTypes.bool
+        isPreview: PropTypes.bool,
+        isHome: PropTypes.bool
     }
 
     getCommunitiesHandler = async (page) => {
         let res
         const { mode, targetId, communities } = this.state
-        const { path, isPreview, switchLoader, createMessage } = this.props
+        const { path, isPreview, isHome, switchLoader, userId, createMessage } = this.props
         switch (mode) {
             case 'search': res = await getSearchedCommunities({ query: path[2], page })
                 break
-            case 'explore': res = await getTrendingCommunities(page)
+            case 'explore':
+            case 'communities':
+                res = await getTrendingCommunities(page)
                 break
-            default: 
-            if (!targetId) await this.getProfileIdHandler(path[1])
-                res = await getProfileCommunities({ userId: this.state.targetId, page })
+            default:
+                if (!targetId) await this.getProfileIdHandler(path[1])
+                if (isHome) {
+                    const [profileCom, adminCom] = await Promise.all([
+                        getProfileCommunities({ userId: this.state.targetId, page }),
+                        isHome && getAdminCommunities({ adminId: this.state.targetId, page })
+                    ])
+                    res = {
+                        data: {
+                            count: parseInt(adminCom.data.count, 10) +
+                                parseInt(profileCom.data.count, 10),
+                            communities: [
+                                ...adminCom.data.communities,
+                                ...profileCom.data.communities
+                            ]
+                        }
+                    }
+                } else res = await getProfileCommunities({ userId: this.state.targetId, page })
         }
         switchLoader(false)
         if (!res) {
@@ -68,7 +85,10 @@ class Communities extends Component {
         }
         // enlarge communitys arr if there are, block loading if there are not
         if (res.data.communities.length) {
-            this.setState({ communities: communities.concat(...res.data.communities) });
+            this.setState({
+                communities: [...communities, ...res.data.communities]
+                    .sort((a) => a.admin_id !== parseInt(userId, 10) ? 1 : -1)
+            });
             if (isPreview) this.setState({ hasMore: false });
         } else {
             this.setState({ hasMore: false });
@@ -142,15 +162,14 @@ class Communities extends Component {
 
     render() {
         const { empty, communities, hasMore } = this.state
-        const { isAuthenticated, path, isPreview } = this.props
+        const { path, isPreview } = this.props
         return (
             isPreview ?
                 <PreviewList
+                    {...this.props}
                     mode='communities'
-                    isAuthenticated={isAuthenticated}
                     datas={communities}
                     hasMore={hasMore}
-                    path={path}
                     createSubscription={this.createSubscriptionHandler}
                     removeSubscription={this.removeSubscriptionHandler}
                 /> :
@@ -158,7 +177,7 @@ class Communities extends Component {
                     <EmptyContentMessage mode={path[1]} /> :
                     <CommunitiesList
                         {...this.state}
-                        isAuthenticated={isAuthenticated}
+                        {...this.props}
                         getCommunities={this.getCommunitiesHandler}
                         createSubscription={this.createSubscriptionHandler}
                         removeSubscription={this.removeSubscriptionHandler}
@@ -171,7 +190,8 @@ const mapStateToProps = (state, ownProps) => ({
     isAuthenticated: state.authentication.isAuthenticated,
     path: ownProps.location.pathname.split('/'),
     userId: state.authentication.id,
-    isPreview: ownProps.isPreview
+    isPreview: ownProps.isPreview,
+    isHome: ownProps.isHome || false
 })
 
 const mapDispatchToProps = dispatch => ({

@@ -6,7 +6,10 @@ WORKDIR /usr/src/app
 
 # add `/usr/src/app/node_modules/.bin` to $PATH
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
-ENV API_HOST=http://localhost:3003
+ENV REACT_APP_PORT=3000
+ENV REACT_APP_TITLE=Publica
+ENV REACT_APP_API_HOST=http://127.0.0.1:3003
+ENV REACT_APP_STORAGE_HOST=http://127.0.0.1:3007
 
 # install and cache app dependencies
 ADD package.json /usr/src/app/package.json

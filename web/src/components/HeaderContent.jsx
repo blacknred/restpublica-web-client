@@ -46,7 +46,7 @@ const styles = theme => ({
     },
     title: {
         marginLeft: theme.spacing.unit * 2,
-        marginRight: theme.spacing.unit * 4,
+        marginRight: theme.spacing.unit * 3,
         fontFamily: 'Product Sans, Roboto,Helvetica, Arial, sans-serif',
         textDecoration: 'none',
     },
@@ -56,7 +56,7 @@ const styles = theme => ({
         '&:before': {
             content: "''",
             fontSize: '1.2em',
-            marginRight: theme.spacing.unit * 4,
+            marginRight: theme.spacing.unit * 3,
             borderWidth: '0.03rem',
             borderStyle: 'solid',
             borderColor: theme.palette.divider
@@ -100,18 +100,16 @@ const HeaderContent = ({
             </Hidden>
             <Hidden smDown>
                 {
-                    isAuthenticated &&
-                        (
-                            path[1].match(/(post|search|people)/) ||
-                            (path[1] === 'explore' && path[2]) ||
-                            (path[1] === 'community' && path[3])
-                        ) ?
-                        <IconButton onClick={goBack}>
-                            <ArrowBackIcon />
-                        </IconButton> :
-                        <IconButton onClick={() => switchDrawer(!isDrawer)}>
-                            <MenuIcon />
-                        </IconButton>
+                    isAuthenticated && (
+                        path.join('/')
+                        .match(/(post|search|explore\/+|communities\/.+|\/.+\/communities)/) ?
+                            <IconButton onClick={goBack}>
+                                <ArrowBackIcon />
+                            </IconButton> :
+                            <IconButton onClick={() => switchDrawer(!isDrawer)}>
+                                <MenuIcon />
+                            </IconButton>
+                    )
                 }
             </Hidden>
         </Fragment>
@@ -129,14 +127,16 @@ const HeaderContent = ({
         </Typography>
     )
 
-    const statusTitle = (<Hidden smDown>
-        <Typography
-            variant="title"
-            color="textSecondary"
-            className={classes.statusTitle}
-        >
-            {path[1] || 'feed'}
-        </Typography></Hidden>
+    const statusTitle = (
+        <Hidden smDown>
+            <Typography
+                variant="title"
+                color="textSecondary"
+                className={classes.statusTitle}
+            >
+                {path[1] || 'feed'}
+            </Typography>
+        </Hidden>
     )
 
     const searchBlock = (
@@ -345,9 +345,8 @@ const HeaderContent = ({
                     </Toolbar>
                 </Toolbar>
                 {
-                    path.join('/').match(/(trending\/+|search|people)/) &&
-                    // ||(path[1] === 'community' && path[3])) &&
-                    <ContentTabs
+                    path.join('/').match(/(trending\/+|search|people|\/communities\/.+\/.+)/)
+                    && <ContentTabs
                         path={path}
                         redirect={tabsRedirect}
                     />

@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Card from '@material-ui/core/Card';
 import Slide from '@material-ui/core/Slide';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/Dialog';
-import DialogContentText from '@material-ui/core/Dialog';
+import { withStyles } from '@material-ui/core/styles';
+import CardContent from '@material-ui/core/CardContent';
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
@@ -20,40 +18,31 @@ const styles = {
     }
 }
 
-const NewCommunityForm = ({ close, open, modalOpen }) => {
+const NewCommunityForm = ({ close, isOpen, modalOpen, classes }) => {
     return (
         <Dialog
-            open={open}
-            transition={Transition}
+            open={isOpen}
+            TransitionComponent={Transition}
             keepMounted
             onClose={() => modalOpen(false)}
             onExited={close}
         >
-            <DialogTitle id="alert-dialog-slide-title">
-                {"Use Google's location service?"}
-            </DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-slide-description">
-                    Let Google help apps determine location. This means sending anonymous location data to
-                    Google, even when no apps are running.
-            </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={() => modalOpen(false)} color="primary">
-                    Cancel
-            </Button>
-                <Button onClick={() => modalOpen(false)} color="primary">
-                    Create
-            </Button>
-            </DialogActions>
+            <Card
+                elevation={0}
+                className={classes.form}
+            >
+                <CardContent>
+                    in dev
+                </CardContent>
+            </Card >
         </Dialog>
     )
 }
 
 NewCommunityForm.propTypes = {
-    open: PropTypes.bool.isRequired,
+    isOpen: PropTypes.bool.isRequired,
     modalOpen: PropTypes.func.isRequired,
     close: PropTypes.func.isRequired,
 }
 
-export default NewCommunityForm 
+export default withStyles(styles)(NewCommunityForm)

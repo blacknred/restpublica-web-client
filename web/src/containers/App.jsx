@@ -98,75 +98,82 @@ class App extends Component {
                     location={isModal ? this.previousLocation : location}
                 >
 
-                    {/* ***** auth paths ***** */}
                     <Route path='/(login|register)' render={() => (
                         <div>
                             {isAuthenticated ? <Redirect to='/' /> : <Landing />}
                         </div>
                     )} />
+
+
+
                     <Route exact path='/' render={() => (
                         isAuthenticated ? <Posts /> : toLogin
                     )} />
-                    <Route path='/settings' render={() => (
-                        isAuthenticated ? <Settings /> : toLogin
-                    )} />
-                    <Route path='/activity' render={() =>
-                        isAuthenticated ? <Notifications /> : toLogin
-                    } />
-                    <Route path='/communities' render={() => (
-                        isAuthenticated ? <div /> : toLogin
-                    )} />
-                    <Route path='/community/:name/moderation' render={() =>
-                        isAuthenticated ? <CommunityModeration /> : toLogin
-                    } />
-
-
-                    {/* ***** non auth paths ***** */}
                     <Route path='/explore/communities' component={Communities} />
                     <Route path='/explore' render={() =>
-                        <Fragment>
+                        <div>
                             <Tags />
                             <Communities isPreview />
                             <Posts />
-                        </Fragment>
+                        </div>
                     } />
-
                     <Route path='/search/:query/communities' component={Communities} />
                     <Route path='/search/:query/authors' component={Authors} />
                     <Route path='/search/:query/posts' render={() =>
-                        <Fragment>
+                        <div>
                             <Tags />
                             <Posts />
-                        </Fragment>
+                        </div>
                     } />
-                    <Route path='/search/:query' render={({ match }) =>
+                    <Route path='/search/:query' render={() =>
                         <Fragment>
                             <Tags />
                             <Authors isPreview />
                             <Communities isPreview />
                             <Posts />
                         </Fragment>
-                        // <Redirect to={`${match.url}/posts`} />
                     } />
                     <Route path='/search' render={() => <Redirect to='/' />} />
-
+                    <Route path='/posts/:slug' render={() => <Post />} />
+                    <Route path='/posts' render={() => <Redirect to='/' />} />
+                    <Route path='/post' render={() => <Redirect to='/' />} />
                     <Route path='/tags/:tag' component={Posts} />
                     <Route path='/tags' render={() => <Redirect to='/' />} />
 
-                    <Route path='/post/:slug' render={() => <Post />} />
-                    <Route path='/post' render={() => <Redirect to='/' />} />
+                    <Route path='/people/(followers|followin|recommended)' component={Authors} />
+                    <Route path='/people' render={() => <Redirect to='/' />} />
 
-                    <Route path='/community/:name/(moderators|participants)' component={Authors} />
-
-                    <Route path='/community/:name' render={() =>
+                    <Route path='/communities/:name/moderation' render={() =>
+                        isAuthenticated ? <CommunityModeration /> : toLogin
+                    } />
+                    <Route path='/communities/:name/(moderators|participants)' render={() => (
+                        isAuthenticated ? <Authors /> : toLogin
+                    )} />
+                    <Route path='/communities/recommended' render={() => (
+                        isAuthenticated ? <Communities /> : toLogin
+                    )} />
+                    <Route path='/communities/:name' render={() =>
                         <Fragment>
                             <Community />
                             <Posts />
                         </Fragment>
                     } />
+                    <Route path='/communities' render={() => (
+                        isAuthenticated ? <Communities isHome /> : toLogin
+                    )} />
                     <Route path='/community' render={() => <Redirect to='/' />} />
 
+
+
+                    <Route path='/settings' render={() => (
+                        isAuthenticated ? <Settings /> : toLogin
+                    )} />
+                    <Route path='/activity' render={() =>
+                        isAuthenticated ? <Notifications /> : toLogin
+                    } />
                     <Route path='/album' render={() => <Redirect to='/' />} />
+
+
 
                     <Route path='/:username/communities' component={Communities} />
                     <Route path='/:username/(followers|following)' component={Authors} />

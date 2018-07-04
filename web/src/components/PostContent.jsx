@@ -51,6 +51,7 @@ const styles = theme => ({
         minWidth: '250px',
         width: '100%',
         margin: '0.6em',
+        borderRadius: 0,
         '@media (max-width: 600px)': {
             margin: '0.6em 0'
         },
@@ -311,14 +312,14 @@ const PostContent = ({
             }
             subheader={
                 post.community_name &&
-                <Link to={`/community/${post.community_name}`}>
+                <Link to={`/communities/${post.community_name}`}>
                     {post.community_name}
                 </Link>
             }
             action={
                 <IconButton
                     component={Link}
-                    to={`/post/${post.slug}`}
+                    to={`/posts/${post.slug}`}
                     aria-label="Share"
                     classes={{ label: classes.headerShiftOnHover }}
                 >

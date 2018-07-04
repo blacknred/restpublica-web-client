@@ -2,13 +2,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 import React, { PureComponent } from 'react';
 
+import { createFlashMessage, } from '../actions'
+
 import NewCommunityForm from '../components/NewCommunityForm'
 
 class NewCommunity extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            open: true,
+            isOpen: true,
         }
     };
 
@@ -37,6 +39,7 @@ const mapStateToProps = (state, ownProps) => ({
 })
 
 const mapDispatchToProps = dispatch => ({
+    createMessage: (message) => dispatch(createFlashMessage(message))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewCommunity)

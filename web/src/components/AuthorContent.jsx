@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 import List from '@material-ui/core/List';
@@ -14,10 +14,13 @@ import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import ListItemText from '@material-ui/core/ListItemText';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
     root: {
-        width: '90%',
+        width: '100%',
+        maxWidth: '1300px',
         marginBottom: theme.spacing.unit * 5,
         position: 'relative',
         '& a': {
@@ -68,24 +71,55 @@ const styles = theme => ({
         flex: 1
     },
     avatar: {
-        height: '3.2em',
-        width: '3.2em',
-        border: `3px solid ${theme.palette.background.default}`
+        width: '68px',
+        height: '68px',
+        position: 'relative',
     },
     avatar2: {
-        height: '5em',
-        width: '5em',
+        height: '100px',
+        width: '100px',
         marginBottom: '10px',
-        border: `3px solid ${theme.palette.background.default}`
+        position: 'relative',
     },
-
+    avatarImg: {
+        width: '100%',
+        height: '100%',
+        border: `2px solid ${theme.palette.background.paper}`
+    },
+    avatarIcon: {
+        position: 'absolute',
+        bottom: '0.9em',
+        left: '0.9em',
+        color: 'white',
+        cursor: 'pointer'
+    },
+    avatarIcon2: {
+        position: 'absolute',
+        bottom: '1.5em',
+        left: '1.5em',
+        color: 'white',
+        cursor: 'pointer'
+    },
+    bannerIcon: {
+        cursor: 'pointer',
+        position: 'absolute',
+        right: theme.spacing.unit * 5,
+        top: theme.spacing.unit * 4,
+    },
+    fileInput: {
+        display: 'none'
+    },
 })
 
 const AuthorContent = ({
     avatar, username, fullname, description, isMine, classes, posts_cnt,
-    followers_cnt, followin_cnt, communities_cnt, my_subscription, banner,
-    preview_communities, createSubscription, removeSubscription
+    followers_cnt, followin_cnt, my_subscription, banner, createSubscription,
+    removeSubscription, updateImg, isBannerLoading, isAvatarLoading
 }) => {
+
+    const progress = () => <CircularProgress size={65} />
+
+    const progress2 = () => <CircularProgress size={100} />
 
     const authorContent = (
         <List
@@ -144,6 +178,75 @@ const AuthorContent = ({
         </CardActions>
     )
 
+    const changeBannerButton = (
+        isMine &&
+        <Avatar
+            className={classes.bannerIcon}
+            component={isBannerLoading ? CircularProgress : 'label'}
+        >
+            <PhotoCameraIcon />
+            <input
+                className={classes.fileInput}
+                key='avatar'
+                type='file'
+                name='avatar'
+                accept='.jpg, .jpeg, .png'
+                onChange={e => updateImg(e, 'banner')}
+            />
+        </Avatar>
+    )
+
+    const authorAvatar = (
+        <Fragment>
+            <Hidden smDown>
+                <label className={classes.avatar}>
+                    <Avatar
+                        className={classes.avatarImg}
+                        srcSet={`data:image/png;base64,${avatar}`}
+                        component={isAvatarLoading ? progress : 'div'}
+                    />
+                    {
+                        isMine &&
+                        <Fragment>
+                            <PhotoCameraIcon className={classes.avatarIcon} />
+                            <input
+                                className={classes.fileInput}
+                                key='avatar'
+                                type='file'
+                                name='avatar'
+                                accept='.jpg, .jpeg, .png'
+                                onChange={e => updateImg(e, 'avatar')}
+                            />
+                        </Fragment>
+                    }
+                </label>
+            </Hidden>
+            <Hidden mdUp>
+                <label className={classes.avatar2}>
+                    <Avatar
+                        className={classes.avatarImg}
+                        srcSet={`data:image/png;base64,${avatar}`}
+                        component={isAvatarLoading ? progress2 : 'div'}
+                    />
+                    {
+                        isMine &&
+                        <Fragment>
+                            <PhotoCameraIcon className={classes.avatarIcon2} />
+                            <input
+                                className={classes.fileInput}
+                                key='avatar'
+                                type='file'
+                                name='avatar'
+                                accept='.jpg, .jpeg, .png'
+                                onChange={e => updateImg(e, 'avatar')}
+                            />
+                        </Fragment>
+                    }
+                </label>
+            </Hidden>
+        </Fragment>
+    )
+
     return (
         <Card
             className={classes.root}
@@ -151,14 +254,13 @@ const AuthorContent = ({
         >
             <Hidden smDown>
                 <CardMedia
-                    image={`data:image/png;base64,${banner || avatar}`}
+                    image={`data:image/png;base64,${banner}`}
                     className={classes.rootBackgroung}
-                />
+                >
+                    {changeBannerButton}
+                </CardMedia>
                 <CardActions className={classes.content}>
-                    <Avatar
-                        srcSet={`data:image/png;base64,${avatar}`}
-                        className={classes.avatar}
-                    />
+                    {authorAvatar}
                     {authorContent}
                     {authorAction}
                 </CardActions>
@@ -167,12 +269,11 @@ const AuthorContent = ({
                 <CardMedia
                     image={`data:image/png;base64,${banner || avatar}`}
                     className={classes.rootBackgroung2}
-                />
+                >
+                    {changeBannerButton}
+                </CardMedia>
                 <CardContent className={classes.content2}>
-                    <Avatar
-                        srcSet={`data:image/png;base64,${avatar}`}
-                        className={classes.avatar2}
-                    />
+                    {authorAvatar}
                     {authorContent}
                     {authorAction}
                 </CardContent>
@@ -191,19 +292,11 @@ AuthorContent.propTypes = {
     posts_cnt: PropTypes.any.isRequired,
     followers_cnt: PropTypes.any.isRequired,
     followin_cnt: PropTypes.any.isRequired,
-    communities_cnt: PropTypes.any.isRequired,
     my_subscription: PropTypes.number,
-    preview_communities: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.number.isRequired,
-            name: PropTypes.string.isRequired,
-            title: PropTypes.string.isRequired,
-            avatar: PropTypes.string.isRequired,
-            followers_cnt: PropTypes.any.isRequired,
-            my_subscription: PropTypes.number,
-        })
-    ).isRequired,
     isMine: PropTypes.bool.isRequired,
+    isAvatarLoading: PropTypes.bool.isRequired,
+    isBannerLoading: PropTypes.bool.isRequired,
+    updateImg: PropTypes.func.isRequired,
     removeSubscription: PropTypes.func.isRequired,
     createSubscription: PropTypes.func.isRequired
 }

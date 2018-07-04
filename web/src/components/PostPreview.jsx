@@ -38,8 +38,8 @@ const styles = theme => ({
     },
     headerAvatar: {
         backgroundColor: theme.palette.primary.light,
-        width: '30px',
-        height: '30px'
+        width: 25,
+        height: 25
     },
     description: {
         '& span': {
@@ -86,9 +86,9 @@ const PostPreview = ({ post, classes }) => {
                 post.content[0].mime === 'video/mp4' ? 'video' : 'img'
             }
             src={
-                post.content[0].mime === 'image/gif' ?
-                    post.content[0].thumb :
-                    post.content[0].file
+                //post.content[0].mime === 'image/gif' ?
+                    post.content[0].thumb
+                    //: post.content[0].file
             }
         />
     )
@@ -103,7 +103,7 @@ const PostPreview = ({ post, classes }) => {
                 <Fade
                     in={true}
                     component={Link}
-                    to={`/post/${post.slug}`}
+                    to={`/posts/${post.slug}`}
                     timeout={800}
                 >
                     <Card

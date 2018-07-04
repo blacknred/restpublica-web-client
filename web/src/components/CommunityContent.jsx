@@ -23,7 +23,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 
 const styles = theme => ({
     root: {
-        width: '90%',
+        width: '100%',
+        maxWidth: '1300px',
         marginBottom: theme.spacing.unit * 5,
         position: 'relative',
         '& a': {
@@ -73,13 +74,13 @@ const styles = theme => ({
     avatar: {
         height: '3.2em',
         width: '3.2em',
-        border: `3px solid ${theme.palette.background.default}`
+        border: `2px solid ${theme.palette.background.default}`
     },
     avatar2: {
         height: '5em',
         width: '5em',
         marginBottom: '10px',
-        border: `3px solid ${theme.palette.background.default}`
+        border: `2px solid ${theme.palette.background.default}`
     },
 
 })
@@ -100,7 +101,7 @@ const CommunityContent = ({
             </ListItem>
             <ListItem
                 component={Link}
-                to={`/community/${name}/participants`}
+                to={`/communities/${name}/participants`}
             >
                 {
                     last_members.map((member, i) =>
