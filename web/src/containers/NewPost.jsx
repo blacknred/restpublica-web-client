@@ -1,7 +1,7 @@
 import URI from 'url';
 import path from 'path';
 import moment from 'moment';
-import urlRegex from 'url-regex';
+import urlRegex from 'is-url';
 import PropTypes from 'prop-types';
 import getVideoId from 'get-video-id';
 import { connect } from 'react-redux';
