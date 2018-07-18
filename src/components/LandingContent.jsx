@@ -47,7 +47,7 @@ const LandingContent = ({ gifUrl, classes, children }) => {
                     variant='display1'
                     className={classes.title}
                 >
-                    {process.env.REACT_APP_TITLE || 'Publica'}
+                    {process.env.REACT_APP_WEBSITE_NAME || 'Publica'}
                 </DialogContentText>
             </DialogTitle>
 

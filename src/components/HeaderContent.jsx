@@ -123,7 +123,7 @@ const HeaderContent = ({
             to={isAuthenticated ? '/' : '/trending'}
             className={classes.title}
         >
-            {process.env.REACT_APP_TITLE}
+            {process.env.REACT_APP_WEBSITE_NAME}
         </Typography>
     )
 

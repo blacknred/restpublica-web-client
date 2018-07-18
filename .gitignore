@@ -9,7 +9,7 @@ build
 
 # misc
 .DS_Store
-.env
+.env*.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -19,3 +19,7 @@ env.sh
 
 #ide
 .vscode
+
+#docker files
+Dockerfile
+.dockerignore

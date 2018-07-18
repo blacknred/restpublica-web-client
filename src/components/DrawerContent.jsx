@@ -115,7 +115,7 @@ const DrawerContent = ({
                 onClick={() => switchDrawer(!isDrawer)}
                 className={classes.drawerHeaderTitle}
             >
-                {process.env.REACT_APP_TITLE}
+                {process.env.REACT_APP_WEBSITE_NAME}
             </Typography>
             <IconButton
                 aria-label="Menu"
@@ -311,7 +311,7 @@ const DrawerContent = ({
             variant='caption'
             color='inherit'
         >
-            <span>© {(new Date()).getFullYear()} {process.env.REACT_APP_TITLE}, LLC</span><br />
+            <span>© {(new Date()).getFullYear()} {process.env.REACT_APP_WEBSITE_NAME}, LLC</span><br />
             <a
                 href="https://github.com/blacknred/restpublica"
                 target="_blank"
