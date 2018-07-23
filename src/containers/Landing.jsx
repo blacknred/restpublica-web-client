@@ -32,7 +32,7 @@ class Landing extends PureComponent {
                 fullname: null,
                 email: null
             },
-            gifUrl: ''
+            gifUrl: 'https://media0.giphy.com/media/fHrM9Iyl0KNbBYj2lg/giphy.gif'
         }
     }
 
@@ -90,8 +90,8 @@ class Landing extends PureComponent {
             })
         } else {
             this.props.auth(res.data)
-            this.props.history.push(this.props.from)
             this.props.createMessage(`You successfully logged in!`)
+            this.props.history.push(this.props.from)
         }
     }
 
@@ -140,21 +140,23 @@ class Landing extends PureComponent {
     render() {
         const { mode } = this.props
         return (
-            <LandingContent gifUrl={this.state.gifUrl} >
-                {
-                    mode === 'login' ?
-                        <LoginForm
-                            {...this.state}
-                            inputChange={this.inputChangeHandler}
-                            submitHandler={this.submitLoginHandler}
-                        /> :
-                        <RegisterForm
-                            {...this.state}
-                            inputChange={this.inputChangeHandler}
-                            submitHandler={this.submitRegisterHandler}
-                        />
-                }
-            </LandingContent>
+            <div>
+                <LandingContent gifUrl={this.state.gifUrl} >
+                    {
+                        mode === 'login' ?
+                            <LoginForm
+                                {...this.state}
+                                inputChange={this.inputChangeHandler}
+                                submitHandler={this.submitLoginHandler}
+                            /> :
+                            <RegisterForm
+                                {...this.state}
+                                inputChange={this.inputChangeHandler}
+                                submitHandler={this.submitRegisterHandler}
+                            />
+                    }
+                </LandingContent>
+            </div>
         )
     }
 }

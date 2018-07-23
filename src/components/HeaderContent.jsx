@@ -86,7 +86,7 @@ const styles = theme => ({
 
 const HeaderContent = ({
     searchRedirect, avatar, path, notificationsCount, classes, isDrawer,
-    query, isNotify, isNightMode, isUserMenuOpen, isTrendingMenuOpen,
+    query, isNotify, isNightMode, isUserMenuOpen, isTrendingMenuOpen, from,
     goBack, isAuthenticated, toggleMenuOpen, logoutUser, switchNightMode,
     switchDrawer, switchNotify, createFlashMessage, changeSearchQuery, tabsRedirect
 }) => {
@@ -102,7 +102,7 @@ const HeaderContent = ({
                 {
                     isAuthenticated && (
                         path.join('/')
-                        .match(/(post|search|explore\/+|communities\/.+|\/.+\/communities)/) ?
+                            .match(/(post|search|explore\/+|communities\/.+|\/.+\/communities)/) ?
                             <IconButton onClick={goBack}>
                                 <ArrowBackIcon />
                             </IconButton> :
@@ -120,7 +120,7 @@ const HeaderContent = ({
             variant="headline"
             color="textSecondary"
             component={Link}
-            to={isAuthenticated ? '/' : '/trending'}
+            to={isAuthenticated ? '/' : '/explore'}
             className={classes.title}
         >
             {process.env.REACT_APP_WEBSITE_NAME}
@@ -238,11 +238,14 @@ const HeaderContent = ({
                 </MenuItem>
                 <MenuItem
                     component={Link}
-                    to='/login'
+                    to={{
+                        pathname: '/login',
+                        state: { from }
+                    }}
                     onClick={() => {
-                        toggleMenuOpen('isUserMenuOpen')
-                        switchNightMode(false)
                         logoutUser()
+                        switchNightMode(false)
+                        toggleMenuOpen('isUserMenuOpen')
                         createFlashMessage('You are now logged out.')
                     }}>
                     <ListItemIcon>
@@ -288,7 +291,7 @@ const HeaderContent = ({
 
     const userLink = (
         isAuthenticated ?
-            <Hidden mdUp>
+            (<Hidden mdUp>
                 <IconButton
                     component={Link}
                     to='/settings/profile'
@@ -298,8 +301,8 @@ const HeaderContent = ({
                         srcSet={`data:image/png;base64,${avatar}`}
                     />
                 </IconButton>
-            </Hidden> :
-            <Button
+            </Hidden>) :
+            (<Button
                 variant='contained'
                 disableRipple
                 size='small'
@@ -308,7 +311,7 @@ const HeaderContent = ({
                 to="/login"
             >
                 Login
-            </Button>
+            </Button>)
     )
 
     return (
@@ -320,7 +323,7 @@ const HeaderContent = ({
         >
             <AppBar
                 position="sticky"
-                elevation={2}
+                elevation={1}
                 color='inherit'
                 classes={{ root: classes.appBar }}
             >
@@ -377,6 +380,7 @@ HeaderContent.propTypes = {
     toggleMenuOpen: PropTypes.func.isRequired,
     changeSearchQuery: PropTypes.func.isRequired,
     classes: PropTypes.object.isRequired,
+    from: PropTypes.string.isRequired,
     goBack: PropTypes.func.isRequired,
 }
 

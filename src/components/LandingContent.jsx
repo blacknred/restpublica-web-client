@@ -52,7 +52,9 @@ const LandingContent = ({ gifUrl, classes, children }) => {
             </DialogTitle>
 
             <DialogContent>
+                <div>
                 {children}
+                </div>
             </DialogContent>
 
             <DialogContent>

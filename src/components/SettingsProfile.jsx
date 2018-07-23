@@ -41,7 +41,7 @@ const styles = theme => ({
 
 const SettingsProfile = ({
     values, errors, classes, isChangePasswordDialogOpen, toggleDialog,
-    isDeleteProfileDialogOpen, updateValue, updatePassword, logoutUser, 
+    isDeleteProfileDialogOpen, updateValue, updatePassword, logoutUser,
     checkPassword, checkNewPassword, sendNewPasswordEmailConfirmation,
     updateEmailConfirmationCode, isDeleteProfileResponsibilityCheck
 }) => {
@@ -258,17 +258,15 @@ const SettingsProfile = ({
                         Cancel
                     </Button>
                     <Button
-                        onClick={() => {
-                            updateValue('active', false)
-                            logoutUser()
-                        }}
+                        onClick={() => updateValue('active', false)}
                         color="primary"
                         disabled={
                             errors.oldpassword !== null ||
                             values.oldpassword === null ||
                             !isDeleteProfileResponsibilityCheck
                         }
-                        autoFocus>
+                        autoFocus
+                    >
                         Delete profile
                     </Button>
                 </DialogActions>
@@ -296,10 +294,8 @@ SettingsProfile.propTypes = {
     values: PropTypes.shape({
         username: PropTypes.string.isRequired,
         fullname: PropTypes.string.isRequired,
-        description: PropTypes.string.isRequired,
+        description: PropTypes.string,
         email: PropTypes.string.isRequired,
-        avatar: PropTypes.string.isRequired,
-        avatar: PropTypes.string.isRequired,
         oldpassword: PropTypes.string,
         newpassword: PropTypes.string,
         emailConfirmationCode: PropTypes.string

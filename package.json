@@ -31,6 +31,7 @@
     },
     "devDependencies": {
         "eslint": "^4.19.1",
-        "react-scripts": "^1.1.4"
+        "react-scripts": "^1.1.4",
+        "serve": "^9.2.0"
     }
 }

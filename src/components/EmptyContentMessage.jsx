@@ -23,7 +23,7 @@ const EmptyContentMessage = ({ mode, isProfilePage, classes }) => {
         <div className={classes.container}>
             {
                 (mode === '' ||
-                mode === 'trending' ||
+                mode === 'explore' ||
                 mode === 'search' ||
                 isProfilePage) &&
                 <ReportIcon
@@ -43,13 +43,13 @@ const EmptyContentMessage = ({ mode, isProfilePage, classes }) => {
                         <Button
                             color='primary'
                             component={Link}
-                            to="/trending">
+                            to="/explore">
                             Start now with Trending
                         </Button>
                     </Fragment>
                 }
                 {
-                    mode === 'trending' &&
+                    mode === 'explore' &&
                     <Fragment>
                         Seems like there is no any content at all.<br />
                         If you are a developer start with db populating :)
@@ -82,7 +82,7 @@ const EmptyContentMessage = ({ mode, isProfilePage, classes }) => {
                 }
                 {
                     mode !== '' &&
-                    mode !== 'trending' &&
+                    mode !== 'explore' &&
                     mode !== 'search' &&
                     !isProfilePage &&
                     <Fragment>There is no any posts yet.</Fragment>

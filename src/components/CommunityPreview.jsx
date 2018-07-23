@@ -13,7 +13,7 @@ import CardActions from '@material-ui/core/CardActions';
 
 const styles = {
     tile: {
-        minWidth: '15.8em',
+        width: '15.8em',
         margin: '10px',
         textDecoration: 'none',
         //overflow: 'inherit'
@@ -61,7 +61,7 @@ const CommunityPreview = ({
         isAuthenticated &&
         <CardActions>
             {
-                community.admin_id == userId ?
+                parseInt(community.admin_id,10) === parseInt(userId, 10) ?
                     <Typography variant='subheading'>
                         Owner
                             </Typography> :

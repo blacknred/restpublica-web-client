@@ -13,7 +13,7 @@ import CardContent from '@material-ui/core/CardContent';
 
 const styles = {
     tile: {
-        minWidth: '15.8em',
+        width: '15.8em',
         margin: '10px',
         textDecoration: 'none',
         textAlign: 'center',

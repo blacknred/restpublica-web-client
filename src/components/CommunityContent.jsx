@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import List from '@material-ui/core/List';
 import Card from '@material-ui/core/Card';
+import Fade from '@material-ui/core/Fade';
 import Dialog from '@material-ui/core/Dialog';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -187,39 +188,41 @@ const CommunityContent = ({
     )
 
     return (
-        <Card
-            className={classes.root}
-            elevation={0}
-        >
-            <Hidden smDown>
-                <CardMedia
-                    image={`data:image/png;base64,${banner}`}
-                    className={classes.rootBackgroung}
-                />
-                <CardActions className={classes.content}>
-                    <Avatar
-                        srcSet={`data:image/png;base64,${avatar}`}
-                        className={classes.avatar}
+        <Fade in={true}>
+            <Card
+                className={classes.root}
+                elevation={0}
+            >
+                <Hidden smDown>
+                    <CardMedia
+                        image={`data:image/png;base64,${banner}`}
+                        className={classes.rootBackgroung}
                     />
-                    {communityContent}
-                    {communityAction}
-                </CardActions>
-            </Hidden>
-            <Hidden mdUp>
-                <CardMedia
-                    image={`data:image/png;base64,${banner}`}
-                    className={classes.rootBackgroung2}
-                />
-                <CardContent className={classes.content2}>
-                    <Avatar
-                        srcSet={`data:image/png;base64,${avatar}`}
-                        className={classes.avatar2}
+                    <CardActions className={classes.content}>
+                        <Avatar
+                            srcSet={`data:image/png;base64,${avatar}`}
+                            className={classes.avatar}
+                        />
+                        {communityContent}
+                        {communityAction}
+                    </CardActions>
+                </Hidden>
+                <Hidden mdUp>
+                    <CardMedia
+                        image={`data:image/png;base64,${banner}`}
+                        className={classes.rootBackgroung2}
                     />
-                    {communityContent}
-                    {communityAction}
-                </CardContent>
-            </Hidden>
-        </Card>
+                    <CardContent className={classes.content2}>
+                        <Avatar
+                            srcSet={`data:image/png;base64,${avatar}`}
+                            className={classes.avatar2}
+                        />
+                        {communityContent}
+                        {communityAction}
+                    </CardContent>
+                </Hidden>
+            </Card>
+        </Fade>
     )
 }
 

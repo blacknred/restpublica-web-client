@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TransitionGroup } from "react-transition-group";
 import classNames from 'classnames';
+import { TransitionGroup } from "react-transition-group";
 
 import Slide from '@material-ui/core/Slide';
 import { withStyles } from '@material-ui/core/styles';
@@ -29,7 +29,7 @@ const Frame = ({ isDrawer, slideKey, isLoading, classes, children }) => {
     return (
         <TransitionGroup className={classNames(classes.frame, isDrawer ? classes.left : null)}>
             <Slide
-                component={'div'}
+                // component={'div'}
                 in={!isLoading}
                 key={slideKey}
                 direction='up'

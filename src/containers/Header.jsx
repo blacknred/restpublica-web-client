@@ -38,6 +38,7 @@ class Header extends Component {
         createFlashMessage: PropTypes.func.isRequired,
         logoutUser: PropTypes.func.isRequired,
         goBack: PropTypes.func.isRequired,
+        from: PropTypes.string.isRequired,
         isPreview: PropTypes.bool
     }
 
@@ -108,6 +109,7 @@ const mapStateToProps = (state, ownProps) => ({
     path: ownProps.location.pathname.split('/'),
     updateHistory: ownProps.history.push,
     goBack: ownProps.history.goBack,
+    from: ownProps.location.pathname,
     isPreview: ownProps.isPreview
 })
 

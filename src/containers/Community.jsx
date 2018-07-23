@@ -24,8 +24,8 @@ class Community extends Component {
 
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
-        userId: PropTypes.string.isRequired,
-        username: PropTypes.string.isRequired,
+        userId: PropTypes.string,
+        username: PropTypes.string,
         community: PropTypes.string.isRequired,
         switchNotFound: PropTypes.func.isRequired
     }

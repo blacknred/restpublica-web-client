@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import List from '@material-ui/core/List';
 import Card from '@material-ui/core/Card';
+import Fade from '@material-ui/core/Fade';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Hidden from '@material-ui/core/Hidden';
@@ -248,37 +249,39 @@ const AuthorContent = ({
     )
 
     return (
-        <Card
-            className={classes.root}
-            elevation={0}
-        >
-            <Hidden smDown>
-                <CardMedia
-                    image={`data:image/png;base64,${banner}`}
-                    className={classes.rootBackgroung}
-                >
-                    {changeBannerButton}
-                </CardMedia>
-                <CardActions className={classes.content}>
-                    {authorAvatar}
-                    {authorContent}
-                    {authorAction}
-                </CardActions>
-            </Hidden>
-            <Hidden mdUp>
-                <CardMedia
-                    image={`data:image/png;base64,${banner || avatar}`}
-                    className={classes.rootBackgroung2}
-                >
-                    {changeBannerButton}
-                </CardMedia>
-                <CardContent className={classes.content2}>
-                    {authorAvatar}
-                    {authorContent}
-                    {authorAction}
-                </CardContent>
-            </Hidden>
-        </Card>
+        <Fade in={true}>
+            <Card
+                className={classes.root}
+                elevation={0}
+            >
+                <Hidden smDown>
+                    <CardMedia
+                        image={`data:image/png;base64,${banner}`}
+                        className={classes.rootBackgroung}
+                    >
+                        {changeBannerButton}
+                    </CardMedia>
+                    <CardActions className={classes.content}>
+                        {authorAvatar}
+                        {authorContent}
+                        {authorAction}
+                    </CardActions>
+                </Hidden>
+                <Hidden mdUp>
+                    <CardMedia
+                        image={`data:image/png;base64,${banner || avatar}`}
+                        className={classes.rootBackgroung2}
+                    >
+                        {changeBannerButton}
+                    </CardMedia>
+                    <CardContent className={classes.content2}>
+                        {authorAvatar}
+                        {authorContent}
+                        {authorAction}
+                    </CardContent>
+                </Hidden>
+            </Card>
+        </Fade>
     )
 }
 

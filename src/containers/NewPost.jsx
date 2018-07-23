@@ -1,7 +1,7 @@
 import URI from 'url';
 import path from 'path';
 import moment from 'moment';
-import urlRegex from 'is-url';
+import isUrl from 'is-url';
 import PropTypes from 'prop-types';
 import getVideoId from 'get-video-id';
 import { connect } from 'react-redux';
@@ -37,7 +37,7 @@ class NewPost extends PureComponent {
                 hasMore: true,
                 empty: false,
                 list: [],
-                selected: this.props.community,
+                selected: this.props.community || {},
             },
 
             description: '',
@@ -155,7 +155,7 @@ class NewPost extends PureComponent {
         }
     }
 
-    setCommunityHandler = ({ selected }) => {
+    setCommunityHandler = selected => {
         this.setState({
             availableCommunities: {
                 ...this.state.availableCommunities,
@@ -266,13 +266,11 @@ class NewPost extends PureComponent {
                 files
             }
         })
-
     }
-
 
     addLinkHandler = async () => {
         const url = this.state.content.link
-        if (!urlRegex({ exact: true }).test(url)) {
+        if (!isUrl(url)) {
             this.props.createMessage('Not valid url')
             return
         }
@@ -359,7 +357,6 @@ class NewPost extends PureComponent {
                 linkDescription: null
             }
         })
-
     }
 
     changeContentLinkHandler = (val) => {

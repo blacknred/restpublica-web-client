@@ -125,6 +125,7 @@ class Settings extends PureComponent {
             this.props.createMessage('Server error. Try later.')
             return
         }
+        if (option === 'active') this.logoutHandler()
         if (res.status.toString().match(/(401|409|422)/)) {
             if (!res.message.length) res.message = [res.message]
             res.message.forEach((failure) => {
@@ -297,9 +298,8 @@ class Settings extends PureComponent {
     }
 
     logoutHandler = () => {
-        this.props.switchNightMode(false)
         this.props.logoutUser()
-        this.props.switchDrawer(false)
+        this.props.switchNightMode(false)
         this.props.createMessage('You are now logged out.')
     }
 

@@ -69,10 +69,12 @@ class App extends Component {
         )
 
         const toLogin = (
-            <Redirect to={{
-                pathname: '/login',
-                state: { from: location.pathname }
-            }} />
+            <div>
+                <Redirect to={{
+                    pathname: '/login',
+                    state: { from: location.pathname }
+                }} />
+            </div>
         )
 
         const modals = (
@@ -97,14 +99,9 @@ class App extends Component {
                     key={isModal ? this.previousLocation.key : location.key}
                     location={isModal ? this.previousLocation : location}
                 >
-
                     <Route path='/(login|register)' render={() => (
-                        <div>
-                            {isAuthenticated ? <Redirect to='/' /> : <Landing />}
-                        </div>
+                        isAuthenticated ? <div><Redirect to='/' /></div> : <Landing />
                     )} />
-
-
 
                     <Route exact path='/' render={() => (
                         isAuthenticated ? <Posts /> : toLogin
@@ -126,12 +123,12 @@ class App extends Component {
                         </div>
                     } />
                     <Route path='/search/:query' render={() =>
-                        <Fragment>
+                        <div>
                             <Tags />
                             <Authors isPreview />
                             <Communities isPreview />
                             <Posts />
-                        </Fragment>
+                        </div>
                     } />
                     <Route path='/search' render={() => <Redirect to='/' />} />
                     <Route path='/posts/:slug' render={() => <Post />} />
@@ -153,10 +150,10 @@ class App extends Component {
                         isAuthenticated ? <Communities /> : toLogin
                     )} />
                     <Route path='/communities/:name' render={() =>
-                        <Fragment>
+                        <div>
                             <Community />
                             <Posts />
-                        </Fragment>
+                        </div>
                     } />
                     <Route path='/communities' render={() => (
                         isAuthenticated ? <Communities isHome /> : toLogin
@@ -178,11 +175,11 @@ class App extends Component {
                     <Route path='/:username/communities' component={Communities} />
                     <Route path='/:username/(followers|following)' component={Authors} />
                     <Route path='/:username' render={() =>
-                        <Fragment>
+                        <div>
                             <Author />
                             <Communities isPreview />
                             <Posts />
-                        </Fragment>
+                        </div>
                     } />
 
                 </Switch>
