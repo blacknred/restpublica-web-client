@@ -48,12 +48,11 @@ class Communities extends Component {
             case 'search': res = await getSearchedCommunities({ query: path[2], page })
                 break
             case 'explore':
-            case 'communities':
                 res = await getTrendingCommunities(page)
                 break
-            default:
-                if (!targetId) await this.getProfileIdHandler(path[1])
+            case 'communities':
                 if (isHome) {
+                    if (!targetId) await this.getProfileIdHandler(path[1])
                     const [profileCom, adminCom] = await Promise.all([
                         getProfileCommunities({ userId: this.state.targetId, page }),
                         isHome && getAdminCommunities({ adminId: this.state.targetId, page })
@@ -68,7 +67,11 @@ class Communities extends Component {
                             ]
                         }
                     }
-                } else res = await getProfileCommunities({ userId: this.state.targetId, page })
+                } else res = await getTrendingCommunities(page);
+                break
+            default:
+                if (!targetId) await this.getProfileIdHandler(path[1]);
+                res = await getProfileCommunities({ userId: this.state.targetId, page });
         }
         switchLoader(false)
         if (!res) {
@@ -105,12 +108,15 @@ class Communities extends Component {
         this.setState({ targetId: res.data.id })
     }
 
-    createSubscriptionHandler = async ({ id, name }) => {
+    createSubscriptionHandler = async ({ id, name, type }) => {
         const { communities } = this.state
         const { userId, createMessage } = this.props
         const data = {
             communityId: id,
-            data: { userId }
+            data: { 
+                userId,
+                type
+            }
         }
         const res = await createCommunitySubscription(data)
         if (!res) {

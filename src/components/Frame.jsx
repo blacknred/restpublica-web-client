@@ -15,17 +15,16 @@ const styles = theme => ({
         height: '100%',
         width: '100%',
         transition: 'padding-left 300ms',
-        padding: `2% 0`,
+        margin: `1% 0`,
     },
     left: {
         '@media (min-width: 960px)': {
-            paddingLeft: '280px',
+            paddingLeft: '250px',
         }
     },
 })
 
 const Frame = ({ isDrawer, slideKey, isLoading, classes, children }) => {
-
     return (
         <TransitionGroup className={classNames(classes.frame, isDrawer ? classes.left : null)}>
             <Slide

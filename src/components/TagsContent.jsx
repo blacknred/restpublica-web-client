@@ -8,7 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
     root: {
-        marginBottom: theme.spacing.unit * 3,
+        margin: `${theme.spacing.unit * 3}px 0`,
         display: 'flex',
         justifyContent: 'center',
         flexWrap: 'wrap'

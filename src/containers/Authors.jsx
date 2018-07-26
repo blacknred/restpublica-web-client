@@ -105,7 +105,7 @@ class Authors extends Component {
             return
         }
         authors.forEach((author) => {
-            if (author.id === id) {
+            if (author.user_id === id) {
                 author.followers_cnt = parseInt(author.followers_cnt, 10) + 1
                 author.my_subscription = parseInt(res.data, 10)
             }

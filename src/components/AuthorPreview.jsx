@@ -13,6 +13,7 @@ import CardContent from '@material-ui/core/CardContent';
 
 const styles = {
     tile: {
+        minWidth: '15.8em',
         width: '15.8em',
         margin: '10px',
         textDecoration: 'none',
@@ -20,6 +21,7 @@ const styles = {
         //overflow: 'inherit'
     },
     tile2: {
+        minWidth: '47%',
         width: '47%',
         margin: '1%',
         textDecoration: 'none',
@@ -91,7 +93,7 @@ const AuthorPreview = ({
                         onClick={(e) => {
                             e.preventDefault()
                             createSubscription({
-                                id: author.id,
+                                id: author.user_id,
                                 username: author.fullname
                             })
                         }}

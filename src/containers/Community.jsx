@@ -96,7 +96,7 @@ class Community extends Component {
                 <CommunityContent
                     {...this.state}
                     {...this.props}
-                    isAdmin={isAuthenticated && admin_id === userId }
+                    isAdmin={isAuthenticated && admin_id === parseInt(userId, 10)}
                     removeSubscription={this.removeSubscriptionHandler}
                     createSubscription={this.createSubscriptionHandler}
                     toggleContextDialog={this.toggleContextDialogHandler}

@@ -29,7 +29,7 @@
         /* Redirect to mobile version */
         var parser = new UAParser(window.navigator.userAgent);
         if (parser.getDevice().type === 'mobile') {
-            window.location = 'localhost:3005' + window.location.pathname;
+            window.location = env.process.REACT_APP_MOBILE_CLIENT_HOST + '/' + window.location.pathname;
         }
     </script>
     <title>%REACT_APP_WEBSITE_NAME%</title>

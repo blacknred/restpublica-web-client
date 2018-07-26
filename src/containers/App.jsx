@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import {
     Switch,
     Route,
@@ -24,7 +24,7 @@ import Frame from '../components/Frame';
 import Loader from '../components/Loader';
 import NewCommunity from './NewCommunity';
 import Notifications from './Notifications';
-import CommunityModeration from './CommunityModeration'
+import CommunityModeration from './CommunityModeration';
 
 import FlashMessages from './FlashMessages';
 import ThemeRoot from '../components/AppRoot';
@@ -140,9 +140,9 @@ class App extends Component {
                     <Route path='/people/(followers|followin|recommended)' component={Authors} />
                     <Route path='/people' render={() => <Redirect to='/' />} />
 
-                    <Route path='/communities/:name/moderation' render={() =>
+                    <Route path='/communities/:name/moderation' render={() => (
                         isAuthenticated ? <CommunityModeration /> : toLogin
-                    } />
+                    )} />
                     <Route path='/communities/:name/(moderators|participants)' render={() => (
                         isAuthenticated ? <Authors /> : toLogin
                     )} />

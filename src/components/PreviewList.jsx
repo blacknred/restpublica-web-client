@@ -14,15 +14,23 @@ import { withStyles } from '@material-ui/core/styles';
 import ListItemText from '@material-ui/core/ListItemText';
 
 const styles = theme => ({
+    block: {
+        maxWidth: '70vw',
+        // display: 'flex',
+        // flexDirection: 'column',
+
+    },
     header: {
-        maxWidth: '1300px',
+        //maxWidth: '80vw',
+        width: '100%',
         textTransform: 'capitalize',
-        marginLeft: theme.spacing.unit * 6
+        marginLeft: theme.spacing.unit * 8
     },
     grid: {
-        maxWidth: '1400px',
+        //maxWidth: '86vw',
         width: '100%',
-        //flex: 1,
+        //maxWidth: '1400px',
+        // flex: 1,
         //margin: '0 auto',
         marginBottom: theme.spacing.unit * 3,
     },
@@ -44,7 +52,7 @@ const styles = theme => ({
     }
 })
 
-const AuthorsList = ({
+const PreviewList = ({
     mode, isAuthenticated, datas, hasMore, path, classes,
     createSubscription, removeSubscription,
 }) => {
@@ -60,7 +68,7 @@ const AuthorsList = ({
                 <Button
                     color='primary'
                     component={Link}
-                    to={`${path.join('/')}/${mode}`}
+                    to={`${path.join('/').replace(/\/$/, '')}/${mode}`}
                 >
                     See all
             </Button>
@@ -70,7 +78,7 @@ const AuthorsList = ({
 
     return (
         datas.length > 0 &&
-        <Fragment>
+        <div className={classes.block}>
             {subheader}
             <Fade in={true}>
                 <Tabs
@@ -118,11 +126,11 @@ const AuthorsList = ({
                     }
                 </Tabs>
             </Fade>
-        </Fragment>
+        </div>
     )
 }
 
-AuthorsList.propTypes = {
+PreviewList.propTypes = {
     mode: PropTypes.oneOf(['authors', 'communities']).isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
     hasMore: PropTypes.bool.isRequired,
@@ -132,4 +140,4 @@ AuthorsList.propTypes = {
     removeSubscription: PropTypes.func.isRequired,
 }
 
-export default withStyles(styles)(AuthorsList)
+export default withStyles(styles)(PreviewList)

@@ -24,8 +24,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 
 const styles = theme => ({
     root: {
-        width: '100%',
-        maxWidth: '1300px',
         marginBottom: theme.spacing.unit * 5,
         position: 'relative',
         '& a': {
@@ -33,14 +31,15 @@ const styles = theme => ({
         }
     },
     rootBackgroung: {
-        height: '400px',
+        height: '450px',
+        minWidth: '70vw',
     },
     rootBackgroung2: {
         height: '300px',
         width: '100vw',
     },
     content: {
-        padding: theme.spacing.unit * 3,
+        padding: theme.spacing.unit * 5,
         position: 'absolute',
         bottom: 0,
         right: 0,
@@ -96,7 +95,7 @@ const CommunityContent = ({
     const communityContent = (
         <List disablePadding>
             <ListItem>
-                <Typography variant='display1'>
+                <Typography variant='display2'>
                     {title}
                 </Typography>
             </ListItem>
@@ -131,12 +130,12 @@ const CommunityContent = ({
     const communityAction = (
         <CardActions>
             {
-                !isAdmin ?
+                isAdmin ?
                     <Button
                         variant='raised'
                         color='primary'
                         component={Link}
-                        to={`/community/${name}/moderation`}
+                        to={`/communities/${name}/moderation`}
                     >
                         Moderation
                          </Button>

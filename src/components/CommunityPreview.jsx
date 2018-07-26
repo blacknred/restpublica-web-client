@@ -13,12 +13,14 @@ import CardActions from '@material-ui/core/CardActions';
 
 const styles = {
     tile: {
+        minWidth: '15.8em',
         width: '15.8em',
         margin: '10px',
         textDecoration: 'none',
         //overflow: 'inherit'
     },
     tile2: {
+        minWidth: '47%',
         width: '47%',
         margin: '1%',
         textDecoration: 'none',

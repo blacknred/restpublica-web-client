@@ -26,6 +26,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import CardMedia from '@material-ui/core/CardMedia';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import CommentIcon from '@material-ui/icons/Comment';
+import ArchiveIcon from '@material-ui/icons/Archive';
 import CardHeader from '@material-ui/core/CardHeader';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -47,7 +48,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 const styles = theme => ({
     card: {
-        maxWidth: '530px',
+        maxWidth: '525px',
         minWidth: '250px',
         width: '100%',
         margin: '0.6em',
@@ -323,12 +324,16 @@ const PostContent = ({
                     aria-label="Share"
                     classes={{ label: classes.headerShiftOnHover }}
                 >
-                    <Typography
-                        variant='caption'
-                        color='textSecondary'
-                    >
-                        {formateDate(post.created_at)}
-                    </Typography>
+                    {
+                        post.archived ?
+                            <ArchiveIcon /> :
+                            <Typography
+                                variant='caption'
+                                color='textSecondary'
+                            >
+                                {formateDate(post.created_at)}
+                            </Typography>
+                    }
                     <OpenInNewIcon className={classes.headerPostLinkIcon} />
                 </IconButton>
             }
@@ -344,7 +349,7 @@ const PostContent = ({
 
                             if (word.charAt(0) !== '#') {
                                 if (searchQuery !== word) return `${word} `
-                                return 
+                                return
                                 <span key={word + index}>{`${word} `}</span>
                             }
                             return (
@@ -465,7 +470,8 @@ const PostContent = ({
                                 }}>
                                     <CardMedia
                                         className={classes.mediaFile}
-                                        image={file.thumb}
+                                        component='picture'
+                                        src={file.thumb}
                                     />
                                 </Link>
                             </GridListTile>

@@ -4,7 +4,7 @@ import ScrollToTop from 'react-scroll-up';
 
 import Hidden from '@material-ui/core/Hidden';
 import { withStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/IconButton';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
 const styles = {
@@ -27,12 +27,13 @@ const ToTopButton = ({ classes }) => {
                 // topPosition={170}
                 style={styles.toTop}
             >
-                <IconButton
+                <Button
                     className={classes.toTopButton}
                     color="primary"
+                    variant="fab"
                 >
-                    <ArrowUpwardIcon color="primary" />
-                </IconButton>
+                    <ArrowUpwardIcon />
+                </Button>
             </ScrollToTop>
         </Hidden>
     )

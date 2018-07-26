@@ -6,11 +6,11 @@ import Fade from '@material-ui/core/Fade'
 import Card from '@material-ui/core/Card';
 import Hidden from '@material-ui/core/Hidden';
 import Avatar from '@material-ui/core/Avatar';
+import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 
 const styles = theme => ({
     tile: {
@@ -29,7 +29,6 @@ const styles = theme => ({
         '&> *': {
             display: 'inline-block',
         },
-        paddingTop: 0,
         '&> :nth-child(2):before': {
             content: '"\\1f892"',
             margin: `0 ${theme.spacing.unit}px`,
@@ -38,13 +37,20 @@ const styles = theme => ({
     },
     headerAvatar: {
         backgroundColor: theme.palette.primary.light,
-        width: 25,
-        height: 25
+        width: 27,
+        height: 27
     },
     description: {
+        paddingBottom: 0,
         '& span': {
             color: theme.palette.primary.main
         }
+    },
+
+    mediaLinkImg: {
+        width: '100%',
+        height: '300px',
+        border: 0
     },
 })
 
@@ -68,13 +74,25 @@ const PostPreview = ({ post, classes }) => {
 
     const postDescription = (
         <CardContent className={classes.description}>
-            <Typography variant='body1'>
+            {
+                post.type === 'link' &&
+                <Typography
+                    component={Link}
+                    to={post.content[0].link}
+                    color='primary'
+                    paragraph
+                    noWrap
+                >
+                    {post.content[0].link}
+                </Typography>
+            }
+            <Typography>
                 {
                     post.description.trim().split(' ').map((word, index) => {
                         if (word.charAt(0) !== '#') return `${word} `;
                         return <span key={word + index}>{`${word} `}</span>
                     })
-                }
+                }...
             </Typography>
         </CardContent>
     )
@@ -82,63 +100,68 @@ const PostPreview = ({ post, classes }) => {
     const postFilesContent = (
         post.content &&
         <CardMedia
-            component={
-                post.content[0].mime === 'video/mp4' ? 'video' : 'img'
-            }
-            src={
-                //post.content[0].mime === 'image/gif' ?
-                    post.content[0].thumb
-                    //: post.content[0].file
-            }
+            component={post.content[0].mime === 'video/mp4' ? 'video' : 'img'}
+            src={post.content[0].thumb}
         />
     )
 
     const postLinkContent = (
-        <div></div>
+        post.content &&
+        <a
+            href={post.content[0].link}
+            target='_blank'
+        >
+            <CardMedia
+                className={classes.mediaLinkImg}
+                //component='iframe'
+                //src={post.content[0].link}
+                image={post.content[0].img}
+            />
+        </a>
     )
 
-    return (
-        <Fragment>
-            <Hidden smDown>
-                <Fade
-                    in={true}
-                    component={Link}
-                    to={`/posts/${post.slug}`}
-                    timeout={800}
+return (
+    <Fragment>
+        <Hidden smDown>
+            <Fade
+                in={true}
+                // component={Link}
+                // to={`/posts/${post.slug}`}
+                timeout={800}
+            >
+                <Card
+                    elevation={1}
+                    className={classes.tile}
                 >
-                    <Card
-                        elevation={1}
-                        className={classes.tile}
-                    >
-                        {post.type === 'file' && postFilesContent}
-                        {post.type === 'link' && postLinkContent}
-                        {postDescription}
-                        {postHeader}
-                    </Card>
-                </Fade>
-            </Hidden>
+                    {post.type === 'file' && postFilesContent}
+                    {post.type === 'link' && postLinkContent}
+                    {postDescription}
+                    {postHeader}
+                </Card>
+            </Fade>
+        </Hidden>
 
-            <Hidden mdUp>
-                <Fade
-                    in={true}
-                    component={Link}
-                    to={`/post/${post.slug}`}
-                    timeout={800}
+        <Hidden mdUp>
+            <Fade
+                in={true}
+                component={Link}
+                to={`/post/${post.slug}`}
+                timeout={800}
+            >
+                <Card
+                    elevation={1}
+                    className={classes.tile2}
                 >
-                    <Card
-                        elevation={1}
-                        className={classes.tile2}
-                    >
-                        {post.type === 'file' && postFilesContent}
-                        {post.type === 'link' && postLinkContent}
-                        {postDescription}
-                        {postHeader}
-                    </Card>
-                </Fade>
-            </Hidden>
-        </Fragment>
+                    {post.type === 'file' && postFilesContent}
+                    {post.type === 'link' && postLinkContent}
+                    {postDescription}
+                    {postHeader}
+                </Card>
+            </Fade>
+        </Hidden>
+    </Fragment>
 
-    )
+)
 }
 
 PostPreview.propTypes = {

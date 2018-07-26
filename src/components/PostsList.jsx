@@ -1,10 +1,11 @@
+import React from 'react';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
+import Masonry from 'react-masonry-css';
 import InfiniteScroll from 'react-infinite-scroller2';
 
-import Post from '../containers/Post'
-import PostPreview from '../components/PostPreview'
+import Post from '../containers/Post';
+import PostPreview from '../components/PostPreview';
 
 import Slide from '@material-ui/core/Slide';
 import Button from '@material-ui/core/Button';
@@ -24,9 +25,15 @@ const styles = theme => ({
     },
     grid: {
         display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        boxSizing: 'border-box'
+        //marginLeft: '-30px',
+        width: 'auto',
+        // flexWrap: 'wrap',
+        // justifyContent: 'center',
+        // boxSizing: 'border-box'
+    },
+    gridColumn: {
+        //paddingLeft: '30px',
+        backgroundClip: 'padding-box'
     },
     newPostLink: {
         maxWidth: '530px',
@@ -102,8 +109,8 @@ const PostsList = ({
     )
 
     return (
-        <Fragment>
-            {newPostLink}
+        <div>
+            {!isFeedMultiColumn && newPostLink}
             <Slide
                 direction='up'
                 in={posts.length > 0}
@@ -114,23 +121,28 @@ const PostsList = ({
                     loadMore={getPosts}
                     hasMore={hasMore}
                     loader={loader}
-                    className={classes.grid}
-                    style={{
-                        alignItems: isFeedMultiColumn ? 'flex-start' : 'center',
-                        flexDirection: isPreview ? 'row' : isFeedMultiColumn ? 'row' : 'column'
-                    }}
+                // style={{
+                //     alignItems: isFeedMultiColumn ? 'flex-start' : 'center',
+                //     flexDirection: isPreview ? 'row' : isFeedMultiColumn ? 'row' : 'column',
+                //     maxWidth: isPreview ? '70vw' : '100%'
+                // }}
                 // ref={(scroll) => { this.scroll = scroll; }}
                 // threshold={200}
                 // key={reload}
                 // initialLoad={false}
                 // useWindow={false}
                 >
-
-                    {postsArr}
+                    <Masonry
+                        breakpointCols={{ default: isPreview ? 4 : (isFeedMultiColumn ?  3 : 1) }}
+                        className={classes.grid}
+                        columnClassName={classes.gridColumn}
+                    >
+                        {postsArr}
+                    </Masonry>
                 </InfiniteScroll>
             </Slide>
             {morePostsLink}
-        </Fragment>
+        </div>
     )
 }
 

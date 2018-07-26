@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroller2';
 
 import CommunityPreview from './CommunityPreview';
 
-import Button from '@material-ui/core/Button'
+import Button from '@material-ui/core/Button';
+import Hidden from '@material-ui/core/Hidden';
 import GridList from '@material-ui/core/GridList';
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
@@ -20,7 +21,11 @@ const styles = {
         flexBasis: '100%'
     },
     header: {
+        width: '70vw',
         maxWidth: '1100px',
+    },
+    header2: {
+        width: '100vw',
     },
     grid: {
         maxWidth: '1100px',
@@ -42,9 +47,8 @@ const CommunitiesList = ({
         </div>
     )
 
-    const subheader = (
-        isHome &&
-        <ListItem className={classes.header}>
+    const subHeaderContent = (
+        <Fragment>
             <ListItemText
                 secondary='My communities'
                 secondaryTypographyProps={{ variant: 'body2' }}
@@ -60,12 +64,29 @@ const CommunitiesList = ({
                 }}
             >
                 <AddCircleIcon /> &nbsp;Create community
-                </Button>
-        </ListItem>
+            </Button>
+        </Fragment>
+    )
+
+    const subHeader = (
+        isHome &&
+        <Fragment>
+            <Hidden smDown>
+                <ListItem className={classes.header}>
+                    {subHeaderContent}
+                </ListItem>
+            </Hidden>
+            <Hidden mdUp>
+                <ListItem className={classes.header2}>
+                    {subHeaderContent}
+                </ListItem>
+            </Hidden>
+        </Fragment>
     )
 
     const moreCommunitiesLink = (
-        isHome && !hasMore &&
+        isHome &&
+        !hasMore &&
         <div className={classes.loader}>
             <Button
                 variant='raised'
@@ -80,7 +101,7 @@ const CommunitiesList = ({
 
     return (
         <div>
-            {subheader}
+            {subHeader}
             <InfiniteScroll
                 pageStart={0}
                 loadMore={getCommunities}

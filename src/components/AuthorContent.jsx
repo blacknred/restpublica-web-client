@@ -20,8 +20,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
     root: {
-        width: '100%',
-        maxWidth: '1300px',
         marginBottom: theme.spacing.unit * 5,
         position: 'relative',
         '& a': {
@@ -29,14 +27,15 @@ const styles = theme => ({
         }
     },
     rootBackgroung: {
-        height: '400px',
+        height: '450px',
+        minWidth: '70vw',
     },
     rootBackgroung2: {
         height: '300px',
         width: '100vw',
     },
     content: {
-        padding: theme.spacing.unit * 3,
+        padding: theme.spacing.unit * 5,
         position: 'absolute',
         bottom: 0,
         right: 0,
@@ -128,7 +127,7 @@ const AuthorContent = ({
             className={classes.contentText}
         >
             <ListItem>
-                <Typography variant='display1'>
+                <Typography variant='display2' >
                     {fullname}
                     <small><small>{` @${username}`}</small></small>
                 </Typography>

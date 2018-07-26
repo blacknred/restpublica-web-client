@@ -132,6 +132,21 @@ class Posts extends Component {
         return (
             <Fragment>
                 {
+                    empty ?
+                        <EmptyContentMessage
+                            mode={path[1]}
+                            isProfilePage={isAuthenticated && path[1] === username}
+                        /> :
+                        <PostsList
+                            {...this.state}
+                            mode={path[1] || 'feed'}
+                            userAvatar={userAvatar}
+                            isPreview={path[1] === 'explore'}
+                            isFeedMultiColumn={isFeedMultiColumn}
+                            getPosts={this.getPostsHandler}
+                        />
+                }
+                {
                     (
                         (path[1] === '') ||
                         (path[1] === username) ||
@@ -146,21 +161,6 @@ class Posts extends Component {
                                 }
                         }
                     />
-                }
-                {
-                    empty ?
-                        <EmptyContentMessage
-                            mode={path[1]}
-                            isProfilePage={isAuthenticated && path[1] === username}
-                        /> :
-                        <PostsList
-                            {...this.state}
-                            mode={path[1] || 'feed'}
-                            userAvatar={userAvatar}
-                            isPreview={path[1] === 'explore'}
-                            isFeedMultiColumn={isFeedMultiColumn}
-                            getPosts={this.getPostsHandler}
-                        />
                 }
             </Fragment>
         )

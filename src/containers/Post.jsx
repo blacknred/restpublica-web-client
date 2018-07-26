@@ -204,6 +204,13 @@ class Post extends Component {
             this.props.createMessage('Server error. Try later.')
             return
         }
+        if ((this.props.path[1] === '' ||
+            this.props.path[1] === 'search' ||
+            this.props.path[1] === 'tags' ||
+            this.props.path[1] === 'communites') &&
+            option === 'archived') {
+            this.setState({ id: null })
+        }
         this.props.createMessage('Post updated')
     }
 
@@ -277,7 +284,7 @@ class Post extends Component {
 
     render() {
         return (
-            (this.state.id && !this.state.archived) ?
+            (this.state.id) ?
                 <PostContent
                     {...this.props}
                     post={this.state}
