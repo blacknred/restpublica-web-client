@@ -44,8 +44,8 @@ class Landing extends PureComponent {
     }
 
     getBackground = async () => {
-        const res = await getBackgroundPic()
-        if (res) this.setState({ gifUrl: res.data.image_original_url })
+        // const res = await getBackgroundPic()
+        // if (res) this.setState({ gifUrl: res.data.image_original_url })
     }
 
     inputChangeHandler = (event) => {
