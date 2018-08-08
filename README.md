@@ -49,7 +49,7 @@
 1. Run the container:
 
     ```sh
-    $ docker run -it restpublica_web-client
+    $ docker run -it -p 3000:3000 restpublica_web-client
     ```
 1. Go to http://localhost:3000
 

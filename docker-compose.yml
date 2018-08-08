@@ -1,0 +1,15 @@
+version: '2.1'
+
+services:
+    
+  web-client:
+    container_name: web-client
+    build: .
+    volumes:
+      - '.:/usr/src/app'
+      - './package.json:/usr/src/package.json'
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - CHOKIDAR_USEPOLLING=true

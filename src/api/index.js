@@ -3,10 +3,10 @@ import axios from 'axios';
 
 const GIPHY_URL = encodeURI('https://api.giphy.com/v1/gifs/random' +
     '?api_key=dc6zaTOxFJmzC&tag=space&rating=pg-13');
-const STORAGE_HOST = `https://${process.env.REACT_APP_S3_HOST}`;
+const STORAGE_HOST = process.env.REACT_APP_S3_HOST;
 const FEED_RAND = window.localStorage.feedrand || 1;
 
-axios.defaults.baseURL = `https://${process.env.REACT_APP_GATEWAY_HOST}`;
+axios.defaults.baseURL = process.env.REACT_APP_GATEWAY_HOST;
 axios.interceptors.response.use(res => res.data, err => null)
 
 const instance = axios.create();
