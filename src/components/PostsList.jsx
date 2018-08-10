@@ -32,9 +32,13 @@ const styles = theme => ({
         // boxSizing: 'border-box'
     },
     gridColumn: {
-        //paddingLeft: '30px',
-        backgroundClip: 'padding-box'
+        //paddingLeft: '20px',
+        backgroundClip: 'padding-box',
+        '& > div': {
+            marginBottom: '20px'
+        }
     },
+
     newPostLink: {
         maxWidth: '530px',
         minWidth: '140px',
@@ -108,6 +112,12 @@ const PostsList = ({
         )
     )
 
+    const masonryColsObj = {
+        default: isPreview ? 4 : (isFeedMultiColumn ? 3 : 1),
+        960: isPreview ? 3 : (isFeedMultiColumn ? 2 : 1),
+        600: isPreview ? 2 : 1
+    };
+
     return (
         <div>
             {!isFeedMultiColumn && newPostLink}
@@ -133,7 +143,7 @@ const PostsList = ({
                 // useWindow={false}
                 >
                     <Masonry
-                        breakpointCols={{ default: isPreview ? 4 : (isFeedMultiColumn ?  3 : 1) }}
+                        breakpointCols={masonryColsObj}
                         className={classes.grid}
                         columnClassName={classes.gridColumn}
                     >

@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import {
     login,
     register,
-    getBackgroundPic,
+    // getBackgroundPic,
 } from '../api'
 import {
     authUser,
