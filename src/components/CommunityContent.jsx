@@ -25,6 +25,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 const styles = theme => ({
     root: {
         marginBottom: theme.spacing.unit * 5,
+        width: '100%',
         position: 'relative',
         '& a': {
             textDecoration: 'none'
@@ -32,11 +33,9 @@ const styles = theme => ({
     },
     rootBackgroung: {
         height: '450px',
-        minWidth: '70vw',
     },
     rootBackgroung2: {
         height: '300px',
-        width: '100vw',
     },
     content: {
         padding: theme.spacing.unit * 5,

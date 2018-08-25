@@ -1,6 +1,6 @@
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
@@ -103,7 +103,8 @@ class Post extends Component {
             case 'minutes': return outputArr[0] + ' min';
             case 'hours': return outputArr[0] + ' h';
             case 'days': return outputArr[0] + ' d';
-            case 'months': return outputArr[0] + ' mon';
+            case 'months':
+            case 'month': return outputArr[0] + ' mon';
             case 'years': return outputArr[0] + ' y';
             default: return output
         }

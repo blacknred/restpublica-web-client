@@ -3,8 +3,9 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import CommentsList from './CommentsList'
+import CommentsList from './CommentsList';
 
+import Fade from '@material-ui/core/Fade';
 import Card from '@material-ui/core/Card';
 import Menu from '@material-ui/core/Menu';
 import List from '@material-ui/core/List';
@@ -48,17 +49,15 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 const styles = theme => ({
     card: {
-        maxWidth: '525px',
-        minWidth: '250px',
+        maxWidth: '530px',
+        minWidth: '140px',
         width: '100%',
-        margin: '0.6em',
         borderRadius: 0,
-        '@media (max-width: 600px)': {
-            margin: '0.6em 0'
-        },
+        marginBottom: '20px',
+        boxShadow: '0 1px 4px 0 rgba(0,0,0,0.14)',
         '& a': {
             textDecoration: 'none',
-        }
+        },
     },
     headerAvatar: {
         backgroundColor: theme.palette.primary.light,
@@ -210,7 +209,7 @@ const styles = theme => ({
 
 
 const PostContent = ({
-    post, isAutoGifs, isFullAccess, userAvatar, classes, togglePostValue,
+    index, post, isAutoGifs, isFullAccess, userAvatar, classes, togglePostValue,
     getComments, toggleNewCommentForm, changeNewComment, changePostDescription,
     postNewComment, createVote, deleteVote, createLike, deleteLike, updatePost,
     deletePost, formateDate, searchQuery
@@ -727,61 +726,62 @@ const PostContent = ({
     )
 
     return (
-        <Card
-            elevation={1}
-            className={classes.card}
-        >
-            {postHeader}
+        <Fade in={true} timeout={500}>
+            <Card
+                elevation={1}
+                className={classes.card}
+            >
+                {postHeader}
 
-            {postDescription}
-            {postDescriptionEditingForm}
-
-
-            {/* media */}
-            {post.type === 'file' && postFilesContent}
-            {post.type === 'link' && postLinkContent}
-            {post.type === 'poll' && postPollContent}
-            {post.type === 'repost' && postRepostContent}
+                {postDescription}
+                {postDescriptionEditingForm}
 
 
-            {/* comments */}
-            {
-                !post.commentable &&
-                post.comments_cnt > 0 &&
-                <Hidden
-                    only={post.listMode ? 'xs' : null}
-                    className={classes.comments}
-                >
-                    <CardActions className={classes.actions}>
-                        {
-                            post.listMode &&
-                            post.comments_cnt > 0 &&
-                            <Button
-                                onClick={() => togglePostValue('showComments')}
-                                color='primary'
-                            >
-                                {`${post.toggleComments ? 'Hide' : 'Show'}
+                {/* media */}
+                {post.type === 'file' && postFilesContent}
+                {post.type === 'link' && postLinkContent}
+                {post.type === 'poll' && postPollContent}
+                {post.type === 'repost' && postRepostContent}
+
+
+                {/* comments */}
+                {
+                    !post.commentable &&
+                    post.comments_cnt > 0 &&
+                    <Hidden
+                        only={post.listMode ? 'xs' : null}
+                        className={classes.comments}
+                    >
+                        <CardActions className={classes.actions}>
+                            {
+                                post.listMode &&
+                                post.comments_cnt > 0 &&
+                                <Button
+                                    onClick={() => togglePostValue('showComments')}
+                                    color='primary'
+                                >
+                                    {`${post.toggleComments ? 'Hide' : 'Show'}
                                         all comments ${post.comments_cnt}`}
-                            </Button>
-                        }
-                        {!post.listMode && actionsButtons}
-                    </CardActions>
-                    <LinearProgress />
-                    <CommentsList
-                        comments={post.comments}
-                        comments_cnt={parseInt(post.comments_cnt, 10)}
-                        showComments={post.showComments}
-                        hasMoreComments={post.hasMoreComments}
-                        getComments={getComments}
-                        formateDate={formateDate}
-                    />
-                </Hidden>
-            }
+                                </Button>
+                            }
+                            {!post.listMode && actionsButtons}
+                        </CardActions>
+                        <LinearProgress />
+                        <CommentsList
+                            comments={post.comments}
+                            comments_cnt={parseInt(post.comments_cnt, 10)}
+                            showComments={post.showComments}
+                            hasMoreComments={post.hasMoreComments}
+                            getComments={getComments}
+                            formateDate={formateDate}
+                        />
+                    </Hidden>
+                }
 
-            {/* actions */}
-            <Divider light />
-            <CardActions className={classes.actions}>
-                <Collapse
+                {/* actions */}
+                <Divider light />
+                <CardActions className={classes.actions}>
+                    {/* <Collapse
                     in={post.commentable}
                     className={classes.actionsFullWidth}
                 >
@@ -823,42 +823,43 @@ const PostContent = ({
                             onChange={(ev) => changeNewComment(ev.target.value)}
                         />
                     </Hidden>
-                </Collapse>
-                <Collapse
-                    in={!post.showCommentForm && post.listMode}
-                    style={{ width: post.showCommentForm ? 0 : 'auto' }}
-                >
-                    {actionsButtons}
-                </Collapse>
-            </CardActions>
-
-            {/* comment form */}
-            <Collapse in={post.showCommentForm}>
-                <CardActions className={classes.actions}>
-                    <span>
-                        <IconButton>
-                            <ImageIcon />
-                        </IconButton>
-                        <IconButton>
-                            <LinkIcon />
-                        </IconButton>
-                    </span>
-                    <span>
-                        <Button onClick={toggleNewCommentForm}>
-                            Cansel
-                        </Button>
-                        <Button
-                            disabled={post.newComment.length === 0}
-                            onClick={postNewComment}
-                            color="primary"
-                        >
-                            Publish
-                        </Button>
-                    </span>
+                </Collapse> */}
+                    <Collapse
+                        in={!post.showCommentForm && post.listMode}
+                        style={{ width: post.showCommentForm ? 0 : 'auto' }}
+                    >
+                        {actionsButtons}
+                    </Collapse>
                 </CardActions>
-            </Collapse>
 
-        </Card >
+                {/* comment form */}
+                <Collapse in={post.showCommentForm}>
+                    <CardActions className={classes.actions}>
+                        <span>
+                            <IconButton>
+                                <ImageIcon />
+                            </IconButton>
+                            <IconButton>
+                                <LinkIcon />
+                            </IconButton>
+                        </span>
+                        <span>
+                            <Button onClick={toggleNewCommentForm}>
+                                Cansel
+                        </Button>
+                            <Button
+                                disabled={post.newComment.length === 0}
+                                onClick={postNewComment}
+                                color="primary"
+                            >
+                                Publish
+                        </Button>
+                        </span>
+                    </CardActions>
+                </Collapse>
+
+            </Card >
+            </Fade>
     )
 }
 

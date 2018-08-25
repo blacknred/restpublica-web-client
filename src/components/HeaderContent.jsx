@@ -37,6 +37,7 @@ const styles = theme => ({
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
         padding: `0 ${(theme.spacing.unit * 2)}px`,
+        transition: 'all 600ms cubic-bezier(0, 0, 0.2, 1)'
     },
     toolbar: {
         justifyContent: 'space-between',
@@ -131,7 +132,7 @@ const HeaderContent = ({
         <Hidden smDown>
             <Typography
                 variant="title"
-                color="textSecondary"
+                color="primary"
                 className={classes.statusTitle}
             >
                 {path[1] || 'feed'}
@@ -230,6 +231,7 @@ const HeaderContent = ({
                 <MenuItem
                     component={Link}
                     to='/settings/profile'
+                    onClick={() => toggleMenuOpen('isUserMenuOpen')}
                 >
                     <ListItemIcon>
                         <ActionSettingsIcon />
@@ -318,8 +320,7 @@ const HeaderContent = ({
         <Slide
             direction="down"
             in={true}
-            timeout={400}
-            mountOnEnter
+            timeout={600}
         >
             <AppBar
                 position="sticky"
@@ -349,10 +350,17 @@ const HeaderContent = ({
                 </Toolbar>
                 {
                     path.join('/').match(/(trending\/+|search|people|\/communities\/.+\/.+)/)
-                    && <ContentTabs
-                        path={path}
-                        redirect={tabsRedirect}
-                    />
+                    &&
+                    // <Slide
+                    //     direction="down"
+                    //     in={true}
+                    //     timeout={600}
+                    // >
+                        <ContentTabs
+                            path={path}
+                            redirect={tabsRedirect}
+                        />
+                    // </Slide>
                 }
             </AppBar>
         </Slide>

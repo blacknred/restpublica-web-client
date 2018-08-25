@@ -763,33 +763,38 @@ const NewPostForm = ({
 
     const contentActions = (
         <CardActions>
-            <Tooltip title="Add file">
-                <IconButton component='label' >
-                    <input
-                        accept='image/*,.mp4,.webm'
-                        multiple
-                        type="file"
-                        className={classes.hidden}
-                        onChange={addFile}
-                    />
+
+            <IconButton component='label' >
+                <input
+                    accept='image/*,.mp4,.webm'
+                    multiple
+                    type="file"
+                    className={classes.hidden}
+                    onChange={addFile}
+                />
+                <Tooltip title="Add file">
                     <ImageIcon />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="Add link">
-                <IconButton onClick={
-                    () => toggleContextDialog('isAddLinkDialogOpen')
-                }>
+                </Tooltip>
+            </IconButton>
+
+            <IconButton onClick={
+                () => toggleContextDialog('isAddLinkDialogOpen')
+            }>
+                <Tooltip title="Add link">
                     <LinkIcon />
-                </IconButton>
-            </Tooltip>
+                </Tooltip>
+            </IconButton>
+
             {addLinkDialog}
-            <Tooltip title="Add poll">
-                <IconButton onClick={
-                    () => toggleContextDialog('isAddPollDialogOpen')
-                }>
+
+            <IconButton onClick={
+                () => toggleContextDialog('isAddPollDialogOpen')
+            }>
+                <Tooltip title="Add poll">
                     <PollIcon />
-                </IconButton>
-            </Tooltip>
+                </Tooltip>
+            </IconButton>
+
             {addPollDialog}
         </CardActions>
     )

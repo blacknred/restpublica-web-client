@@ -15,22 +15,18 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 const styles = theme => ({
     block: {
-        maxWidth: '70vw',
-        // display: 'flex',
-        // flexDirection: 'column',
-
+        width: '100%',
+        paddingLeft: '2%'
     },
     header: {
-        //maxWidth: '80vw',
         width: '100%',
         textTransform: 'capitalize',
-        marginLeft: theme.spacing.unit * 8
+        //paddingLeft: theme.spacing.unit * 8
     },
     grid: {
-        //maxWidth: '86vw',
-        width: '100%',
+        //width: '100%',
         //maxWidth: '1400px',
-        // flex: 1,
+        flex: 1,
         //margin: '0 auto',
         marginBottom: theme.spacing.unit * 3,
     },
@@ -47,9 +43,9 @@ const styles = theme => ({
             boxShadow: theme.shadows[3]
         }
     },
-    scrollTabs: {
-        position: 'static'
-    }
+    // scrollTabs: {
+    //     position: 'static'
+    // }
 })
 
 const PreviewList = ({

@@ -1,52 +1,76 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { TransitionGroup } from "react-transition-group";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 
-import Slide from '@material-ui/core/Slide';
 import { withStyles } from '@material-ui/core/styles';
 
-const styles = theme => ({
-    frame: {
+const styles = {
+    content: {
+        position: 'relative',
+        transition: 'padding-left 600ms',
+        margin: '15px auto',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100%',
-        width: '100%',
-        transition: 'padding-left 300ms',
-        margin: `1% 0`,
+        '@media (min-width: 960px)': {
+            width: '93%'
+        },
     },
     left: {
         '@media (min-width: 960px)': {
-            paddingLeft: '250px',
+            paddingLeft: '220px',
         }
     },
-})
+    // animation
+    cntntEnter: {
+        opacity: '0.01',
+        transform: 'translate(0px, 300px)',
+    },
+    cntntEnterActive: {
+        opacity: 1,
+        transform: 'translate(0px, 0px)',
+        transition: 'all 300ms cubic-bezier(0, 0, 0.2, 1) 500ms'
+    },
+    cntntExit: {
+        opacity: 1,
+        transform: 'translate(0px, 0px)',
+    },
+    cntntExitActive: {
+        opacity: '0.01',
+        transform: 'translate(0px, 300px)',
+        transition: 'all 300ms cubic-bezier(0, 0, 0.2, 1) 0ms'
+    }
+}
 
 const Frame = ({ isDrawer, slideKey, isLoading, classes, children }) => {
     return (
-        <TransitionGroup className={classNames(classes.frame, isDrawer ? classes.left : null)}>
-            <Slide
-                // component={'div'}
+        <TransitionGroup>
+            <CSSTransition
                 in={!isLoading}
                 key={slideKey}
-                direction='up'
-                timeout={{ enter: 500, exit: 150 }}
-            // mountOnEnter
-            // unmountOnExit
-            // transitionEnter={false}
-            // transitionLeave={true}
-            // transitionAppear={true}
-            //onEnter={(e) => e.style.opacity = 0}
-            // onExit={(e) => setTimeout(() => e.style.opacity = '0.01', 200)}
-            // onEnter={(e) => setTimeout(() => e.style.opacity = 1, 250)}
-            //style={{ transitionDelay: isLoading ? 2000 : 0 }}
-            //onEntered={(e) => setTimeout(() => e.style.transform = 'none', 800)}
+                classNames={{
+                    appear: classes.cntntEnter,
+                    appearActive: classes.cntntEnterActive,
+                    enter: classes.cntntEnter,
+                    enterActive: classes.cntntEnterActive,
+                    exit: classes.cntntExit,
+                    exitActive: classes.cntntExitActive,
+                }}
+                timeout={{ enter: 800, exit: 300 }}
+                onEntered={() => window.scrollTo(0, 0)}
+                // document.body.scrollTop = 0; // For Safari
+                // document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+                unmountOnExit
+                mountOnEnter
             >
-                {children}
-            </Slide>
-        </TransitionGroup>
+                <div className={classNames(classes.content, isDrawer ? classes.left : null)}>
+                    {children}
+                </div>
+            </CSSTransition>
+        </TransitionGroup >
     )
 }
 

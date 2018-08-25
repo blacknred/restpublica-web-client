@@ -11,7 +11,8 @@ const styles = theme => ({
         margin: `${theme.spacing.unit * 3}px 0`,
         display: 'flex',
         justifyContent: 'center',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        width: '100%'
     },
     chip: {
         margin: theme.spacing.unit,

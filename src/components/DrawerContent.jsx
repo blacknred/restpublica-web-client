@@ -52,6 +52,8 @@ const styles = theme => ({
     drawerRoot2: {
         height: '100vh',
         marginTop: theme.spacing.unit * 15,
+        transform: 'translate(0px, 0px)',
+        transition: 'translate 600ms cubic-bezier(0, 0, 0.2, 1)'
     },
     drawerHeader: {
         justifyContent: 'space-between',
@@ -372,7 +374,7 @@ const DrawerContent = ({
                     <Slide
                         direction="right"
                         in={isDrawer}
-                        timeout={400}
+                        timeout={500}
                         className={
                             path.join('/')
                                 .match(/(trending\/+|search|people|\/communities\/.+\/.+)/) ?

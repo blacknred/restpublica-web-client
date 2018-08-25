@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import Masonry from 'react-masonry-css';
 import InfiniteScroll from 'react-infinite-scroller2';
@@ -7,7 +7,6 @@ import InfiniteScroll from 'react-infinite-scroller2';
 import Post from '../containers/Post';
 import PostPreview from '../components/PostPreview';
 
-import Slide from '@material-ui/core/Slide';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import ListItem from '@material-ui/core/ListItem';
@@ -25,26 +24,20 @@ const styles = theme => ({
     },
     grid: {
         display: 'flex',
-        //marginLeft: '-30px',
-        width: 'auto',
-        // flexWrap: 'wrap',
-        // justifyContent: 'center',
-        // boxSizing: 'border-box'
     },
     gridColumn: {
-        //paddingLeft: '20px',
+        margin: '10px',
         backgroundClip: 'padding-box',
-        '& > div': {
-            marginBottom: '20px'
-        }
+        '@media (max-width: 600px)': {
+            margin: '0'
+        },
     },
-
     newPostLink: {
         maxWidth: '530px',
         minWidth: '140px',
+        margin: '10px',
         background: theme.palette.background.paper,
-        margin: '0.6em auto',
-        boxShadow: theme.shadows[1]
+        boxShadow: '0 1px 4px 0 rgba(0,0,0,0.14)', //theme.shadows[1]
     },
     morePostsLink: {
         width: '100%',
@@ -102,6 +95,7 @@ const PostsList = ({
         posts.map((post, index) =>
             isPreview ?
                 <PostPreview
+                    index={index}
                     key={index * 2}
                     post={post}
                 /> :
@@ -114,45 +108,34 @@ const PostsList = ({
 
     const masonryColsObj = {
         default: isPreview ? 4 : (isFeedMultiColumn ? 3 : 1),
-        960: isPreview ? 3 : (isFeedMultiColumn ? 2 : 1),
-        600: isPreview ? 2 : 1
+        1400: isPreview ? 3 : (isFeedMultiColumn ? 2 : 1),
+        1100: isPreview ? 2 : 1
     };
 
     return (
-        <div>
+        <Fragment>
             {!isFeedMultiColumn && newPostLink}
-            <Slide
-                direction='up'
-                in={posts.length > 0}
-                timeout={400}
+            <InfiniteScroll
+                pageStart={0}
+                loadMore={getPosts}
+                hasMore={hasMore}
+                loader={loader}
+            // ref={(scroll) => { this.scroll = scroll; }}
+            // threshold={200}
+            // key={reload}
+            // initialLoad={false}
+            // useWindow={false}
             >
-                <InfiniteScroll
-                    pageStart={0}
-                    loadMore={getPosts}
-                    hasMore={hasMore}
-                    loader={loader}
-                // style={{
-                //     alignItems: isFeedMultiColumn ? 'flex-start' : 'center',
-                //     flexDirection: isPreview ? 'row' : isFeedMultiColumn ? 'row' : 'column',
-                //     maxWidth: isPreview ? '70vw' : '100%'
-                // }}
-                // ref={(scroll) => { this.scroll = scroll; }}
-                // threshold={200}
-                // key={reload}
-                // initialLoad={false}
-                // useWindow={false}
+                <Masonry
+                    breakpointCols={masonryColsObj}
+                    className={classes.grid}
+                    columnClassName={classes.gridColumn}
                 >
-                    <Masonry
-                        breakpointCols={masonryColsObj}
-                        className={classes.grid}
-                        columnClassName={classes.gridColumn}
-                    >
-                        {postsArr}
-                    </Masonry>
-                </InfiniteScroll>
-            </Slide>
+                    {postsArr}
+                </Masonry>
+            </InfiniteScroll>
             {morePostsLink}
-        </div>
+        </Fragment>
     )
 }
 

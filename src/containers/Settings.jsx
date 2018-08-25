@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux'
-import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
+import React, { PureComponent, Fragment } from 'react';
 
 import {
     getUserProfile,
@@ -84,11 +84,12 @@ class Settings extends PureComponent {
     }
 
     getProfileHandler = async () => {
-        this.props.switchLoader(true)
+        const { switchLoader, createMessage } = this.props;
+        switchLoader(true)
         const res = await getUserProfile()
+        switchLoader(false)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
-            this.props.switchLoader(false)
+            createMessage('Server error. Try later.')
             return
         }
         this.setState({
@@ -100,10 +101,10 @@ class Settings extends PureComponent {
                 }
             }
         })
-        this.props.switchLoader(false)
     }
 
     updateProfileValueHandler = async (option, value) => {
+        const { createMessage, update } = this.props;
         if (value === this.state.profile.values[option]) {
             this.setState({
                 profile: {
@@ -122,7 +123,7 @@ class Settings extends PureComponent {
         };
         const res = await updateUser(updatedData)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
         if (option === 'active') this.logoutHandler()
@@ -152,11 +153,11 @@ class Settings extends PureComponent {
                 }
             })
             if (option.match(/^(username|feed_rand)$/)) {
-                this.props.update(res.data)
+                update(res.data)
             }
             if (!option.match(/^(email_notify|feed_rand|active)$/)) {
                 const formatedOption = option[0].toUpperCase() + option.substr(1);
-                this.props.createMessage(formatedOption + ' is updated')
+                createMessage(formatedOption + ' is updated')
             }
         }
     }
@@ -334,13 +335,13 @@ class Settings extends PureComponent {
 
         return (
             <Switch>
-                <Route path='/settings/profile' render={() => <div>{profileSettings}</div>} />
+                <Route path='/settings/profile' render={() => profileSettings} />
                 <Route path='/settings/app' render={() => appSettings} />
                 <Route render={() => (
-                    <div>
+                    <Fragment>
                         {appSettings}
                         {profileSettings}
-                    </div>
+                    </Fragment>
                 )} />
             </Switch>
         )
@@ -348,7 +349,7 @@ class Settings extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-    username: state.authentication.username,
+    username: state.authentication.username || '',
     isNightMode: state.uiSwitchers.isNightMode,
     isNotify: state.notifications.isNotify,
     isAutoGifs: state.uiSwitchers.isAutoGifs,

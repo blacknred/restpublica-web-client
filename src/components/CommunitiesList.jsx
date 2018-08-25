@@ -6,7 +6,6 @@ import InfiniteScroll from 'react-infinite-scroller2';
 import CommunityPreview from './CommunityPreview';
 
 import Button from '@material-ui/core/Button';
-import Hidden from '@material-ui/core/Hidden';
 import GridList from '@material-ui/core/GridList';
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
@@ -19,13 +18,6 @@ const styles = {
         textAlign: 'center',
         padding: '2em',
         flexBasis: '100%'
-    },
-    header: {
-        width: '70vw',
-        maxWidth: '1100px',
-    },
-    header2: {
-        width: '100vw',
     },
     grid: {
         maxWidth: '1100px',
@@ -47,8 +39,9 @@ const CommunitiesList = ({
         </div>
     )
 
-    const subHeaderContent = (
-        <Fragment>
+    const subHeader = (
+        isHome &&
+        <ListItem>
             <ListItemText
                 secondary='My communities'
                 secondaryTypographyProps={{ variant: 'body2' }}
@@ -65,23 +58,7 @@ const CommunitiesList = ({
             >
                 <AddCircleIcon /> &nbsp;Create community
             </Button>
-        </Fragment>
-    )
-
-    const subHeader = (
-        isHome &&
-        <Fragment>
-            <Hidden smDown>
-                <ListItem className={classes.header}>
-                    {subHeaderContent}
-                </ListItem>
-            </Hidden>
-            <Hidden mdUp>
-                <ListItem className={classes.header2}>
-                    {subHeaderContent}
-                </ListItem>
-            </Hidden>
-        </Fragment>
+        </ListItem>
     )
 
     const moreCommunitiesLink = (
@@ -100,7 +77,7 @@ const CommunitiesList = ({
     )
 
     return (
-        <div>
+        <Fragment>
             {subHeader}
             <InfiniteScroll
                 pageStart={0}
@@ -125,7 +102,7 @@ const CommunitiesList = ({
             </InfiniteScroll>
             <br />
             {moreCommunitiesLink}
-        </div>
+        </Fragment>
     )
 }
 

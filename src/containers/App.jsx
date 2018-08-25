@@ -1,4 +1,6 @@
-import React, { Component } from 'react';
+import React, { 
+    Component, Fragment
+} from 'react';
 import {
     Switch,
     Route,
@@ -108,27 +110,27 @@ class App extends Component {
                     )} />
                     <Route path='/explore/communities' component={Communities} />
                     <Route path='/explore' render={() =>
-                        <div>
+                        <Fragment>
                             <Tags />
                             <Communities isPreview />
                             <Posts />
-                        </div>
+                        </Fragment>
                     } />
                     <Route path='/search/:query/communities' component={Communities} />
                     <Route path='/search/:query/authors' component={Authors} />
                     <Route path='/search/:query/posts' render={() =>
-                        <div>
+                        <Fragment>
                             <Tags />
                             <Posts />
-                        </div>
+                        </Fragment>
                     } />
                     <Route path='/search/:query' render={() =>
-                        <div>
+                        <Fragment>
                             <Tags />
                             <Authors isPreview />
                             <Communities isPreview />
                             <Posts />
-                        </div>
+                        </Fragment>
                     } />
                     <Route path='/search' render={() => <Redirect to='/' />} />
                     <Route path='/posts/:slug' render={() => <Post />} />
@@ -150,10 +152,10 @@ class App extends Component {
                         isAuthenticated ? <Communities /> : toLogin
                     )} />
                     <Route path='/communities/:name' render={() =>
-                        <div>
+                        <Fragment>
                             <Community />
                             <Posts />
-                        </div>
+                        </Fragment>
                     } />
                     <Route path='/communities' render={() => (
                         isAuthenticated ? <Communities isHome /> : toLogin
@@ -175,11 +177,11 @@ class App extends Component {
                     <Route path='/:username/communities' component={Communities} />
                     <Route path='/:username/(followers|following)' component={Authors} />
                     <Route path='/:username' render={() =>
-                        <div>
+                        <Fragment>
                             <Author />
                             <Communities isPreview />
                             <Posts />
-                        </div>
+                        </Fragment>
                     } />
 
                 </Switch>

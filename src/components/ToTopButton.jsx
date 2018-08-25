@@ -3,33 +3,30 @@ import PropTypes from 'prop-types';
 import ScrollToTop from 'react-scroll-up';
 
 import Hidden from '@material-ui/core/Hidden';
-import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/IconButton';
+import { withStyles } from '@material-ui/core/styles';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 
-const styles = {
-    toTop: {
-        top: '150px',
-        right: '35px',
-        bottom: 'none',
-        zIndex: 1
-    },
+const styles = theme => ({
     toTopButton: {
-        backgroundColor: 'rgba(225,225,225,0.8)'
+        backgroundColor: theme.palette.secondary.light
     }
-}
+})
 
 const ToTopButton = ({ classes }) => {
     return (
         <Hidden smDown>
             <ScrollToTop
                 showUnder={460}
-                // topPosition={170}
-                style={styles.toTop}
+                style={{
+                    top: '120px',
+                    right: '35px',
+                    bottom: 'none',
+                    zIndex: 1,
+                }}
             >
                 <Button
                     className={classes.toTopButton}
-                    color="primary"
                     variant="fab"
                 >
                     <ArrowUpwardIcon />

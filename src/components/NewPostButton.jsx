@@ -19,7 +19,6 @@ const styles = {
 const NewPostButton = ({ community, classes }) =>
     <Zoom
         in={true}
-        //timeout={1200}
         style={{ transitionDelay: 1000 }}
     >
         <Button

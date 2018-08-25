@@ -35,11 +35,11 @@ class Community extends Component {
     }
 
     getCommunityDataHandler = async () => {
-        const { community } = this.props
+        const { community, switchNotFound, createMessage } = this.props
         const res = await getCommunity(community)
         if (!res) {
-            this.props.switchNotFound(true)
-            this.props.createMessage('Server error. Try later.')
+            switchNotFound(true)
+            createMessage('Server error. Try later.')
             return
         }
         this.setState({ ...res.data })

@@ -21,6 +21,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 const styles = theme => ({
     root: {
         marginBottom: theme.spacing.unit * 5,
+        width: '100%',
         position: 'relative',
         '& a': {
             textDecoration: 'none'
@@ -28,11 +29,9 @@ const styles = theme => ({
     },
     rootBackgroung: {
         height: '450px',
-        minWidth: '70vw',
     },
     rootBackgroung2: {
         height: '300px',
-        width: '100vw',
     },
     content: {
         padding: theme.spacing.unit * 5,
@@ -96,7 +95,7 @@ const styles = theme => ({
     avatarIcon2: {
         position: 'absolute',
         bottom: '1.5em',
-        left: '1.5em',
+        left: '1.6em',
         color: 'white',
         cursor: 'pointer'
     },

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux'
-import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import React, { Component, Fragment } from 'react';
 
 import {
     getFeedPosts,

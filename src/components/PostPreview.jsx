@@ -1,10 +1,9 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import Fade from '@material-ui/core/Fade'
+import Zoom from '@material-ui/core/Zoom';
 import Card from '@material-ui/core/Card';
-import Hidden from '@material-ui/core/Hidden';
 import Avatar from '@material-ui/core/Avatar';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
@@ -14,17 +13,19 @@ import CardContent from '@material-ui/core/CardContent';
 
 const styles = theme => ({
     tile: {
-        width: '290px',
-        margin: '10px',
-        textDecoration: 'none',
-        borderRadius: '1%'
+        borderRadius: '1%',
+        boxShadow: '0 1px 4px 0 rgba(0,0,0,0.14)',
+        '@media (min-width: 600px)': {
+            width: '280px',
+            marginBottom: '20px',
+        },
+        '@media (max-width: 600px)': {
+            margin: '10px 5px',
+        },
+        '& a': {
+            textDecoration: 'none',
+        }
     },
-    tile2: {
-        width: '47%',
-        margin: '1%',
-        textDecoration: 'none',
-    },
-
     headerContent: {
         '&> *': {
             display: 'inline-block',
@@ -54,7 +55,7 @@ const styles = theme => ({
     },
 })
 
-const PostPreview = ({ post, classes }) => {
+const PostPreview = ({ index, post, classes }) => {
 
     const postHeader = (
         <CardHeader
@@ -120,48 +121,21 @@ const PostPreview = ({ post, classes }) => {
         </a>
     )
 
-return (
-    <Fragment>
-        <Hidden smDown>
-            <Fade
-                in={true}
-                // component={Link}
-                // to={`/posts/${post.slug}`}
-                timeout={800}
+    return (
+        <Zoom in={true}>
+            <Card
+                elevation={1}
+                className={classes.tile}
             >
-                <Card
-                    elevation={1}
-                    className={classes.tile}
-                >
+                <Link to={`/post/${post.slug}`}>
                     {post.type === 'file' && postFilesContent}
                     {post.type === 'link' && postLinkContent}
                     {postDescription}
                     {postHeader}
-                </Card>
-            </Fade>
-        </Hidden>
-
-        <Hidden mdUp>
-            <Fade
-                in={true}
-                component={Link}
-                to={`/post/${post.slug}`}
-                timeout={800}
-            >
-                <Card
-                    elevation={1}
-                    className={classes.tile2}
-                >
-                    {post.type === 'file' && postFilesContent}
-                    {post.type === 'link' && postLinkContent}
-                    {postDescription}
-                    {postHeader}
-                </Card>
-            </Fade>
-        </Hidden>
-    </Fragment>
-
-)
+                </Link>
+            </Card>
+        </Zoom>
+    )
 }
 
 PostPreview.propTypes = {
