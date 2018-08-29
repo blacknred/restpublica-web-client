@@ -60,9 +60,10 @@ const Frame = ({ isDrawer, slideKey, isLoading, classes, children }) => {
                     exitActive: classes.cntntExitActive,
                 }}
                 timeout={{ enter: 800, exit: 300 }}
-                onEntered={() => window.scrollTo(0, 0)}
-                // document.body.scrollTop = 0; // For Safari
-                // document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+                onEntered={() => {
+                    document.body.scrollTop = 0; // For Safari
+                    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+                }}
                 unmountOnExit
                 mountOnEnter
             >

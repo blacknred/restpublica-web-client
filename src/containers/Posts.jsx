@@ -1,9 +1,11 @@
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import React, { Component, Fragment } from 'react';
 
 import {
+    getPost,
     getFeedPosts,
     getTrendingPosts,
     getSearchedPosts,
@@ -12,25 +14,35 @@ import {
     getTagPosts,
     getProfile,
     getCommunity
-} from '../api'
+} from '../api';
 import {
     createFlashMessage,
     switchLoader
-} from '../actions'
-import PostsList from '../components/PostsList'
-import NewPostButton from '../components/NewPostButton'
-import EmptyContentMessage from '../components/EmptyContentMessage'
+} from '../actions';
+import PostsList from '../components/PostsList';
+import NewPostButton from '../components/NewPostButton';
+import PostsUpdatesButton from '../components/PostsUpdatesButton';
+import EmptyContentMessage from '../components/EmptyContentMessage';
+
+// eslint-disable-next-line
+import Worker from 'worker-loader!./posts.worker.js';
+const worker = new Worker();
 
 class Posts extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            targetId: null,
             hasMore: true,
             empty: false,
             posts: [],
+
+            srcId: null,
+
+            newPosts: []
         }
     }
+
+    timer = null
 
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
@@ -44,7 +56,7 @@ class Posts extends Component {
 
     getPostsHandler = async (page) => {
         let res
-        const { targetId, posts } = this.state
+        const { srcId, posts } = this.state
         const { path, userId, username, switchLoader, createMessage } = this.props
         switch (path[1]) {
             case '': res = await getFeedPosts(page)
@@ -59,12 +71,14 @@ class Posts extends Component {
             case 'tags': res = await getTagPosts({ tag: path[2], page })
                 break
             case 'communities':
-                if (!targetId) await this.getCommunityIdHandler(path[2])
-                res = await getCommunityPosts({ communityId: this.state.targetId, page })
+                if (!srcId) await this.getCommunityIdHandler(path[2])
+                res = await getCommunityPosts({ communityId: this.state.srcId, page })
+                break
+            case 'post': res = await getPost(path[2])
                 break
             default:
-                if (!targetId) await this.getProfileIdHandler(path[1])
-                res = await getProfilePosts({ userId: this.state.targetId, page })
+                if (!srcId) await this.getProfileIdHandler(path[1])
+                res = await getProfilePosts({ userId: this.state.srcId, page })
         }
         switchLoader(false)
         if (!res) {
@@ -72,7 +86,13 @@ class Posts extends Component {
             createMessage('Server error. Try later.')
             return
         }
-        if (this.mounted) {
+        //  if single post mode enlarge posts arr and block further loading
+        if (path[1] === 'post') {
+            this.setState({
+                posts: [res.data],
+                hasMore: false
+            });
+        } else if (this.mounted) {
             // if there are no requested posts at all view empty page 
             if (res.data.count === '0') {
                 this.setState({
@@ -80,14 +100,41 @@ class Posts extends Component {
                     empty: true
                 })
             }
-            // enlarge posts arr if there are, block loading if there are not
             if (res.data.posts.length) {
+                // enlarge posts arr if there are
                 this.setState({ posts: posts.concat(...res.data.posts) });
+                // initiate posts autoupdate if feed mode
+                if (path[1] === '' && page === 1) {
+                    this.timer = setInterval(this.postsAutoUpdateHandler, 20000)
+                }
             } else {
+                // block loading if there are not posts left
                 this.setState({ hasMore: false });
             }
             console.log(`page:${page}, ${this.state.posts.length} from ${res.data.count}`)
         }
+    }
+
+    postsAutoUpdateHandler = async () => {
+        const lastPostDate = this.state.posts[0].created_at
+        if (lastPostDate) {
+            const res = await getFeedPosts(1);
+            if (res && res.data.posts.length) {
+                const newPosts = res.data.posts.filter(post =>
+                    moment(post.created_at).isAfter(lastPostDate));
+                this.setState({ newPosts })
+            }
+        }
+    }
+
+    addNewPostsHandler = async () => {
+        const { posts, newPosts } = this.state
+        this.setState({
+            posts: [...newPosts, ...posts],
+            newPosts: []
+        })
+        clearInterval(this.timer)
+        this.timer = null
     }
 
     getCommunityIdHandler = async (communityName) => {
@@ -97,7 +144,7 @@ class Posts extends Component {
             return
         }
         this.setState({
-            targetId: res.data.id,
+            srcId: res.data.id,
             communityName: res.data.name,
             communitySubscription: res.data.my_subscription
         })
@@ -109,28 +156,58 @@ class Posts extends Component {
             this.props.createMessage('Server error. Try later.')
             return
         }
-        this.setState({ targetId: res.data.id })
+        this.setState({ srcId: res.data.id })
+    }
+
+    removePostHandler = (id) => {
+        const posts = this.state.posts
+        posts.forEach((t, i) => t.id === id && posts.splice(i, 1))
+        this.setState({ posts })
     }
 
     componentDidMount() {
-        this.mounted = true;
         const { path, switchLoader } = this.props
+        this.mounted = true;
         switchLoader(true)
         console.log('posts are mounted:', path[1] || 'feed')
+        this.getPostsHandler(1)
+
+        // new posts worker
+        if (path[1] === '') {
+            worker.postMessage('start');
+            worker.onmessage = mess => {
+                const data = JSON.stringify(mess.data);
+                console.log(data);
+            }
+            worker.addEventListener('error', e => console.log(e))
+        }
     }
 
     componentWillUnmount() {
         this.setState({ hasMore: false })
+        worker.terminate();
+        clearInterval(this.timer)
+        this.timer = null
         this.mounted = false;
     }
 
+
     render() {
-        const { empty, targetId, communityName, communitySubscription } = this.state
+        const {
+            empty, srcId, communityName, communitySubscription, newPosts
+        } = this.state
         const {
             isAuthenticated, username, userAvatar, isFeedMultiColumn, path
         } = this.props;
         return (
             <Fragment>
+                {
+                    newPosts.length > 0 &&
+                    <PostsUpdatesButton
+                        newPostsCnt={newPosts.length}
+                        addNewPosts={this.addNewPostsHandler}
+                    />
+                }
                 {
                     empty ?
                         <EmptyContentMessage
@@ -144,6 +221,7 @@ class Posts extends Component {
                             isPreview={path[1] === 'explore'}
                             isFeedMultiColumn={isFeedMultiColumn}
                             getPosts={this.getPostsHandler}
+                            removePost={this.removePostHandler}
                         />
                 }
                 {
@@ -156,7 +234,7 @@ class Posts extends Component {
                         community={
                             !communityName ? null :
                                 {
-                                    id: targetId,
+                                    id: srcId,
                                     name: communityName
                                 }
                         }

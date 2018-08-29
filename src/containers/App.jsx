@@ -132,11 +132,12 @@ class App extends Component {
                             <Posts />
                         </Fragment>
                     } />
+                    <Route path='/tags/:tag' component={Posts} />
+                    <Route path='/post/:slug' component={Posts} />
+
                     <Route path='/search' render={() => <Redirect to='/' />} />
-                    <Route path='/posts/:slug' render={() => <Post />} />
                     <Route path='/posts' render={() => <Redirect to='/' />} />
                     <Route path='/post' render={() => <Redirect to='/' />} />
-                    <Route path='/tags/:tag' component={Posts} />
                     <Route path='/tags' render={() => <Redirect to='/' />} />
 
                     <Route path='/people/(followers|followin|recommended)' component={Authors} />

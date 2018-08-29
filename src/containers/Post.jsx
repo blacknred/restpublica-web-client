@@ -5,15 +5,14 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import {
-    getPost,
     updatePost,
     deletePost,
     getPostComments,
     createPostComment,
-    deletePostComment,
     createPostLike,
-    getPostLikes,
     deletePostLike,
+    deletePostComment,
+    getPostLikes,
     getPostVotes,
     createPostVote,
     deletePostVote,
@@ -44,6 +43,7 @@ class Post extends Component {
 
     static propTypes = {
         post: PropTypes.object,
+        removePost: PropTypes.func.isRequired,
         path: PropTypes.array.isRequired,
         isAuthenticated: PropTypes.bool.isRequired,
         userId: PropTypes.any,
@@ -55,32 +55,18 @@ class Post extends Component {
         switchNotFound: PropTypes.func.isRequired
     }
 
-    getPostHandler = async () => {
-        const { path, switchLoader, switchNotFound } = this.props
-        switchLoader(true)
-        const slug = path[2]
-        const res = await getPost(slug)
-        switchLoader(false)
-        if (!res) {
-            switchNotFound(true)
-            return
-        }
-        this.setState({
-            ...res.data,
-            newDescription: res.data.description
-        });
-    }
-
     getPostCommentsHandler = async (page) => {
+        const { id, comments } = this.state
+        const { createMessage } = this.props
         const data = {
-            postId: this.state.id,
+            postId: id,
             page
         }
         const res = await getPostComments(data)
         console.log('ddd', res.data)
         if (!res) {
             this.setState({ hasMoreComments: false })
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
         // if there are no comments left block further loading
@@ -88,7 +74,7 @@ class Post extends Component {
         // enlarge post comments arr if there are
         this.setState({
             comments: [
-                ...this.state.comments,
+                ...comments,
                 ...res.data.comments
             ]
         });
@@ -118,14 +104,6 @@ class Post extends Component {
         this.setState({ [target]: !this.state[target] })
     }
 
-
-
-
-
-    changePostDescriptionHandler = (value) => {
-        this.setState({ newDescription: value })
-    }
-
     togglePostNewCommentFormHandler = () => {
         this.setState({
             newComment: '',
@@ -133,67 +111,77 @@ class Post extends Component {
         })
     }
 
+    changePostDescriptionHandler = (value) => {
+        this.setState({ newDescription: value })
+    }
+
     changePostNewCommentHandler = (value) => {
         this.setState({ newComment: value })
     }
 
     addNewPostCommentHandler = async () => {
-        const comment = this.state.newComment
+        const { newComment, comments } = this.state
+        const { username, userAvatar, createMessage } = this.props
         const data = {
             postId: this.state.id,
-            body: { comment }
+            body: { comment: newComment }
         }
         const res = await createPostComment(data)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
         res.data.author = {
-            username: this.props.username,
-            avatar: this.props.userAvatar
+            username,
+            avatar: userAvatar
         }
         this.setState({
             newComment: '',
             showCommentForm: false,
-            comments: [res.data, ...this.state.comments]
+            comments: [res.data, ...comments]
         })
-        this.props.createMessage('New comment was published')
+        createMessage('New comment was published')
     }
 
     createPostLikeHandler = async () => {
-        const userId = this.props.userId
+        const { id, likes_cnt } = this.state
+        const { userId, createMessage } = this.props
         const data = {
-            postId: this.state.id,
+            postId: id,
             data: { userId }
         }
         const res = await createPostLike(data)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
         this.setState({
             my_like_id: res.data.id,
-            likes_cnt: ++this.state.likes_cnt
+            likes_cnt: parseInt(likes_cnt, 10) + 1
         })
-        this.props.createMessage('You liked a post')
+        createMessage('You liked a post')
     }
 
     deletePostLikeHandler = async () => {
-        const res = await deletePostLike(this.state.id)
+        const { id, likes_cnt } = this.state
+        const { createMessage } = this.props
+        const res = await deletePostLike(id)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
         this.setState({
             my_like_id: null,
-            likes_cnt: --this.state.likes_cnt
+            likes_cnt: parseInt(likes_cnt, 10) - 1
         })
-        this.props.createMessage('You deleted like from post')
+        createMessage('You deleted like from post')
     }
 
     updatePostHandler = async (option, value) => {
+        const { id } = this.state
+        const { path, createMessage } = this.props
         const data = {
-            postId: this.state.id,
+            postId: id,
             data: {
                 option,
                 value
@@ -202,46 +190,47 @@ class Post extends Component {
         this.setState({ [option]: value })
         const res = await updatePost(data)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
-        if ((this.props.path[1] === '' ||
-            this.props.path[1] === 'search' ||
-            this.props.path[1] === 'tags' ||
-            this.props.path[1] === 'communites') &&
+        if ((path[1] === '' ||
+            path[1] === 'search' ||
+            path[1] === 'tags' ||
+            path[1] === 'communites') &&
             option === 'archived') {
             this.setState({ id: null })
         }
-        this.props.createMessage('Post updated')
+        createMessage('Post updated')
     }
 
     deletePostHandler = async () => {
-        const res = await deletePost(this.state.id)
+        const { id } = this.state
+        const { removePost, createMessage } = this.props
+        const res = await deletePost(id)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
         if (res.data.filesToDelete) {
             Promise.all(res.data.filesToDelete
                 .map(file => deleteFileFromStorage(file)))
         }
-        this.setState({ id: null })
-        this.props.createMessage('Post deleted')
+        removePost(id)
+        createMessage('Post deleted')
     }
 
     createPostVoteHandler = async (optionId) => {
-        const userId = this.props.userId
+        const { id, content } = this.state
+        const { userId, createMessage } = this.props
         const data = {
-            postId: this.state.id,
+            postId: id,
             data: { optionId, userId }
         }
         const res = await createPostVote(data)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
-        const content = this.state.content;
-
         if (content.every(ans => !ans.my_vote)) {
             content.forEach((ans) => {
                 if (ans.id === optionId)++ans.count;
@@ -253,68 +242,68 @@ class Post extends Component {
                 ans.my_vote = res.data.id
             }
         })
-        this.setState({ content: content })
-        this.props.createMessage('You voted a post')
+        this.setState({ content })
+        createMessage('You voted a post')
     }
 
     deletePostVoteHandler = async (optionId) => {
+        const { id, content } = this.state
+        const { createMessage } = this.props
         const data = {
-            postId: this.state.id,
+            postId: id,
             optionId
         }
         const res = await deletePostVote(data)
         if (!res) {
-            this.props.createMessage('Server error. Try later.')
+            createMessage('Server error. Try later.')
             return
         }
-        const content = this.state.content;
         content.forEach((ans) => {
             if (ans.id === optionId) {
                 ans.my_vote = null
                 --ans.count;
             }
         })
-        this.setState({ content: content })
-        this.props.createMessage('You deleted vote from post')
+        this.setState({ content })
+        createMessage('You deleted vote from post')
     }
 
-    componentDidMount() {
-        console.log('post is mounted')
-        !this.props.post && this.getPostHandler()
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.post && (nextProps.post.id !== this.props.post.id)) {
+            this.setState({ ...nextProps.post })
+        }
     }
 
     render() {
+        const { path, isAuthenticated, userId, userAvatar } = this.props
+        const { author_id } = this.state
         return (
-            (this.state.id) ?
-                <PostContent
-                    {...this.props}
-                    post={this.state}
-                    isFullAccess={
-                        this.props.isAuthenticated &&
-                        (this.state.author_id == this.props.userId)
-                    }
-                    searchQuery={this.props.path[1] === 'search' ? this.props.path[2] : ''}
-                    getComments={this.getPostCommentsHandler}
-                    togglePostValue={this.togglePostValueHandler}
-                    changePostDescription={this.changePostDescriptionHandler}
-                    toggleNewCommentForm={this.togglePostNewCommentFormHandler}
-                    changeNewComment={this.changePostNewCommentHandler}
-                    postNewComment={this.addNewPostCommentHandler}
-                    formateDate={this.formateDateHandler}
-                    createLike={this.createPostLikeHandler}
-                    deleteLike={this.deletePostLikeHandler}
-                    createVote={this.createPostVoteHandler}
-                    deleteVote={this.deletePostVoteHandler}
-                    updatePost={this.updatePostHandler}
-                    deletePost={this.deletePostHandler}
-                /> :
-                <div />
+            <PostContent
+                post={this.state}
+                userAvatar={userAvatar}
+                isFullAccess={isAuthenticated && (author_id == userId)}
+                searchQuery={path[1] === 'search' ? path[2] : ''}
+                getComments={this.getPostCommentsHandler}
+                togglePostValue={this.togglePostValueHandler}
+                changePostDescription={this.changePostDescriptionHandler}
+                toggleNewCommentForm={this.togglePostNewCommentFormHandler}
+                changeNewComment={this.changePostNewCommentHandler}
+                postNewComment={this.addNewPostCommentHandler}
+                formateDate={this.formateDateHandler}
+                createLike={this.createPostLikeHandler}
+                deleteLike={this.deletePostLikeHandler}
+                createVote={this.createPostVoteHandler}
+                deleteVote={this.deletePostVoteHandler}
+                updatePost={this.updatePostHandler}
+                deletePost={this.deletePostHandler}
+            />
         )
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
     post: ownProps.post || null,
+    removePost: ownProps.removePost,
     isAuthenticated: state.authentication.isAuthenticated,
     path: ownProps.location.pathname.split('/'),
     userId: state.authentication.id,

@@ -46,7 +46,7 @@ const styles = theme => ({
 })
 
 const PostsList = ({
-    mode, isFeedMultiColumn, classes, hasMore, isPreview, posts, userAvatar, getPosts,
+    mode, isFeedMultiColumn, classes, hasMore, isPreview, posts, userAvatar, getPosts, removePost
 }) => {
 
     const loader = (
@@ -102,6 +102,7 @@ const PostsList = ({
                 <Post
                     key={index}
                     post={post}
+                    removePost={removePost}
                 />
         )
     )
@@ -148,6 +149,7 @@ PostsList.propTypes = {
     isPreview: PropTypes.bool.isRequired,
     isFeedMultiColumn: PropTypes.bool.isRequired,
     getPosts: PropTypes.func.isRequired,
+    removePost: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(PostsList)

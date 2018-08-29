@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 
 import CommentsList from './CommentsList';
 
-import Fade from '@material-ui/core/Fade';
 import Card from '@material-ui/core/Card';
 import Menu from '@material-ui/core/Menu';
 import List from '@material-ui/core/List';
@@ -209,17 +208,17 @@ const styles = theme => ({
 
 
 const PostContent = ({
-    index, post, isAutoGifs, isFullAccess, userAvatar, classes, togglePostValue,
+    index, isAutoGifs, isFullAccess, userAvatar, classes, togglePostValue,
     getComments, toggleNewCommentForm, changeNewComment, changePostDescription,
     postNewComment, createVote, deleteVote, createLike, deleteLike, updatePost,
-    deletePost, formateDate, searchQuery
+    deletePost, formateDate, searchQuery, ...props
 }) => {
 
     const postOptionsMenu = (
         <Menu
             key='postOptionsMenu'
             id="postOptionsMenu"
-            anchorEl={document.getElementById(`post${post.id}OptionsMenuButton`)}
+            anchorEl={document.getElementById(`post${props.post.id}OptionsMenuButton`)}
             anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'right',
@@ -228,7 +227,7 @@ const PostContent = ({
                 vertical: 'bottom',
                 horizontal: 'right',
             }}
-            open={post.isOptionsMenuOpen}
+            open={props.post.isOptionsMenuOpen}
             onClose={() => togglePostValue('isOptionsMenuOpen')}
         >
             <MenuItem onClick={deletePost}>
@@ -237,14 +236,14 @@ const PostContent = ({
             <MenuItem onClick={() => togglePostValue('isEditingModeOn')}>
                 <ListItemText primary="Edit description" />
             </MenuItem>
-            <MenuItem onClick={() => updatePost('commentable', !post.commentable)}>
+            <MenuItem onClick={() => updatePost('commentable', !props.post.commentable)}>
                 <ListItemText
-                    primary={`Turn ${post.commentable ? 'off' : 'on'} comments`}
+                    primary={`Turn ${props.post.commentable ? 'off' : 'on'} comments`}
                 />
             </MenuItem>
-            <MenuItem onClick={() => updatePost('archived', !post.archived)}>
+            <MenuItem onClick={() => updatePost('archived', !props.post.archived)}>
                 <ListItemText
-                    primary={`${post.archived ? 'Don\'t archive' : 'Archive'} post`}
+                    primary={`${props.post.archived ? 'Don\'t archive' : 'Archive'} post`}
                 />
             </MenuItem>
         </Menu>
@@ -253,12 +252,12 @@ const PostContent = ({
     const actionsButtons = (
         <span className={classes.actionsToolbar}>
             <IconButton
-                color={post.my_like_id ? 'primary' : 'default'}
-                onClick={post.my_like_id === null ? createLike : deleteLike}
+                color={props.post.my_like_id ? 'primary' : 'default'}
+                onClick={props.post.my_like_id === null ? createLike : deleteLike}
             >
                 <ThumbUpIcon />
             </IconButton>
-            <Typography variant='body1'>{post.likes_cnt}</Typography>
+            <Typography variant='body1'>{props.post.likes_cnt}</Typography>
             <IconButton
                 component={Link}
                 to={{
@@ -266,20 +265,20 @@ const PostContent = ({
                     state: {
                         modal: true,
                         repost: {
-                            id: post.id,
-                            author: post.author
+                            id: props.post.id,
+                            author: props.post.author
                         }
                     }
                 }}
             >
                 <ShareIcon />
             </IconButton>
-            <Typography variant='body1'>{post.reposts_cnt}</Typography>
+            <Typography variant='body1'>{props.post.reposts_cnt}</Typography>
             {
                 isFullAccess &&
                 <IconButton
                     onClick={() => togglePostValue('isOptionsMenuOpen')}
-                    id={`post${post.id}OptionsMenuButton`}
+                    id={`post${props.post.id}OptionsMenuButton`}
                 >
                     <MoreHorizIcon />
                     {postOptionsMenu}
@@ -299,38 +298,38 @@ const PostContent = ({
             avatar={
                 <Avatar
                     component={Link}
-                    to={`/${post.author.username}`}
+                    to={`/${props.post.author.username}`}
                     className={classes.headerAvatar}
-                    srcSet={`data:image/png;base64,${post.author.avatar}`}
-                    aria-label={post.author.username}
+                    srcSet={`data:image/png;base64,${props.post.author.avatar}`}
+                    aria-label={props.post.author.username}
                 />
             }
             title={
-                <Link to={`/${post.author.username}`} >
-                    {post.author.username}
+                <Link to={`/${props.post.author.username}`} >
+                    {props.post.author.username}
                 </Link>
             }
             subheader={
-                post.community_name &&
-                <Link to={`/communities/${post.community_name}`}>
-                    {post.community_name}
+                props.post.community_name &&
+                <Link to={`/communities/${props.post.community_name}`}>
+                    {props.post.community_name}
                 </Link>
             }
             action={
                 <IconButton
                     component={Link}
-                    to={`/posts/${post.slug}`}
+                    to={`/post/${props.post.slug}`}
                     aria-label="Share"
                     classes={{ label: classes.headerShiftOnHover }}
                 >
                     {
-                        post.archived ?
+                        props.post.archived ?
                             <ArchiveIcon /> :
                             <Typography
                                 variant='caption'
                                 color='textSecondary'
                             >
-                                {formateDate(post.created_at)}
+                                {formateDate(props.post.created_at)}
                             </Typography>
                     }
                     <OpenInNewIcon className={classes.headerPostLinkIcon} />
@@ -340,11 +339,11 @@ const PostContent = ({
     )
 
     const postDescription = (
-        <Collapse in={!post.isEditingModeOn && post.description.length > 0}>
+        <Collapse in={!props.post.isEditingModeOn && props.post.description.length > 0}>
             <CardContent className={classes.description}>
                 <Typography variant='body2'>
                     {
-                        post.description.trim().split(' ').map((word, index) => {
+                        props.post.description.trim().split(' ').map((word, index) => {
 
                             if (word.charAt(0) !== '#') {
                                 if (searchQuery !== word) return `${word} `
@@ -367,7 +366,7 @@ const PostContent = ({
     )
 
     const postDescriptionEditingForm = (
-        <Collapse in={post.isEditingModeOn}>
+        <Collapse in={props.post.isEditingModeOn}>
             <CardContent className={classes.description}>
                 <DialogActions>
                     <Button onClick={() => togglePostValue('isEditingModeOn')}>
@@ -375,7 +374,7 @@ const PostContent = ({
                                     </Button>
                     <Button
                         onClick={() => {
-                            updatePost('description', post.newDescription)
+                            updatePost('description', props.post.newDescription)
                             togglePostValue('isEditingModeOn')
                         }}
                         color="primary"
@@ -384,13 +383,13 @@ const PostContent = ({
                                     </Button>
                 </DialogActions>
                 <Input
-                    autoFocus={post.isEditingModeOn}
+                    autoFocus={props.post.isEditingModeOn}
                     fullWidth
                     placeholder='Add description'
                     disableUnderline
                     color='secondary'
                     multiline
-                    value={post.newDescription}
+                    value={props.post.newDescription}
                     onChange={(ev) => changePostDescription(ev.target.value)}
                 />
             </CardContent>
@@ -398,58 +397,58 @@ const PostContent = ({
     )
 
     const postFilesContent = (
-        !post.content ? null :
-            post.content.length === 1 ?
+        !props.post.content ? null :
+            props.post.content.length === 1 ?
                 <div className={classes.content}>
                     <Link to={{
                         pathname: '/album',
                         state: {
                             modal: true,
                             currentIndex: 0,
-                            files: post.content,
-                            postId: post.id,
-                            author: post.author,
+                            files: props.post.content,
+                            postId: props.post.id,
+                            author: props.post.author,
                             postStats: {
-                                likes_cnt: post.likes_cnt,
-                                comments_cnt: post.comments_cnt,
-                                reposts_cnt: post.reposts_cnt
+                                likes_cnt: props.post.likes_cnt,
+                                comments_cnt: props.post.comments_cnt,
+                                reposts_cnt: props.post.reposts_cnt
                             }
                         }
                     }}>
                         <CardMedia
                             component={
-                                post.content[0].mime === 'video/mp4' ? 'video' : 'img'
+                                props.post.content[0].mime === 'video/mp4' ? 'video' : 'img'
                             }
                             src={
-                                post.content[0].mime === 'image/gif' && !isAutoGifs ?
-                                    post.content[0].thumb :
-                                    post.content[0].file
+                                props.post.content[0].mime === 'image/gif' && !isAutoGifs ?
+                                    props.post.content[0].thumb :
+                                    props.post.content[0].file
                             }
                         />
                     </Link>
                     {
-                        post.content[0].mime === 'image/gif' &&
+                        props.post.content[0].mime === 'image/gif' &&
                         <IconButton className={classes.mediaCenterActionButton}>
                             <PlayCircleFilledIcon />
                         </IconButton>
                     }
                     {
-                        post.content[0].mime === 'image/gif' &&
+                        props.post.content[0].mime === 'image/gif' &&
                         <GifIcon className={classes.mediaMimeIcon} />
                     }
                 </div> :
                 <GridList /* cellHeight='auto' */>
                     {
-                        post.content.map((file, i) =>
+                        props.post.content.map((file, i) =>
                             <GridListTile
                                 key={file.thumb}
                                 cols={
-                                    post.content.length === 2 ? 1 :
-                                        i === 0 ? 2 : 2 / (post.content.length - 1)
+                                    props.post.content.length === 2 ? 1 :
+                                        i === 0 ? 2 : 2 / (props.post.content.length - 1)
                                 }
                                 rows={
-                                    post.content.length === 2 ? 1.8 :
-                                        i === 0 ? 2 : post.content.length > 3 ? 0.5 : 1
+                                    props.post.content.length === 2 ? 1.8 :
+                                        i === 0 ? 2 : props.post.content.length > 3 ? 0.5 : 1
                                 }
                             >
                                 <Link to={{
@@ -457,13 +456,13 @@ const PostContent = ({
                                     state: {
                                         modal: true,
                                         currentIndex: i,
-                                        files: post.content,
-                                        postId: post.id,
-                                        author: post.author,
+                                        files: props.post.content,
+                                        postId: props.post.id,
+                                        author: props.post.author,
                                         postStats: {
-                                            likes_cnt: post.likes_cnt,
-                                            comments_cnt: post.comments_cnt,
-                                            reposts_cnt: post.reposts_cnt
+                                            likes_cnt: props.post.likes_cnt,
+                                            comments_cnt: props.post.comments_cnt,
+                                            reposts_cnt: props.post.reposts_cnt
                                         }
                                     }
                                 }}>
@@ -480,95 +479,95 @@ const PostContent = ({
     )
 
     const postLinkContent = (
-        post.content &&
+        props.post.content &&
         <div className={classes.content}>
             <Divider />
             {
-                post.content[0].type !== 'embed' &&
+                props.post.content[0].type !== 'embed' &&
                 <a
-                    href={post.content[0].link}
+                    href={props.post.content[0].link}
                     target='_blank'
                 >
                     {
-                        post.content[0].type === 'file' &&
-                        !post.content[0].img &&
+                        props.post.content[0].type === 'file' &&
+                        !props.post.content[0].img &&
                         <CardContent>
                             <Typography
                                 variant='subheading'
                                 color='secondary'
                                 paragraph
                             >
-                                {post.content[0].link}
+                                {props.post.content[0].link}
                             </Typography>
                             <Typography variant='body1'>
-                                {post.content[0].src}
+                                {props.post.content[0].src}
                             </Typography>
                         </CardContent>
                     }
                     {
-                        post.content[0].type === 'page' &&
+                        props.post.content[0].type === 'page' &&
                         <CardContent>
                             <Typography
                                 variant='body1'
-                                paragraph={!post.content[0].img}
+                                paragraph={!props.post.content[0].img}
                             >
                                 {
-                                    post.content[0].description ||
-                                    post.content[0].title
+                                    props.post.content[0].description ||
+                                    props.post.content[0].title
                                 }
                             </Typography>
                             {
-                                !post.content[0].img &&
+                                !props.post.content[0].img &&
                                 <Typography variant='body1'>
-                                    {post.content[0].src}
+                                    {props.post.content[0].src}
                                 </Typography>
                             }
                         </CardContent>
                     }
                     {
-                        post.content[0].img &&
+                        props.post.content[0].img &&
                         <div>
                             {
-                                post.content[0].type === 'page' &&
+                                props.post.content[0].type === 'page' &&
                                 <CardMedia
                                     className={classes.mediaLinkImg}
-                                    image={post.content[0].img}
+                                    image={props.post.content[0].img}
                                 />
                             }
                             {
-                                post.content[0].type === 'file' &&
+                                props.post.content[0].type === 'file' &&
                                 <CardMedia
                                     component='img'
-                                    src={post.content[0].img}
+                                    src={props.post.content[0].img}
                                 />
                             }
                             <Chip
                                 className={classes.mediaLinkSrc}
-                                label={post.content[0].src}
+                                label={props.post.content[0].src}
                             />
                         </div>
                     }
                 </a>
             }
             {
-                post.content[0].type === 'embed' &&
+                props.post.content[0].type === 'embed' &&
                 <CardMedia
                     className={classes.mediaLinkImg}
                     component='iframe'
-                    src={post.content[0].link}
+                    src={props.post.content[0].link}
                 />
             }
         </div>
     )
 
     const postPollContent = (
-        post.content &&
+        props.post.content &&
         <div>
             <CardContent className={classes.mediaPollStatus}>
                 {
-                    post.content.some(ans => parseInt(ans.count, 10)) ?
+                    props.post.content.some(ans => parseInt(ans.count, 10)) ?
                         <Typography component='a' href='#'>
-                            {post.content.reduce((a, b) =>
+                            {props.post.content.reduce((a, b) =>
                                 parseInt(a.count, 10) + parseInt(b.count, 10))}
                             &nbsp;voices
                                 </Typography> :
@@ -577,37 +576,37 @@ const PostContent = ({
                         </Typography>
                 }
                 {
-                    !post.content[0].ends_at ? null :
-                        moment(Date.now()).isSameOrAfter(post.content[0].ends_at, 'days') ?
+                    !props.post.content[0].ends_at ? null :
+                        moment(Date.now()).isSameOrAfter(props.post.content[0].ends_at, 'days') ?
                             <Typography color='textSecondary'>
                                 finished
                             </Typography> :
                             <Typography color='primary'>
-                                ends after {formateDate(post.content[0].ends_at)}
+                                ends after {formateDate(props.post.content[0].ends_at)}
                             </Typography>
 
                 }
             </CardContent>
             {
-                post.content.length === 2 && post.content[0].img ?
+                props.post.content.length === 2 && props.post.content[0].img ?
                     <GridList cellHeight='auto'>
                         {
-                            post.content.map((ans, i) =>
+                            props.post.content.map((ans, i) =>
                                 <GridListTile key={ans.text}>
                                     <Link to={{
                                         pathname: '/album',
                                         state: {
                                             modal: true,
                                             currentIndex: i,
-                                            files: post.content.map((post) => {
-                                                return { file: post.img }
+                                            files: props.post.content.map((post) => {
+                                                return { file: props.post.img }
                                             }),
                                             postId: ans.post_id,
-                                            author: post.author,
+                                            author: props.post.author,
                                             postStats: {
-                                                likes_cnt: post.likes_cnt,
-                                                comments_cnt: post.comments_cnt,
-                                                reposts_cnt: post.reposts_cnt
+                                                likes_cnt: props.post.likes_cnt,
+                                                comments_cnt: props.post.comments_cnt,
+                                                reposts_cnt: props.post.reposts_cnt
                                             }
                                         }
                                     }}>
@@ -638,7 +637,7 @@ const PostContent = ({
                     :
                     <List>
                         {
-                            post.content.map((ans, i) =>
+                            props.post.content.map((ans, i) =>
                                 <ListItem
                                     key={ans.id}//ans.img || ans.text
                                     disableGutters
@@ -652,15 +651,15 @@ const PostContent = ({
                                             state: {
                                                 modal: true,
                                                 currentIndex: i,
-                                                files: post.content.map((post) => {
-                                                    return { file: post.img }
+                                                files: props.post.content.map((post) => {
+                                                    return { file: props.post.img }
                                                 }),
                                                 postId: ans.post_id,
-                                                author: post.author,
+                                                author: props.post.author,
                                                 postStats: {
-                                                    likes_cnt: post.likes_cnt,
-                                                    comments_cnt: post.comments_cnt,
-                                                    reposts_cnt: post.reposts_cnt
+                                                    likes_cnt: props.post.likes_cnt,
+                                                    comments_cnt: props.post.comments_cnt,
+                                                    reposts_cnt: props.post.reposts_cnt
                                                 }
                                             }
                                         }}>
@@ -677,7 +676,7 @@ const PostContent = ({
                                             //style={{ position: 'absolute' }}
                                             value={
                                                 (parseInt(ans.count, 10) * 100) /
-                                                (post.content.reduce((a, b) =>
+                                                (props.post.content.reduce((a, b) =>
                                                     parseInt(a.count, 10) + parseInt(b.count, 10)))
                                             }
                                         />
@@ -685,7 +684,7 @@ const PostContent = ({
                                             classes={{ root: classes.mediaPollText }}
                                             onClick={() => {
                                                 moment(Date.now())
-                                                    .isSameOrAfter(post.content[0].ends_at, 'days')
+                                                    .isSameOrAfter(props.post.content[0].ends_at, 'days')
                                                     ? null : ans.my_vote ? deleteVote(ans.id) :
                                                         createVote(ans.id)
                                             }}
@@ -699,15 +698,15 @@ const PostContent = ({
                                             {ans.text}
                                             {
                                                 moment(Date.now())
-                                                    .isSameOrAfter(post.content[0].ends_at, 'days') ?
+                                                    .isSameOrAfter(props.post.content[0].ends_at, 'days') ?
                                                     (parseInt(ans.count, 10) * 100) /
-                                                    (post.content.reduce((a, b) =>
+                                                    (props.post.content.reduce((a, b) =>
                                                         parseInt(a.count, 10) + parseInt(b.count, 10)))
                                                     :
-                                                    post.content.some(ans => parseInt(ans.my_vote, 10)) ?
+                                                    props.post.content.some(ans => parseInt(ans.my_vote, 10)) ?
 
                                                         (parseInt(ans.count, 10) * 100) /
-                                                        (post.content.reduce((a, b) =>
+                                                        (props.post.content.reduce((a, b) =>
                                                             parseInt(a.count, 10) + parseInt(b.count, 10)))
                                                         : null
                                             }
@@ -726,7 +725,6 @@ const PostContent = ({
     )
 
     return (
-        <Fade in={true} timeout={500}>
             <Card
                 elevation={1}
                 className={classes.card}
@@ -738,40 +736,40 @@ const PostContent = ({
 
 
                 {/* media */}
-                {post.type === 'file' && postFilesContent}
-                {post.type === 'link' && postLinkContent}
-                {post.type === 'poll' && postPollContent}
-                {post.type === 'repost' && postRepostContent}
+                {props.post.type === 'file' && postFilesContent}
+                {props.post.type === 'link' && postLinkContent}
+                {props.post.type === 'poll' && postPollContent}
+                {props.post.type === 'repost' && postRepostContent}
 
 
                 {/* comments */}
                 {
-                    !post.commentable &&
-                    post.comments_cnt > 0 &&
+                    !props.post.commentable &&
+                    props.post.comments_cnt > 0 &&
                     <Hidden
-                        only={post.listMode ? 'xs' : null}
+                        only={props.post.listMode ? 'xs' : null}
                         className={classes.comments}
                     >
                         <CardActions className={classes.actions}>
                             {
-                                post.listMode &&
-                                post.comments_cnt > 0 &&
+                                props.post.listMode &&
+                                props.post.comments_cnt > 0 &&
                                 <Button
                                     onClick={() => togglePostValue('showComments')}
                                     color='primary'
                                 >
-                                    {`${post.toggleComments ? 'Hide' : 'Show'}
-                                        all comments ${post.comments_cnt}`}
+                                    {`${props.post.toggleComments ? 'Hide' : 'Show'}
+                                        all comments ${props.post.comments_cnt}`}
                                 </Button>
                             }
-                            {!post.listMode && actionsButtons}
+                            {!props.post.listMode && actionsButtons}
                         </CardActions>
                         <LinearProgress />
                         <CommentsList
-                            comments={post.comments}
-                            comments_cnt={parseInt(post.comments_cnt, 10)}
-                            showComments={post.showComments}
-                            hasMoreComments={post.hasMoreComments}
+                            comments={props.post.comments}
+                            comments_cnt={parseInt(props.post.comments_cnt, 10)}
+                            showComments={props.post.showComments}
+                            hasMoreComments={props.post.hasMoreComments}
                             getComments={getComments}
                             formateDate={formateDate}
                         />
@@ -782,31 +780,31 @@ const PostContent = ({
                 <Divider light />
                 <CardActions className={classes.actions}>
                     {/* <Collapse
-                    in={post.commentable}
+                    in={props.post.commentable}
                     className={classes.actionsFullWidth}
                 >
-                    <Hidden only={[!post.listMode ? 'xs' : null, 'sm', 'md', 'lg', 'xl']}>
+                    <Hidden only={[!props.post.listMode ? 'xs' : null, 'sm', 'md', 'lg', 'xl']}>
                         <span className={classes.actionsToolbar}>
                             <IconButton
                                 aria-label="Discussion"
                                 component={Link}
-                                to={`/post/${post.slug}`}
+                                to={`/post/${props.post.slug}`}
                             >
                                 <CommentIcon />
                             </IconButton>
                             <Typography>
-                                &nbsp;{post.comments_cnt}&nbsp;
+                                &nbsp;{props.post.comments_cnt}&nbsp;
                             </Typography>
                         </span>
                     </Hidden>
-                    <Hidden only={post.listMode ? 'xs' : null}>
+                    <Hidden only={props.post.listMode ? 'xs' : null}>
                         <Input
                             fullWidth={true}
-                            autoFocus={post.showCommentForm}
+                            autoFocus={props.post.showCommentForm}
                             placeholder="Write a comment"
                             disableUnderline={true}
-                            value={post.newComment}
-                            multiline={post.newComment.length > 50}
+                            value={props.post.newComment}
+                            multiline={props.post.newComment.length > 50}
                             startAdornment={
                                 <InputAdornment position="start" >
                                     <Avatar
@@ -819,21 +817,21 @@ const PostContent = ({
                                     />
                                 </InputAdornment>
                             }
-                            onClick={!post.showCommentForm ? toggleNewCommentForm : null}
+                            onClick={!props.post.showCommentForm ? toggleNewCommentForm : null}
                             onChange={(ev) => changeNewComment(ev.target.value)}
                         />
                     </Hidden>
                 </Collapse> */}
                     <Collapse
-                        in={!post.showCommentForm && post.listMode}
-                        style={{ width: post.showCommentForm ? 0 : 'auto' }}
+                        in={!props.post.showCommentForm && props.post.listMode}
+                        style={{ width: props.post.showCommentForm ? 0 : 'auto' }}
                     >
                         {actionsButtons}
                     </Collapse>
                 </CardActions>
 
                 {/* comment form */}
-                <Collapse in={post.showCommentForm}>
+                <Collapse in={props.post.showCommentForm}>
                     <CardActions className={classes.actions}>
                         <span>
                             <IconButton>
@@ -848,7 +846,7 @@ const PostContent = ({
                                 Cansel
                         </Button>
                             <Button
-                                disabled={post.newComment.length === 0}
+                                disabled={props.post.newComment.length === 0}
                                 onClick={postNewComment}
                                 color="primary"
                             >
@@ -859,7 +857,6 @@ const PostContent = ({
                 </Collapse>
 
             </Card >
-            </Fade>
     )
 }
 

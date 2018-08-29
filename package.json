@@ -33,6 +33,7 @@
     "devDependencies": {
         "eslint": "^4.19.1",
         "react-scripts": "^1.1.4",
-        "serve": "^9.4.0"
+        "serve": "^9.4.0",
+        "worker-loader": "^2.0.0"
     }
 }
