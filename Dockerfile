@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:alpine
 
 # set working directory
 RUN mkdir -p /usr/src/app
@@ -11,10 +11,10 @@ ENV PATH /usr/src/app/node_modules/.bin:$PATH
 ADD package.json /usr/src/app/package.json
 RUN npm install
 # ADD package-lock.json /usr/src/package-lock.json
-RUN npm install react-scripts@1.1.4 -g
+RUN npm install react-scripts@1.1.5 -g
 
 # Volume configuration
-#VOLUME ["/usr/src/app", "/usr/src/package.json"]
+VOLUME ["/usr/src/app", "/usr/src/package.json"]
 
 # start app
 CMD ["npm", "start"]
