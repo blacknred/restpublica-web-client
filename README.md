@@ -1,6 +1,6 @@
-# Restpublica Web Client - React, Redux, React-Router on Docker
+# Restpublica Web Client - React, Redux client on Docker
 
-## Endpoints
+## Endpoints - http://localhost:3000
 
 | Endpoint     | Result                            |
 |--------------|-----------------------------------|
@@ -24,11 +24,11 @@
 
 1. Download [Docker](https://docs.docker.com/docker-for-mac/install/) (if necessary)
 
-1. Make sure you are using a Docker version >= 17:
+1. Make sure you are using a Docker version >= 18:
 
     ```sh
     $ docker -v
-    Docker version 17.03.0-ce, build 60ccb22
+    Docker version 18.09.0, build 4d60db4
     ```
 
 ### Build and Run the App

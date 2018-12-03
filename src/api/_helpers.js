@@ -3,11 +3,15 @@ const cheerio = require('cheerio')
 
 export const asyncMiddleware = fn => async (next) => {
     try {
-        const { data, status } = await fn(next);
+        const {
+            data,
+            status
+        } = await fn(next);
         console.log(data)
-        return { ...data, status }
-    }
-    catch (e) {
+        return { ...data,
+            status
+        }
+    } catch (e) {
         console.log((e.response && e.response.data) || e.message)
     }
 }
@@ -92,11 +96,11 @@ export const Parser = ({
     if (options.images) {
         const imagehash = {};
         response.images = $('img').map((r) => {
-            const src = $(this).attr('src')
-            console.log(r, src)
-            if (src) return URL.resolve(url, src);
-            else return ""
-        })
+                const src = $(this).attr('src')
+                console.log(r, src)
+                if (src) return URL.resolve(url, src);
+                else return ""
+            })
             .filter((e, f) => f.match(/\.(jpeg|jpg|gif|png|JPEG|JPG|GIF|PNG)$/) !== null)
             .filter((i, item) => imagehash.hasOwnProperty(item) ? false : (imagehash[item] = true))
             .get()
@@ -104,18 +108,17 @@ export const Parser = ({
     if (options.links) {
         const linkhash = {};
         response.links = $('a').map(() => {
-            const href = $(this).attr('href')
-            if (href && href.trim().length && href[0] !== "#") {
-                return URL.resolve(url, href);
-            } else return 0;
-        })
+                const href = $(this).attr('href')
+                if (href && href.trim().length && href[0] !== "#") {
+                    return URL.resolve(url, href);
+                } else return 0;
+            })
             .filter((i, item) => {
                 if (item === 0) return false
                 return linkhash.hasOwnProperty(item) ? false : (linkhash[item] = true);
             })
             .get()
     }
-
 
     console.log(response)
     return response

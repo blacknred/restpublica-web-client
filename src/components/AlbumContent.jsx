@@ -192,7 +192,6 @@ AlbumContent.propTypes = {
     files: PropTypes.arrayOf(
         PropTypes.shape({
             file: PropTypes.string.isRequired,
-
         })
     ).isRequired,
     close: PropTypes.func.isRequired,

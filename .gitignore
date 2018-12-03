@@ -1,13 +1,6 @@
-# dependencies
-node_modules
-
-# testing
+node_modules/
 coverage
-
-# production
 build
-
-# misc
 .DS_Store
 .env*.local
 npm-debug.log*
@@ -16,10 +9,5 @@ yarn-error.log*
 yarn-lock
 _ignore
 env.sh
-
-#ide
 .vscode
-
-#docker files
-Dockerfile
 .dockerignore
